@@ -1,0 +1,195 @@
+import React from 'react';
+import Layout from '@/components/layout/Layout';
+import Hero from '@/components/ui/Hero';
+import SectionTitle from '@/components/ui/SectionTitle';
+import { visionContent } from '@/data/content';
+import { 
+  Star, 
+  Shield, 
+  Lightbulb, 
+  Heart, 
+  Globe, 
+  Target,
+  Eye,
+  Compass,
+  CheckCircle,
+  ArrowRight,
+  type LucideIcon
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+const iconMap: Record<string, LucideIcon> = {
+  star: Star,
+  shield: Shield,
+  lightbulb: Lightbulb,
+  heart: Heart,
+  globe: Globe,
+  target: Target
+};
+
+const VisionPage: React.FC = () => {
+  return (
+    <Layout>
+      <Hero
+        title={visionContent.hero.title}
+        subtitle={visionContent.hero.subtitle}
+        description={visionContent.hero.description}
+        size="medium"
+      />
+
+      {/* Vision & Mission */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12">
+            {/* Vision */}
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl p-10">
+              <div className="w-16 h-16 bg-blue-800 rounded-2xl flex items-center justify-center mb-6">
+                <Eye className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                {visionContent.vision.title}
+              </h2>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                {visionContent.vision.content}
+              </p>
+            </div>
+
+            {/* Mission */}
+            <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-3xl p-10">
+              <div className="w-16 h-16 bg-amber-600 rounded-2xl flex items-center justify-center mb-6">
+                <Compass className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                {visionContent.mission.title}
+              </h2>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                {visionContent.mission.content}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionTitle
+            subtitle="Nos valeurs"
+            title="Les piliers de notre éducation"
+            description="Ces valeurs fondamentales guident chaque aspect de notre action éducative."
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {visionContent.values.map((value, index) => {
+              const Icon = iconMap[value.icon] || Star;
+              const colors = [
+                'from-blue-600 to-blue-800',
+                'from-blue-500 to-blue-600',
+                'from-amber-500 to-amber-600',
+                'from-rose-500 to-rose-600',
+                'from-purple-500 to-purple-600',
+                'from-cyan-500 to-cyan-600'
+              ];
+              return (
+                <div 
+                  key={index}
+                  className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 group"
+                >
+                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${colors[index % colors.length]} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                    <Icon className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">{value.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{value.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Commitment */}
+      <section className="py-20 bg-blue-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <span className="inline-block px-4 py-1.5 bg-white/10 text-blue-200 rounded-full text-sm font-semibold mb-6">
+                Notre engagement
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                {visionContent.commitment.title}
+              </h2>
+              <p className="text-lg text-blue-100 mb-8 leading-relaxed">
+                Nous nous engageons chaque jour à offrir le meilleur environnement d'apprentissage 
+                pour le développement académique et personnel de chaque élève.
+              </p>
+              <ul className="space-y-4">
+                {visionContent.commitment.points.map((point, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-white">{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="relative">
+              <div className="aspect-square rounded-3xl bg-gradient-to-br from-blue-700 to-blue-800 p-12 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-32 h-32 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Target className="w-16 h-16 text-white" />
+                  </div>
+                  <p className="text-2xl font-bold text-white mb-2">Notre objectif</p>
+                  <p className="text-blue-200">Former les leaders de demain</p>
+                </div>
+              </div>
+              <div className="absolute -bottom-6 -right-6 bg-white rounded-xl shadow-xl p-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-blue-800">100%</div>
+                  <div className="text-sm text-gray-500">Engagement</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Quote Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <blockquote className="text-2xl md:text-3xl font-medium text-gray-900 italic mb-8">
+            "L'éducation est l'arme la plus puissante que vous pouvez utiliser pour changer le monde."
+          </blockquote>
+          <cite className="text-gray-600">— Nelson Mandela</cite>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            Partagez-vous nos valeurs ?
+          </h2>
+          <p className="text-lg text-gray-600 mb-10">
+            Rejoignez une communauté éducative engagée pour l'excellence et l'épanouissement de chaque élève.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/admissions"
+              className="inline-flex items-center justify-center gap-2 bg-blue-800 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+            >
+              Rejoindre Vision Future
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              to="/histoire"
+              className="inline-flex items-center justify-center gap-2 border-2 border-blue-800 text-blue-800 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
+            >
+              Découvrir notre histoire
+            </Link>
+          </div>
+        </div>
+      </section>
+    </Layout>
+  );
+};
+
+export default VisionPage;
