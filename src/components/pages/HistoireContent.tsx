@@ -15,6 +15,16 @@ type HistoireData = typeof histoireContent;
 
 const HistoireContent: React.FC = () => {
   const { value: data } = usePageJsonContent<HistoireData>('histoire', histoireContent);
+  const fallbackUi = (histoireContent as any).ui;
+  const uiFromData = (data as any).ui || {};
+  const ui = {
+    ...fallbackUi,
+    ...uiFromData,
+    founders: { ...fallbackUi.founders, ...(uiFromData as any).founders },
+    quote: { ...fallbackUi.quote, ...(uiFromData as any).quote },
+    stats: (uiFromData as any).stats || fallbackUi.stats,
+    cta: { ...fallbackUi.cta, ...(uiFromData as any).cta },
+  };
   return (
     <>
       <Hero
@@ -40,9 +50,12 @@ const HistoireContent: React.FC = () => {
       {/* Timeline */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-16">
-            Notre parcours
-          </h2>
+          <EditableText
+            as="h2"
+            path="ui.timelineTitle"
+            value={ui.timelineTitle}
+            className="text-3xl font-bold text-gray-900 text-center mb-16"
+          />
 
           <div className="relative">
             {/* Timeline Line */}
@@ -108,12 +121,19 @@ const HistoireContent: React.FC = () => {
       {/* Founders */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">
-            Nos Fondateurs
-          </h2>
-          <p className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-            Des visionnaires qui ont cru en une éducation d'excellence pour tous.
-          </p>
+          <EditableText
+            as="h2"
+            path="ui.founders.title"
+            value={ui.founders.title}
+            className="text-3xl font-bold text-gray-900 text-center mb-4"
+          />
+          <EditableText
+            as="p"
+            multiline
+            path="ui.founders.description"
+            value={ui.founders.description}
+            className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto"
+          />
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {data.founders.map((founder, index) => (
@@ -153,10 +173,14 @@ const HistoireContent: React.FC = () => {
       <section className="py-20 bg-blue-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Quote className="w-16 h-16 text-blue-400 mx-auto mb-8" />
-          <blockquote className="text-2xl md:text-3xl font-medium text-white italic mb-8">
-            "Chaque enfant mérite une éducation de qualité qui lui permet de réaliser son plein potentiel."
-          </blockquote>
-          <cite className="text-blue-200">— Dr. Kouamé Yao, Fondateur</cite>
+          <EditableText
+            as="blockquote"
+            multiline
+            path="ui.quote.text"
+            value={ui.quote.text}
+            className="text-2xl md:text-3xl font-medium text-white italic mb-8"
+          />
+          <EditableText as="cite" path="ui.quote.author" value={ui.quote.author} className="text-blue-200" />
         </div>
       </section>
 
@@ -164,17 +188,20 @@ const HistoireContent: React.FC = () => {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { value: '1998', label: 'Année de fondation' },
-              { value: '25+', label: 'Années d\'excellence' },
-              { value: '5000+', label: 'Diplômés' },
-              { value: '120+', label: 'Enseignants' }
-            ].map((stat, index) => (
+            {ui.stats.map((stat: any, index: number) => (
               <div key={index} className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-blue-800 mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-gray-600">{stat.label}</div>
+                <EditableText
+                  as="div"
+                  path={`ui.stats.${index}.value`}
+                  value={stat.value}
+                  className="text-4xl md:text-5xl font-bold text-blue-800 mb-2"
+                />
+                <EditableText
+                  as="div"
+                  path={`ui.stats.${index}.label`}
+                  value={stat.label}
+                  className="text-gray-600"
+                />
               </div>
             ))}
           </div>
@@ -184,25 +211,32 @@ const HistoireContent: React.FC = () => {
       {/* CTA */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            Écrivez l'histoire avec nous
-          </h2>
-          <p className="text-lg text-gray-600 mb-10">
-            Rejoignez une institution qui a fait ses preuves depuis plus de 25 ans.
-          </p>
+          <EditableText
+            as="h2"
+            path="ui.cta.title"
+            value={ui.cta.title}
+            className="text-3xl font-bold text-gray-900 mb-6"
+          />
+          <EditableText
+            as="p"
+            multiline
+            path="ui.cta.description"
+            value={ui.cta.description}
+            className="text-lg text-gray-600 mb-10"
+          />
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/admissions"
               className="inline-flex items-center justify-center gap-2 bg-blue-800 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
             >
-              Rejoindre Vision Future
+              <EditableText as="span" path="ui.cta.primary" value={ui.cta.primary} />
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               to="/excellence"
               className="inline-flex items-center justify-center gap-2 border-2 border-blue-800 text-blue-800 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
             >
-              Nos résultats
+              <EditableText as="span" path="ui.cta.secondary" value={ui.cta.secondary} />
             </Link>
           </div>
         </div>

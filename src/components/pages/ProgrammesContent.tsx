@@ -45,6 +45,7 @@ const specialIconMap: Record<string, LucideIcon> = {
 const ProgrammesContent: React.FC = () => {
   const [expandedCycle, setExpandedCycle] = useState<string | null>('maternelle');
   const { value: programmesData } = usePageJsonContent('programmes', programmesContent);
+  const ui = (programmesData as any).ui || (programmesContent as any).ui;
 
   const toggleCycle = (id: string) => {
     setExpandedCycle(expandedCycle === id ? null : id);
@@ -76,7 +77,7 @@ const ProgrammesContent: React.FC = () => {
       <section className="py-8 bg-gray-50 hidden lg:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-4 gap-6">
-            {programmesData.cycles.map((cycle) => {
+            {programmesData.cycles.map((cycle, cycleIndex) => {
               const Icon = cycleIcons[cycle.id] || GraduationCap;
               return (
                 <a
@@ -87,8 +88,18 @@ const ProgrammesContent: React.FC = () => {
                   <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${cycleColors[cycle.id]} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
                     <Icon className="w-7 h-7 text-white" />
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-1">{cycle.title}</h3>
-                  <p className="text-sm text-gray-500">{cycle.ages}</p>
+                  <EditableText
+                    as="h3"
+                    path={`cycles.${cycleIndex}.title`}
+                    value={cycle.title}
+                    className="font-bold text-gray-900 mb-1"
+                  />
+                  <EditableText
+                    as="p"
+                    path={`cycles.${cycleIndex}.ages`}
+                    value={cycle.ages}
+                    className="text-sm text-gray-500"
+                  />
                 </a>
               );
             })}
@@ -100,7 +111,7 @@ const ProgrammesContent: React.FC = () => {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-8">
-            {programmesData.cycles.map((cycle) => {
+            {programmesData.cycles.map((cycle, cycleIndex) => {
               const Icon = cycleIcons[cycle.id] || GraduationCap;
               const isExpanded = expandedCycle === cycle.id;
 
@@ -121,8 +132,18 @@ const ProgrammesContent: React.FC = () => {
                           <Icon className="w-7 h-7 text-white" />
                         </div>
                         <div className="text-left">
-                          <h3 className="text-xl lg:text-2xl font-bold text-gray-900">{cycle.title}</h3>
-                          <p className="text-gray-500">{cycle.ages}</p>
+                          <EditableText
+                            as="h3"
+                            path={`cycles.${cycleIndex}.title`}
+                            value={cycle.title}
+                            className="text-xl lg:text-2xl font-bold text-gray-900"
+                          />
+                          <EditableText
+                            as="p"
+                            path={`cycles.${cycleIndex}.ages`}
+                            value={cycle.ages}
+                            className="text-gray-500"
+                          />
                         </div>
                       </div>
                       <div className="lg:hidden">
@@ -140,15 +161,29 @@ const ProgrammesContent: React.FC = () => {
                     <div className="px-6 lg:px-8 pb-8">
                       <div className="grid lg:grid-cols-2 gap-8">
                         <div>
-                          <p className="text-gray-600 mb-6 leading-relaxed">
-                            {cycle.description}
-                          </p>
-                          <h4 className="font-semibold text-gray-900 mb-4">Points clés du programme :</h4>
+                          <EditableText
+                            as="p"
+                            multiline
+                            path={`cycles.${cycleIndex}.description`}
+                            value={cycle.description}
+                            className="text-gray-600 mb-6 leading-relaxed"
+                          />
+                          <EditableText
+                            as="h4"
+                            path="ui.cycles.keyPointsTitle"
+                            value={ui.cycles.keyPointsTitle}
+                            className="font-semibold text-gray-900 mb-4"
+                          />
                           <ul className="space-y-3">
                             {cycle.features.map((feature, fIndex) => (
                               <li key={fIndex} className="flex items-start gap-3">
                                 <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                                <span className="text-gray-700">{feature}</span>
+                                <EditableText
+                                  as="span"
+                                  path={`cycles.${cycleIndex}.features.${fIndex}`}
+                                  value={feature}
+                                  className="text-gray-700"
+                                />
                               </li>
                             ))}
                           </ul>
@@ -156,7 +191,12 @@ const ProgrammesContent: React.FC = () => {
                         <div className="aspect-video lg:aspect-square rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                           <div className="text-center">
                             <Icon className="w-16 h-16 text-gray-400 mx-auto mb-2" />
-                            <p className="text-gray-500">{cycle.title}</p>
+                            <EditableText
+                              as="p"
+                              path={`cycles.${cycleIndex}.title`}
+                              value={cycle.title}
+                              className="text-gray-500"
+                            />
                           </div>
                         </div>
                       </div>
@@ -173,9 +213,12 @@ const ProgrammesContent: React.FC = () => {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            subtitle="Programmes spéciaux"
-            title="Des parcours d'excellence"
-            description="En plus du programme national, nous proposons des parcours spécialisés pour développer les talents de chaque élève."
+            subtitle={ui.specialPrograms.subtitle}
+            title={ui.specialPrograms.title}
+            description={ui.specialPrograms.description}
+            subtitlePath="ui.specialPrograms.subtitle"
+            titlePath="ui.specialPrograms.title"
+            descriptionPath="ui.specialPrograms.description"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -195,8 +238,19 @@ const ProgrammesContent: React.FC = () => {
                   <div className={`w-12 h-12 rounded-xl ${colors[index % colors.length]} flex items-center justify-center mb-4`}>
                     <Icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">{program.title}</h3>
-                  <p className="text-gray-600 text-sm">{program.description}</p>
+                  <EditableText
+                    as="h3"
+                    path={`specialPrograms.${index}.title`}
+                    value={program.title}
+                    className="text-lg font-bold text-gray-900 mb-2"
+                  />
+                  <EditableText
+                    as="p"
+                    multiline
+                    path={`specialPrograms.${index}.description`}
+                    value={program.description}
+                    className="text-gray-600 text-sm"
+                  />
                 </div>
               );
             })}
@@ -210,40 +264,45 @@ const ProgrammesContent: React.FC = () => {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <span className="inline-block px-4 py-1.5 bg-white/10 text-orange-200 rounded-full text-sm font-semibold mb-6">
-                Notre approche
+                <EditableText as="span" path="ui.pedagogy.badge" value={ui.pedagogy.badge} />
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                Une pédagogie innovante
-              </h2>
-              <p className="text-lg text-orange-100 mb-8 leading-relaxed">
-                Notre approche pédagogique combine les méthodes traditionnelles éprouvées 
-                avec les innovations éducatives modernes pour offrir le meilleur à chaque élève.
-              </p>
+              <EditableText
+                as="h2"
+                path="ui.pedagogy.title"
+                value={ui.pedagogy.title}
+                className="text-3xl md:text-4xl font-bold text-white mb-6"
+              />
+              <EditableText
+                as="p"
+                multiline
+                path="ui.pedagogy.description"
+                value={ui.pedagogy.description}
+                className="text-lg text-orange-100 mb-8 leading-relaxed"
+              />
               <ul className="space-y-4">
-                {[
-                  'Apprentissage par projets et expérimentation',
-                  'Suivi individualisé de chaque élève',
-                  'Intégration des outils numériques',
-                  'Développement des compétences du 21ème siècle',
-                  'Évaluation formative continue'
-                ].map((item, index) => (
+                {ui.pedagogy.points.map((item: string, index: number) => (
                   <li key={index} className="flex items-start gap-3">
                     <CheckCircle className="w-6 h-6 text-orange-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-white">{item}</span>
+                    <EditableText as="span" path={`ui.pedagogy.points.${index}`} value={item} className="text-white" />
                   </li>
                 ))}
               </ul>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {[
-                { value: '25', label: 'Élèves max/classe' },
-                { value: '1:12', label: 'Ratio enseignant' },
-                { value: '8h', label: 'Anglais/semaine' },
-                { value: '100%', label: 'Équipement numérique' }
-              ].map((stat, index) => (
+              {ui.pedagogy.stats.map((stat: any, index: number) => (
                 <div key={index} className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
-                  <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-                  <div className="text-orange-200 text-sm">{stat.label}</div>
+                  <EditableText
+                    as="div"
+                    path={`ui.pedagogy.stats.${index}.value`}
+                    value={stat.value}
+                    className="text-3xl font-bold text-white mb-1"
+                  />
+                  <EditableText
+                    as="div"
+                    path={`ui.pedagogy.stats.${index}.label`}
+                    value={stat.label}
+                    className="text-orange-200 text-sm"
+                  />
                 </div>
               ))}
             </div>
@@ -254,25 +313,32 @@ const ProgrammesContent: React.FC = () => {
       {/* CTA */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            Prêt à inscrire votre enfant ?
-          </h2>
-          <p className="text-lg text-gray-600 mb-10">
-            Découvrez notre processus d'admission et les prochaines étapes pour rejoindre Vision Future.
-          </p>
+          <EditableText
+            as="h2"
+            path="ui.cta.title"
+            value={ui.cta.title}
+            className="text-3xl font-bold text-gray-900 mb-6"
+          />
+          <EditableText
+            as="p"
+            multiline
+            path="ui.cta.description"
+            value={ui.cta.description}
+            className="text-lg text-gray-600 mb-10"
+          />
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/admissions"
               className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-xl font-semibold hover:bg-primary/90 transition-colors"
             >
-              Processus d'admission
+              <EditableText as="span" path="ui.cta.primary" value={ui.cta.primary} />
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               to="/visite"
               className="inline-flex items-center justify-center gap-2 border-2 border-primary text-primary px-8 py-4 rounded-xl font-semibold hover:bg-primary/10 transition-colors"
             >
-              Visiter le campus
+              <EditableText as="span" path="ui.cta.secondary" value={ui.cta.secondary} />
             </Link>
           </div>
         </div>

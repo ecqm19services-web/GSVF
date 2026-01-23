@@ -24,6 +24,58 @@ export const homeContent = {
     ctaPrimary: "Découvrir nos programmes",
     ctaSecondary: "Visite virtuelle"
   },
+  sections: {
+    features: {
+      subtitle: "Pourquoi nous choisir",
+      title: "Une éducation d'excellence",
+      description: "Découvrez ce qui fait de Vision Future un établissement de référence en Côte d'Ivoire."
+    },
+    aboutPreview: {
+      badge: "Notre histoire",
+      title: "25 ans d'engagement pour l'éducation",
+      paragraphs: [
+        "Fondé en 1998 à Grand-Bassam, le Groupe Scolaire Vision Future est né de la vision d'éducateurs passionnés qui croyaient en une éducation de qualité accessible à tous.",
+        "Aujourd'hui, nous sommes fiers d'avoir formé des milliers d'élèves qui excellent dans tous les domaines, de la médecine à l'ingénierie, du droit à l'entrepreneuriat."
+      ],
+      ctaPrimary: "Notre histoire",
+      ctaSecondary: "Notre vision",
+      imageCaption: "Campus Vision Future",
+      highlight: {
+        value: "98%",
+        label: "Réussite au BAC"
+      }
+    },
+    programmesPreview: {
+      subtitle: "Nos programmes",
+      title: "Un parcours complet",
+      description: "De la maternelle au baccalauréat, nous accompagnons chaque élève vers la réussite.",
+      learnMore: "En savoir plus",
+      cards: [
+        { title: "Maternelle", ages: "3-5 ans", icon: "heart", color: "from-pink-500 to-rose-500" },
+        { title: "Primaire", ages: "6-11 ans", icon: "book", color: "from-blue-500 to-cyan-500" },
+        { title: "Collège", ages: "12-15 ans", icon: "graduation", color: "from-purple-500 to-violet-500" },
+        { title: "Lycée", ages: "16-18 ans", icon: "star", color: "from-amber-500 to-orange-500" }
+      ],
+      cta: "Découvrir tous nos programmes"
+    },
+    testimonials: {
+      subtitle: "Témoignages",
+      title: "Ils nous font confiance",
+      description: "Découvrez ce que nos élèves et parents disent de leur expérience."
+    },
+    news: {
+      subtitle: "Actualités",
+      title: "Les dernières nouvelles",
+      description: "Restez informé des événements et actualités de notre établissement.",
+      readMore: "Lire la suite"
+    },
+    cta: {
+      title: "Prêt à rejoindre Vision Future ?",
+      description: "Inscrivez votre enfant dès maintenant et offrez-lui les meilleures chances de réussite.",
+      primary: "Demander une inscription",
+      secondary: "Nous contacter"
+    }
+  },
   stats: [
     { value: "25+", label: "Années d'excellence" },
     { value: "98%", label: "Taux de réussite au BAC" },
@@ -99,6 +151,20 @@ export const visiteContent = {
     title: "Visite Virtuelle du Campus",
     subtitle: "Découvrez nos installations et notre environnement d'apprentissage",
     description: "Explorez notre campus de 5 hectares à travers cette visite guidée interactive."
+  },
+  ui: {
+    zoneLabel: "Zone",
+    galleryButton: "Voir la galerie",
+    photosLabel: "photos",
+    cta: {
+      title: "Envie de visiter en personne ?",
+      description: "Planifiez une visite guidée de notre campus avec notre équipe.",
+      button: "Planifier une visite"
+    },
+    lightbox: {
+      imageLabel: "Image",
+      ofLabel: "sur"
+    }
   },
   sections: [
     {
@@ -210,6 +276,33 @@ export const visionContent = {
       "Une communication transparente avec les familles",
       "Une préparation aux études supérieures et à la vie professionnelle"
     ]
+  },
+  ui: {
+    values: {
+      subtitle: "Nos valeurs",
+      title: "Les piliers de notre éducation",
+      description: "Ces valeurs fondamentales guident chaque aspect de notre action éducative."
+    },
+    commitment: {
+      badge: "Notre engagement",
+      intro: "Nous nous engageons chaque jour à offrir le meilleur environnement d'apprentissage pour le développement académique et personnel de chaque élève.",
+      objectiveTitle: "Notre objectif",
+      objectiveSubtitle: "Former les leaders de demain",
+      stats: {
+        value: "100%",
+        label: "Engagement"
+      }
+    },
+    quote: {
+      text: "\"L'éducation est l'arme la plus puissante que vous pouvez utiliser pour changer le monde.\"",
+      author: "— Nelson Mandela"
+    },
+    cta: {
+      title: "Partagez-vous nos valeurs ?",
+      description: "Rejoignez une communauté éducative engagée pour l'excellence et l'épanouissement de chaque élève.",
+      primary: "Rejoindre Vision Future",
+      secondary: "Découvrir notre histoire"
+    }
   }
 };
 
@@ -293,7 +386,30 @@ export const histoireContent = {
       role: "Co-fondatrice & Directrice Pédagogique",
       bio: "30 ans d'expérience dans l'enseignement, spécialiste des méthodes actives."
     }
-  ]
+  ],
+  ui: {
+    timelineTitle: "Notre parcours",
+    founders: {
+      title: "Nos Fondateurs",
+      description: "Des visionnaires qui ont cru en une éducation d'excellence pour tous."
+    },
+    quote: {
+      text: "\"Chaque enfant mérite une éducation de qualité qui lui permet de réaliser son plein potentiel.\"",
+      author: "— Dr. Kouamé Yao, Fondateur"
+    },
+    stats: [
+      { value: "1998", label: "Année de fondation" },
+      { value: "25+", label: "Années d'excellence" },
+      { value: "5000+", label: "Diplômés" },
+      { value: "120+", label: "Enseignants" }
+    ],
+    cta: {
+      title: "Écrivez l'histoire avec nous",
+      description: "Rejoignez une institution qui a fait ses preuves depuis plus de 25 ans.",
+      primary: "Rejoindre Vision Future",
+      secondary: "Nos résultats"
+    }
+  }
 };
 
 export const programmesContent = {
@@ -382,7 +498,41 @@ export const programmesContent = {
       description: "Aménagement des horaires pour les sportifs de haut niveau.",
       icon: "trophy"
     }
-  ]
+  ],
+  ui: {
+    cycles: {
+      keyPointsTitle: "Points clés du programme :"
+    },
+    specialPrograms: {
+      subtitle: "Programmes spéciaux",
+      title: "Des parcours d'excellence",
+      description: "En plus du programme national, nous proposons des parcours spécialisés pour développer les talents de chaque élève."
+    },
+    pedagogy: {
+      badge: "Notre approche",
+      title: "Une pédagogie innovante",
+      description: "Notre approche pédagogique combine les méthodes traditionnelles éprouvées avec les innovations éducatives modernes pour offrir le meilleur à chaque élève.",
+      points: [
+        "Apprentissage par projets et expérimentation",
+        "Suivi individualisé de chaque élève",
+        "Intégration des outils numériques",
+        "Développement des compétences du 21ème siècle",
+        "Évaluation formative continue"
+      ],
+      stats: [
+        { value: "25", label: "Élèves max/classe" },
+        { value: "1:12", label: "Ratio enseignant" },
+        { value: "8h", label: "Anglais/semaine" },
+        { value: "100%", label: "Équipement numérique" }
+      ]
+    },
+    cta: {
+      title: "Prêt à inscrire votre enfant ?",
+      description: "Découvrez notre processus d'admission et les prochaines étapes pour rejoindre Vision Future.",
+      primary: "Processus d'admission",
+      secondary: "Visiter le campus"
+    }
+  }
 };
 
 export const excellenceContent = {
@@ -485,7 +635,44 @@ export const excellenceContent = {
       author: "Yao Kouamé",
       role: "Promotion 2012"
     }
-  ]
+  ],
+  ui: {
+    results: {
+      subtitle: "Résultats 2025",
+      description: "Des performances exceptionnelles qui témoignent de la qualité de notre enseignement."
+    },
+    distinctions: {
+      subtitle: "Distinctions",
+      title: "Nos élèves brillent",
+      description: "Palmarès des distinctions obtenues par nos élèves lors des compétitions académiques."
+    },
+    alumni: {
+      subtitle: "Nos anciens",
+      title: "Ils ont réussi avec Vision Future",
+      description: "Découvrez les parcours inspirants de nos anciens élèves.",
+      promotionLabel: "Promotion"
+    },
+    testimonials: {
+      subtitle: "Témoignages",
+      title: "Paroles d'anciens"
+    },
+    successStats: {
+      title: "L'excellence en chiffres",
+      description: "Des résultats qui parlent d'eux-mêmes et témoignent de notre engagement pour la réussite de chaque élève.",
+      stats: [
+        { value: "98%", label: "Réussite BAC", icon: "graduationcap" },
+        { value: "85%", label: "Mentions", icon: "award" },
+        { value: "100%", label: "Orientation réussie", icon: "trending" },
+        { value: "5000+", label: "Diplômés", icon: "trophy" }
+      ]
+    },
+    cta: {
+      title: "Rejoignez l'excellence",
+      description: "Offrez à votre enfant les meilleures chances de réussite en rejoignant Vision Future.",
+      primary: "Demander une inscription",
+      secondary: "Découvrir nos programmes"
+    }
+  }
 };
 
 export const admissionsContent = {
@@ -559,6 +746,21 @@ export const admissionsContent = {
       { event: "Notifications", date: "Juin 2025" },
       { event: "Rentrée scolaire", date: "Septembre 2025" }
     ]
+  },
+  ui: {
+    processSection: {
+      subtitle: "Processus",
+      title: "Les étapes d'admission"
+    },
+    applicationSection: {
+      subtitle: "Candidature",
+      title: "Demande d'admission"
+    },
+    helpCta: {
+      title: "Des questions ?",
+      description: "Notre équipe est à votre disposition.",
+      button: "Nous contacter"
+    }
   }
 };
 
@@ -567,6 +769,13 @@ export const contactContent = {
     title: "Contactez-Nous",
     subtitle: "Nous sommes à votre écoute",
     description: "Une question ? N'hésitez pas à nous contacter par téléphone, email ou via le formulaire."
+  },
+  ui: {
+    coordinatesTitle: "Nos coordonnées",
+    form: {
+      title: "Envoyez-nous un message",
+      description: "Remplissez le formulaire ci-dessous et nous vous répondrons rapidement."
+    }
   },
   info: {
     address: {

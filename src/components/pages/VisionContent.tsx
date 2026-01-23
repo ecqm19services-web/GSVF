@@ -32,6 +32,7 @@ type VisionData = typeof visionContent;
 
 const VisionContent: React.FC = () => {
   const { value: data } = usePageJsonContent<VisionData>('vision', visionContent);
+  const ui = (data as any).ui || (visionContent as any).ui;
   return (
     <>
       <Hero
@@ -92,9 +93,12 @@ const VisionContent: React.FC = () => {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            subtitle="Nos valeurs"
-            title="Les piliers de notre éducation"
-            description="Ces valeurs fondamentales guident chaque aspect de notre action éducative."
+            subtitle={ui.values.subtitle}
+            title={ui.values.title}
+            description={ui.values.description}
+            subtitlePath="ui.values.subtitle"
+            titlePath="ui.values.title"
+            descriptionPath="ui.values.description"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -142,7 +146,7 @@ const VisionContent: React.FC = () => {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <span className="inline-block px-4 py-1.5 bg-white/10 text-blue-200 rounded-full text-sm font-semibold mb-6">
-                Notre engagement
+                <EditableText as="span" path="ui.commitment.badge" value={ui.commitment.badge} />
               </span>
               <EditableText
                 as="h2"
@@ -150,10 +154,13 @@ const VisionContent: React.FC = () => {
                 value={data.commitment.title}
                 className="text-3xl md:text-4xl font-bold text-white mb-6"
               />
-              <p className="text-lg text-blue-100 mb-8 leading-relaxed">
-                Nous nous engageons chaque jour à offrir le meilleur environnement d'apprentissage 
-                pour le développement académique et personnel de chaque élève.
-              </p>
+              <EditableText
+                as="p"
+                multiline
+                path="ui.commitment.intro"
+                value={ui.commitment.intro}
+                className="text-lg text-blue-100 mb-8 leading-relaxed"
+              />
               <ul className="space-y-4">
                 {data.commitment.points.map((point, index) => (
                   <li key={index} className="flex items-start gap-3">
@@ -169,14 +176,34 @@ const VisionContent: React.FC = () => {
                   <div className="w-32 h-32 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Target className="w-16 h-16 text-white" />
                   </div>
-                  <p className="text-2xl font-bold text-white mb-2">Notre objectif</p>
-                  <p className="text-blue-200">Former les leaders de demain</p>
+                  <EditableText
+                    as="p"
+                    path="ui.commitment.objectiveTitle"
+                    value={ui.commitment.objectiveTitle}
+                    className="text-2xl font-bold text-white mb-2"
+                  />
+                  <EditableText
+                    as="p"
+                    path="ui.commitment.objectiveSubtitle"
+                    value={ui.commitment.objectiveSubtitle}
+                    className="text-blue-200"
+                  />
                 </div>
               </div>
               <div className="absolute -bottom-6 -right-6 bg-white rounded-xl shadow-xl p-6">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-800">100%</div>
-                  <div className="text-sm text-gray-500">Engagement</div>
+                  <EditableText
+                    as="div"
+                    path="ui.commitment.stats.value"
+                    value={ui.commitment.stats.value}
+                    className="text-3xl font-bold text-blue-800"
+                  />
+                  <EditableText
+                    as="div"
+                    path="ui.commitment.stats.label"
+                    value={ui.commitment.stats.label}
+                    className="text-sm text-gray-500"
+                  />
                 </div>
               </div>
             </div>
@@ -187,35 +214,46 @@ const VisionContent: React.FC = () => {
       {/* Quote Section */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <blockquote className="text-2xl md:text-3xl font-medium text-gray-900 italic mb-8">
-            "L'éducation est l'arme la plus puissante que vous pouvez utiliser pour changer le monde."
-          </blockquote>
-          <cite className="text-gray-600">— Nelson Mandela</cite>
+          <EditableText
+            as="blockquote"
+            multiline
+            path="ui.quote.text"
+            value={ui.quote.text}
+            className="text-2xl md:text-3xl font-medium text-gray-900 italic mb-8"
+          />
+          <EditableText as="cite" path="ui.quote.author" value={ui.quote.author} className="text-gray-600" />
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            Partagez-vous nos valeurs ?
-          </h2>
-          <p className="text-lg text-gray-600 mb-10">
-            Rejoignez une communauté éducative engagée pour l'excellence et l'épanouissement de chaque élève.
-          </p>
+          <EditableText
+            as="h2"
+            path="ui.cta.title"
+            value={ui.cta.title}
+            className="text-3xl font-bold text-gray-900 mb-6"
+          />
+          <EditableText
+            as="p"
+            multiline
+            path="ui.cta.description"
+            value={ui.cta.description}
+            className="text-lg text-gray-600 mb-10"
+          />
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/admissions"
               className="inline-flex items-center justify-center gap-2 bg-blue-800 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
             >
-              Rejoindre Vision Future
+              <EditableText as="span" path="ui.cta.primary" value={ui.cta.primary} />
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               to="/histoire"
               className="inline-flex items-center justify-center gap-2 border-2 border-blue-800 text-blue-800 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
             >
-              Découvrir notre histoire
+              <EditableText as="span" path="ui.cta.secondary" value={ui.cta.secondary} />
             </Link>
           </div>
         </div>

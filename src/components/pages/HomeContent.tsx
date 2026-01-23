@@ -32,12 +32,13 @@ type HomeData = typeof homeContent;
 
 const HomeContent: React.FC = () => {
   const { value: homeData } = usePageJsonContent<HomeData>('accueil', homeContent);
+  const sections = (homeData as any).sections || (homeContent as any).sections;
   return (
     <>
       {/* Hero Section */}
       <Hero
         title={homeData.hero.title}
-        subtitle={homeData.hero.subtitle || 'Excellence éducative depuis 1998'}
+        subtitle={homeData.hero.subtitle}
         description={homeData.hero.description}
         ctaPrimary={{ text: homeData.hero.ctaPrimary, link: '/programmes' }}
         ctaSecondary={{ text: homeData.hero.ctaSecondary, link: '/visite' }}
@@ -75,9 +76,12 @@ const HomeContent: React.FC = () => {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            subtitle="Pourquoi nous choisir"
-            title="Une éducation d'excellence"
-            description="Découvrez ce qui fait de Vision Future un établissement de référence en Côte d'Ivoire."
+            subtitle={sections.features.subtitle}
+            title={sections.features.title}
+            description={sections.features.description}
+            subtitlePath="sections.features.subtitle"
+            titlePath="sections.features.title"
+            descriptionPath="sections.features.description"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -117,32 +121,41 @@ const HomeContent: React.FC = () => {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <span className="inline-block px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-6">
-                Notre histoire
+                <EditableText as="span" path="sections.aboutPreview.badge" value={sections.aboutPreview.badge} />
               </span>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                25 ans d'engagement pour l'éducation
-              </h2>
-              <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Fondé en 1998 à Grand-Bassam, le Groupe Scolaire Vision Future est né de la vision 
-                d'éducateurs passionnés qui croyaient en une éducation de qualité accessible à tous.
-              </p>
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                Aujourd'hui, nous sommes fiers d'avoir formé des milliers d'élèves qui excellent 
-                dans tous les domaines, de la médecine à l'ingénierie, du droit à l'entrepreneuriat.
-              </p>
+              <EditableText
+                as="h2"
+                path="sections.aboutPreview.title"
+                value={sections.aboutPreview.title}
+                className="text-4xl font-bold text-gray-900 mb-6"
+              />
+              <EditableText
+                as="p"
+                multiline
+                path="sections.aboutPreview.paragraphs.0"
+                value={sections.aboutPreview.paragraphs[0]}
+                className="text-lg text-gray-600 mb-6 leading-relaxed"
+              />
+              <EditableText
+                as="p"
+                multiline
+                path="sections.aboutPreview.paragraphs.1"
+                value={sections.aboutPreview.paragraphs[1]}
+                className="text-lg text-gray-600 mb-8 leading-relaxed"
+              />
               <div className="flex flex-wrap gap-4">
                 <Link
                   to="/histoire"
                   className="inline-flex items-center gap-2 bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                 >
-                  Notre histoire
+                  <EditableText as="span" path="sections.aboutPreview.ctaPrimary" value={sections.aboutPreview.ctaPrimary} />
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link
                   to="/vision"
                   className="inline-flex items-center gap-2 border-2 border-blue-800 text-blue-800 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
                 >
-                  Notre vision
+                  <EditableText as="span" path="sections.aboutPreview.ctaSecondary" value={sections.aboutPreview.ctaSecondary} />
                 </Link>
               </div>
             </div>
@@ -151,7 +164,12 @@ const HomeContent: React.FC = () => {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
                     <GraduationCap className="w-24 h-24 text-blue-800 mx-auto mb-4" />
-                    <p className="text-blue-700 font-medium">Campus Vision Future</p>
+                    <EditableText
+                      as="p"
+                      path="sections.aboutPreview.imageCaption"
+                      value={sections.aboutPreview.imageCaption}
+                      className="text-blue-700 font-medium"
+                    />
                   </div>
                 </div>
               </div>
@@ -161,8 +179,18 @@ const HomeContent: React.FC = () => {
                     <Award className="w-6 h-6 text-blue-800" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-900">98%</div>
-                    <div className="text-sm text-gray-500">Réussite au BAC</div>
+                    <EditableText
+                      as="div"
+                      path="sections.aboutPreview.highlight.value"
+                      value={sections.aboutPreview.highlight.value}
+                      className="text-2xl font-bold text-gray-900"
+                    />
+                    <EditableText
+                      as="div"
+                      path="sections.aboutPreview.highlight.label"
+                      value={sections.aboutPreview.highlight.label}
+                      className="text-sm text-gray-500"
+                    />
                   </div>
                 </div>
               </div>
@@ -175,35 +203,52 @@ const HomeContent: React.FC = () => {
       <section className="py-20 bg-blue-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            subtitle="Nos programmes"
-            title="Un parcours complet"
-            description="De la maternelle au baccalauréat, nous accompagnons chaque élève vers la réussite."
+            subtitle={sections.programmesPreview.subtitle}
+            title={sections.programmesPreview.title}
+            description={sections.programmesPreview.description}
+            subtitlePath="sections.programmesPreview.subtitle"
+            titlePath="sections.programmesPreview.title"
+            descriptionPath="sections.programmesPreview.description"
             light
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { title: 'Maternelle', ages: '3-5 ans', icon: Heart, color: 'from-pink-500 to-rose-500' },
-              { title: 'Primaire', ages: '6-11 ans', icon: BookOpen, color: 'from-blue-500 to-cyan-500' },
-              { title: 'Collège', ages: '12-15 ans', icon: GraduationCap, color: 'from-purple-500 to-violet-500' },
-              { title: 'Lycée', ages: '16-18 ans', icon: Star, color: 'from-amber-500 to-orange-500' }
-            ].map((program, index) => (
+            {sections.programmesPreview.cards.map((program: any, index: number) => {
+              const programmeIconMap: Record<string, LucideIcon> = {
+                heart: Heart,
+                book: BookOpen,
+                graduation: GraduationCap,
+                star: Star,
+              };
+              const Icon = programmeIconMap[program.icon] || GraduationCap;
+              return (
               <Link
                 key={index}
                 to="/programmes"
                 className="group bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all"
               >
                 <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${program.color} flex items-center justify-center mb-4`}>
-                  <program.icon className="w-7 h-7 text-white" />
+                  <Icon className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-1">{program.title}</h3>
-                <p className="text-blue-200 mb-4">{program.ages}</p>
+                <EditableText
+                  as="h3"
+                  path={`sections.programmesPreview.cards.${index}.title`}
+                  value={program.title}
+                  className="text-xl font-bold text-white mb-1"
+                />
+                <EditableText
+                  as="p"
+                  path={`sections.programmesPreview.cards.${index}.ages`}
+                  value={program.ages}
+                  className="text-blue-200 mb-4"
+                />
                 <span className="inline-flex items-center text-white/80 group-hover:text-white transition-colors">
-                  En savoir plus
+                  <EditableText as="span" path="sections.programmesPreview.learnMore" value={sections.programmesPreview.learnMore} />
                   <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                 </span>
               </Link>
-            ))}
+              );
+            })}
           </div>
 
           <div className="text-center mt-12">
@@ -211,7 +256,7 @@ const HomeContent: React.FC = () => {
               to="/programmes"
               className="inline-flex items-center gap-2 bg-white text-blue-800 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
             >
-              Découvrir tous nos programmes
+              <EditableText as="span" path="sections.programmesPreview.cta" value={sections.programmesPreview.cta} />
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
@@ -222,9 +267,12 @@ const HomeContent: React.FC = () => {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            subtitle="Témoignages"
-            title="Ils nous font confiance"
-            description="Découvrez ce que nos élèves et parents disent de leur expérience."
+            subtitle={sections.testimonials.subtitle}
+            title={sections.testimonials.title}
+            description={sections.testimonials.description}
+            subtitlePath="sections.testimonials.subtitle"
+            titlePath="sections.testimonials.title"
+            descriptionPath="sections.testimonials.description"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -271,9 +319,12 @@ const HomeContent: React.FC = () => {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            subtitle="Actualités"
-            title="Les dernières nouvelles"
-            description="Restez informé des événements et actualités de notre établissement."
+            subtitle={sections.news.subtitle}
+            title={sections.news.title}
+            description={sections.news.description}
+            subtitlePath="sections.news.subtitle"
+            titlePath="sections.news.title"
+            descriptionPath="sections.news.description"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -308,7 +359,7 @@ const HomeContent: React.FC = () => {
                     className="text-gray-600 mb-4"
                   />
                   <button className="inline-flex items-center text-blue-800 font-medium hover:text-blue-700">
-                    Lire la suite
+                    <EditableText as="span" path="sections.news.readMore" value={sections.news.readMore} />
                     <ChevronRight className="w-4 h-4 ml-1" />
                   </button>
                 </div>
@@ -321,25 +372,32 @@ const HomeContent: React.FC = () => {
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-blue-800 to-blue-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Prêt à rejoindre Vision Future ?
-          </h2>
-          <p className="text-xl text-blue-100 mb-10">
-            Inscrivez votre enfant dès maintenant et offrez-lui les meilleures chances de réussite.
-          </p>
+          <EditableText
+            as="h2"
+            path="sections.cta.title"
+            value={sections.cta.title}
+            className="text-3xl md:text-4xl font-bold text-white mb-6"
+          />
+          <EditableText
+            as="p"
+            multiline
+            path="sections.cta.description"
+            value={sections.cta.description}
+            className="text-xl text-blue-100 mb-10"
+          />
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/admissions"
               className="inline-flex items-center justify-center gap-2 bg-white text-blue-800 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-colors shadow-lg"
             >
-              Demander une inscription
+              <EditableText as="span" path="sections.cta.primary" value={sections.cta.primary} />
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               to="/contact"
               className="inline-flex items-center justify-center gap-2 bg-blue-700/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl font-semibold border border-white/20 hover:bg-blue-700/70 transition-colors"
             >
-              Nous contacter
+              <EditableText as="span" path="sections.cta.secondary" value={sections.cta.secondary} />
             </Link>
           </div>
         </div>

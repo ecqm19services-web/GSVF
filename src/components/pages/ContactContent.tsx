@@ -1,15 +1,22 @@
 import React from 'react';
 import Hero from '@/components/ui/Hero';
 import ContactForm from '@/components/forms/ContactForm';
-import { contactContent, siteConfig } from '@/data/content';
+import { contactContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
-import { MapPin, Phone, Mail, Clock, ArrowRight } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 
 type ContactData = typeof contactContent;
 
 const ContactContent: React.FC = () => {
   const { value: data } = usePageJsonContent<ContactData>('contact', contactContent);
+  const fallbackUi = (contactContent as any).ui;
+  const uiFromData = (data as any).ui || {};
+  const ui = {
+    ...fallbackUi,
+    ...uiFromData,
+    form: { ...fallbackUi.form, ...(uiFromData as any).form },
+  };
   return (
     <>
       <Hero title={data.hero.title} subtitle={data.hero.subtitle} description={data.hero.description} size="medium" />
@@ -17,7 +24,7 @@ const ContactContent: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-1">
-              <h2 className="text-2xl font-bold text-gray-900 mb-8">Nos coordonnées</h2>
+              <EditableText as="h2" path="ui.coordinatesTitle" value={ui.coordinatesTitle} className="text-2xl font-bold text-gray-900 mb-8" />
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><MapPin className="w-6 h-6 text-blue-800" /></div>
@@ -39,8 +46,8 @@ const ContactContent: React.FC = () => {
             </div>
             <div className="lg:col-span-2">
               <div className="bg-gray-50 rounded-2xl p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Envoyez-nous un message</h2>
-                <p className="text-gray-600 mb-8">Remplissez le formulaire ci-dessous et nous vous répondrons rapidement.</p>
+                <EditableText as="h2" path="ui.form.title" value={ui.form.title} className="text-2xl font-bold text-gray-900 mb-2" />
+                <EditableText as="p" multiline path="ui.form.description" value={ui.form.description} className="text-gray-600 mb-8" />
                 <ContactForm />
               </div>
             </div>

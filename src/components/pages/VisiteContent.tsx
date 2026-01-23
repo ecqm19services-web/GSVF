@@ -17,6 +17,7 @@ type VisiteData = typeof visiteContent;
 
 const VisiteContent: React.FC = () => {
   const { value: data } = usePageJsonContent<VisiteData>('visite', visiteContent);
+  const ui = (data as any).ui || (visiteContent as any).ui;
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
   const [currentImage, setCurrentImage] = useState(0);
@@ -95,7 +96,7 @@ const VisiteContent: React.FC = () => {
                     <MapPin className="w-5 h-5 text-blue-800" />
                   </div>
                   <span className="text-blue-800 font-semibold">
-                    Zone {sectionIndex + 1}
+                    <EditableText as="span" path="ui.zoneLabel" value={ui.zoneLabel} /> {sectionIndex + 1}
                   </span>
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -114,11 +115,11 @@ const VisiteContent: React.FC = () => {
                     className="inline-flex items-center gap-2 bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                   >
                     <Play className="w-5 h-5" />
-                    Voir la galerie
+                    <EditableText as="span" path="ui.galleryButton" value={ui.galleryButton} />
                   </button>
                   <span className="text-gray-500">
                     <Camera className="w-5 h-5 inline mr-1" />
-                    {section.images.length} photos
+                    {section.images.length} <EditableText as="span" path="ui.photosLabel" value={ui.photosLabel} />
                   </span>
                 </div>
               </div>
@@ -162,17 +163,24 @@ const VisiteContent: React.FC = () => {
       {/* Virtual Tour CTA */}
       <section className="py-20 bg-blue-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Envie de visiter en personne ?
-          </h2>
-          <p className="text-xl text-blue-100 mb-10">
-            Planifiez une visite guidée de notre campus avec notre équipe.
-          </p>
+          <EditableText
+            as="h2"
+            path="ui.cta.title"
+            value={ui.cta.title}
+            className="text-3xl md:text-4xl font-bold text-white mb-6"
+          />
+          <EditableText
+            as="p"
+            multiline
+            path="ui.cta.description"
+            value={ui.cta.description}
+            className="text-xl text-blue-100 mb-10"
+          />
           <Link
             to="/contact"
             className="inline-flex items-center gap-2 bg-white text-blue-800 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-colors shadow-lg"
           >
-            Planifier une visite
+            <EditableText as="span" path="ui.cta.button" value={ui.cta.button} />
             <ChevronRight className="w-5 h-5" />
           </Link>
         </div>
@@ -199,17 +207,26 @@ const VisiteContent: React.FC = () => {
             <div className="aspect-video bg-gradient-to-br from-blue-800 to-blue-900 rounded-xl flex items-center justify-center">
               <div className="text-center">
                 <Camera className="w-20 h-20 text-blue-400 mx-auto mb-4" />
-                <p className="text-blue-200 text-lg">
-                  {data.sections[currentSection].images[currentImage].caption}
-                </p>
+                <EditableText
+                  as="p"
+                  multiline
+                  path={`sections.${currentSection}.images.${currentImage}.caption`}
+                  value={data.sections[currentSection]?.images?.[currentImage]?.caption || ''}
+                  className="text-blue-200 text-lg"
+                />
               </div>
             </div>
             <div className="mt-4 text-center">
               <p className="text-white font-medium">
-                {data.sections[currentSection].title}
+                <EditableText
+                  as="span"
+                  path={`sections.${currentSection}.title`}
+                  value={data.sections[currentSection]?.title || ''}
+                />
               </p>
               <p className="text-white/60 text-sm">
-                Image {currentImage + 1} sur {data.sections[currentSection].images.length}
+                <EditableText as="span" path="ui.lightbox.imageLabel" value={ui.lightbox.imageLabel} /> {currentImage + 1}{' '}
+                <EditableText as="span" path="ui.lightbox.ofLabel" value={ui.lightbox.ofLabel} /> {data.sections[currentSection]?.images?.length || 0}
               </p>
             </div>
           </div>

@@ -21,6 +21,22 @@ type ExcellenceData = typeof excellenceContent;
 
 const ExcellenceContent: React.FC = () => {
   const { value: data } = usePageJsonContent<ExcellenceData>('excellence', excellenceContent);
+  const fallbackUi = (excellenceContent as any).ui;
+  const uiFromData = (data as any).ui || {};
+  const ui = {
+    ...fallbackUi,
+    ...uiFromData,
+    results: { ...fallbackUi.results, ...(uiFromData as any).results },
+    distinctions: { ...fallbackUi.distinctions, ...(uiFromData as any).distinctions },
+    alumni: { ...fallbackUi.alumni, ...(uiFromData as any).alumni },
+    testimonials: { ...fallbackUi.testimonials, ...(uiFromData as any).testimonials },
+    successStats: {
+      ...fallbackUi.successStats,
+      ...(uiFromData as any).successStats,
+      stats: (uiFromData as any).successStats?.stats || fallbackUi.successStats.stats,
+    },
+    cta: { ...fallbackUi.cta, ...(uiFromData as any).cta },
+  };
   return (
     <>
       <Hero
@@ -34,10 +50,12 @@ const ExcellenceContent: React.FC = () => {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            subtitle="Résultats 2025"
+            subtitle={ui.results.subtitle}
             title={data.results.title}
             titlePath="results.title"
-            description="Des performances exceptionnelles qui témoignent de la qualité de notre enseignement."
+            subtitlePath="ui.results.subtitle"
+            description={ui.results.description}
+            descriptionPath="ui.results.description"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -95,9 +113,12 @@ const ExcellenceContent: React.FC = () => {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            subtitle="Distinctions"
-            title="Nos élèves brillent"
-            description="Palmarès des distinctions obtenues par nos élèves lors des compétitions académiques."
+            subtitle={ui.distinctions.subtitle}
+            title={ui.distinctions.title}
+            description={ui.distinctions.description}
+            subtitlePath="ui.distinctions.subtitle"
+            titlePath="ui.distinctions.title"
+            descriptionPath="ui.distinctions.description"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -132,9 +153,12 @@ const ExcellenceContent: React.FC = () => {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            subtitle="Nos anciens"
-            title="Ils ont réussi avec Vision Future"
-            description="Découvrez les parcours inspirants de nos anciens élèves."
+            subtitle={ui.alumni.subtitle}
+            title={ui.alumni.title}
+            description={ui.alumni.description}
+            subtitlePath="ui.alumni.subtitle"
+            titlePath="ui.alumni.title"
+            descriptionPath="ui.alumni.description"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -150,7 +174,7 @@ const ExcellenceContent: React.FC = () => {
                   <div>
                     <EditableText as="h3" path={`alumni.${index}.name`} value={alum.name} className="font-bold text-gray-900" />
                     <div className="text-sm text-blue-800">
-                      Promotion{' '}
+                      <EditableText as="span" path="ui.alumni.promotionLabel" value={ui.alumni.promotionLabel} />{' '}
                       <EditableText as="span" path={`alumni.${index}.promotion`} value={alum.promotion} />
                     </div>
                   </div>
@@ -172,8 +196,10 @@ const ExcellenceContent: React.FC = () => {
       <section className="py-20 bg-blue-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            subtitle="Témoignages"
-            title="Paroles d'anciens"
+            subtitle={ui.testimonials.subtitle}
+            title={ui.testimonials.title}
+            subtitlePath="ui.testimonials.subtitle"
+            titlePath="ui.testimonials.title"
             light
           />
 
@@ -216,31 +242,50 @@ const ExcellenceContent: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl p-12">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                L'excellence en chiffres
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Des résultats qui parlent d'eux-mêmes et témoignent de notre engagement pour la réussite de chaque élève.
-              </p>
+              <EditableText
+                as="h2"
+                path="ui.successStats.title"
+                value={ui.successStats.title}
+                className="text-3xl font-bold text-gray-900 mb-4"
+              />
+              <EditableText
+                as="p"
+                multiline
+                path="ui.successStats.description"
+                value={ui.successStats.description}
+                className="text-gray-600 max-w-2xl mx-auto"
+              />
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {[
-                { value: '98%', label: 'Réussite BAC', icon: GraduationCap },
-                { value: '85%', label: 'Mentions', icon: Award },
-                { value: '100%', label: 'Orientation réussie', icon: TrendingUp },
-                { value: '5000+', label: 'Diplômés', icon: Trophy }
-              ].map((stat, index) => (
+              {ui.successStats.stats.map((stat: any, index: number) => {
+                const successIconMap: Record<string, any> = {
+                  graduationcap: GraduationCap,
+                  award: Award,
+                  trending: TrendingUp,
+                  trophy: Trophy,
+                };
+                const Icon = successIconMap[stat.icon] || Trophy;
+                return (
                 <div key={index} className="text-center">
                   <div className="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mx-auto mb-4">
-                    <stat.icon className="w-7 h-7 text-blue-800" />
+                    <Icon className="w-7 h-7 text-blue-800" />
                   </div>
-                  <div className="text-3xl md:text-4xl font-bold text-blue-800 mb-1">
-                    {stat.value}
-                  </div>
-                  <div className="text-gray-600 text-sm">{stat.label}</div>
+                  <EditableText
+                    as="div"
+                    path={`ui.successStats.stats.${index}.value`}
+                    value={stat.value}
+                    className="text-3xl md:text-4xl font-bold text-blue-800 mb-1"
+                  />
+                  <EditableText
+                    as="div"
+                    path={`ui.successStats.stats.${index}.label`}
+                    value={stat.label}
+                    className="text-gray-600 text-sm"
+                  />
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -249,25 +294,32 @@ const ExcellenceContent: React.FC = () => {
       {/* CTA */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            Rejoignez l'excellence
-          </h2>
-          <p className="text-lg text-gray-600 mb-10">
-            Offrez à votre enfant les meilleures chances de réussite en rejoignant Vision Future.
-          </p>
+          <EditableText
+            as="h2"
+            path="ui.cta.title"
+            value={ui.cta.title}
+            className="text-3xl font-bold text-gray-900 mb-6"
+          />
+          <EditableText
+            as="p"
+            multiline
+            path="ui.cta.description"
+            value={ui.cta.description}
+            className="text-lg text-gray-600 mb-10"
+          />
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/admissions"
               className="inline-flex items-center justify-center gap-2 bg-blue-800 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
             >
-              Demander une inscription
+              <EditableText as="span" path="ui.cta.primary" value={ui.cta.primary} />
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               to="/programmes"
               className="inline-flex items-center justify-center gap-2 border-2 border-blue-800 text-blue-800 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
             >
-              Découvrir nos programmes
+              <EditableText as="span" path="ui.cta.secondary" value={ui.cta.secondary} />
             </Link>
           </div>
         </div>
