@@ -19,22 +19,17 @@ export interface ParsedContent {
 
 // Content files mapping
 const contentFiles: Record<string, string> = {
-  accueil: '../../content/accueil.md',
-  vision: '../../content/vision.md',
-  histoire: '../../content/histoire.md',
-  programmes: '../../content/programmes.md',
-  excellence: '../../content/excellence.md',
-  admissions: '../../content/admissions.md',
-  contact: '../../content/contact.md',
-  visite: '../../content/visite.md',
-  'mentions-legales': '../../content/mentions-legales.md',
-  confidentialite: '../../content/confidentialite.md',
+  accueil: '/content/accueil.md',
+  vision: '/content/vision.md',
+  histoire: '/content/histoire.md',
+  programmes: '/content/programmes.md',
+  excellence: '/content/excellence.md',
+  admissions: '/content/admissions.md',
+  contact: '/content/contact.md',
+  visite: '/content/visite.md',
+  'mentions-legales': '/content/mentions-legales.md',
+  confidentialite: '/content/confidentialite.md',
 };
-
-const markdownModules = import.meta.glob('../../content/*.md', { query: '?raw', import: 'default' }) as Record<
-  string,
-  () => Promise<string>
->;
 
 // Cache for loaded content
 const contentCache: Map<string, ParsedContent> = new Map();
@@ -55,12 +50,12 @@ export async function loadContent(pageName: string): Promise<ParsedContent | nul
   }
 
   try {
-    const loader = markdownModules[filePath];
-    if (!loader) {
-      throw new Error(`Markdown module not found for ${filePath}`);
+    const res = await fetch(filePath);
+    if (!res.ok) {
+      throw new Error(`Failed to fetch markdown: ${filePath} (${res.status})`);
     }
 
-    const rawContent = await loader();
+    const rawContent = await res.text();
     const { data, content } = matter(rawContent);
     const html = marked(content) as string;
 
