@@ -56,11 +56,30 @@ export async function loadContent(pageName: string): Promise<ParsedContent | nul
     }
 
     const rawContent = await res.text();
-    const { data, content } = matter(rawContent);
-    const html = marked(content) as string;
+    let data: Record<string, unknown> = {};
+    let content = rawContent;
+    try {
+      const parsed = matter(rawContent);
+      data = (parsed && typeof parsed.data === 'object' && parsed.data) ? (parsed.data as Record<string, unknown>) : {};
+      content = typeof parsed.content === 'string' ? parsed.content : rawContent;
+    } catch (e) {
+      console.error(`Error parsing frontmatter for ${pageName}:`, e);
+    }
+
+    let html = '';
+    try {
+      html = marked(content) as string;
+    } catch (e) {
+      console.error(`Error rendering markdown for ${pageName}:`, e);
+      const escaped = content
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      html = `<pre>${escaped}</pre>`;
+    }
 
     const parsed: ParsedContent = {
-      meta: data as ContentMeta,
+      meta: { title: '', ...(data as ContentMeta) },
       content,
       html,
     };
