@@ -185,7 +185,7 @@ const AdminDashboard: React.FC = () => {
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-orange-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -197,10 +197,10 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-blue-900 text-white p-6">
+      <aside className="fixed left-0 top-0 h-full w-64 bg-orange-950 text-white p-6">
         <div className="mb-8">
           <h1 className="text-xl font-bold">Administration</h1>
-          <p className="text-blue-300 text-sm">Vision Future</p>
+          <p className="text-orange-200 text-sm">Vision Future</p>
         </div>
 
         <nav className="space-y-2">
@@ -238,7 +238,7 @@ const AdminDashboard: React.FC = () => {
         <div className="absolute bottom-6 left-6 right-6">
           <button
             onClick={logout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-blue-300 hover:text-white"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-orange-200 hover:text-white"
           >
             <LogOut className="w-5 h-5" />
             Déconnexion
@@ -252,8 +252,8 @@ const AdminDashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                <GraduationCap className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                <GraduationCap className="w-6 h-6 text-orange-600" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-gray-900">{stats.totalAdmissions}</p>
@@ -310,7 +310,7 @@ const AdminDashboard: React.FC = () => {
                   placeholder="Rechercher par nom, email ou référence..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -319,7 +319,7 @@ const AdminDashboard: React.FC = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as ContactFilterStatus | AdmissionFilterStatus)}
-                className="appearance-none pl-4 pr-10 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                className="appearance-none pl-4 pr-10 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
               >
                 <option value="all">Tous les statuts</option>
                 {activeTab === 'contacts' ? (
@@ -352,7 +352,7 @@ const AdminDashboard: React.FC = () => {
 
             <button
               onClick={exportToCSV}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
             >
               <Download className="w-4 h-4" />
               Export CSV
@@ -364,7 +364,7 @@ const AdminDashboard: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           {isLoading ? (
             <div className="p-12 text-center">
-              <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <div className="w-8 h-8 border-4 border-orange-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               <p className="text-gray-500">Chargement...</p>
             </div>
           ) : (
@@ -401,7 +401,7 @@ const AdminDashboard: React.FC = () => {
                     ) : (
                       filteredContacts.map((contact) => (
                         <tr key={contact.$id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 font-mono text-sm text-blue-600">{contact.reference}</td>
+                          <td className="px-6 py-4 font-mono text-sm text-orange-700">{contact.reference}</td>
                           <td className="px-6 py-4 text-sm text-gray-500">{formatDate(contact.$createdAt)}</td>
                           <td className="px-6 py-4">
                             <div className="font-medium text-gray-900">{contact.lastName} {contact.firstName}</div>
@@ -412,7 +412,7 @@ const AdminDashboard: React.FC = () => {
                           <td className="px-6 py-4">
                             <button
                               onClick={() => { setSelectedItem(contact); setShowDetail(true); }}
-                              className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1"
+                              className="text-orange-700 hover:text-orange-800 font-medium text-sm flex items-center gap-1"
                             >
                               <Eye className="w-4 h-4" />
                               Voir
@@ -431,7 +431,7 @@ const AdminDashboard: React.FC = () => {
                     ) : (
                       filteredAdmissions.map((admission) => (
                         <tr key={admission.$id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 font-mono text-sm text-blue-600">{admission.reference}</td>
+                          <td className="px-6 py-4 font-mono text-sm text-orange-700">{admission.reference}</td>
                           <td className="px-6 py-4 text-sm text-gray-500">{formatDate(admission.$createdAt)}</td>
                           <td className="px-6 py-4">
                             <div className="font-medium text-gray-900">{admission.studentLastName} {admission.studentFirstName}</div>
@@ -445,7 +445,7 @@ const AdminDashboard: React.FC = () => {
                           <td className="px-6 py-4">
                             <button
                               onClick={() => { setSelectedItem(admission); setShowDetail(true); }}
-                              className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1"
+                              className="text-orange-700 hover:text-orange-800 font-medium text-sm flex items-center gap-1"
                             >
                               <Eye className="w-4 h-4" />
                               Voir
@@ -619,7 +619,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ item, type, onClose, onStatus
                 <select
                   value={newStatus}
                   onChange={(e) => setNewStatus(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 >
                   {type === 'contact' ? (
                     <>
@@ -648,7 +648,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ item, type, onClose, onStatus
                     onChange={(e) => setPublicNotes(e.target.value)}
                     placeholder="Cette note sera visible sur la page de suivi..."
                     rows={3}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
                   />
                 </div>
               )}
@@ -667,7 +667,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ item, type, onClose, onStatus
           <button
             onClick={handleUpdate}
             disabled={isUpdating}
-            className="px-4 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition-colors disabled:opacity-50 flex items-center gap-2"
+            className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 flex items-center gap-2"
           >
             {isUpdating && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
             Enregistrer

@@ -127,9 +127,9 @@ const ContactForm: React.FC = () => {
 
   if (submitStatus === 'success') {
     return (
-      <div className="bg-blue-50 border border-blue-200 rounded-2xl p-8 text-center">
-        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <CheckCircle className="w-8 h-8 text-blue-800" />
+      <div className="bg-orange-50 border border-orange-200 rounded-2xl p-8 text-center">
+        <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <CheckCircle className="w-8 h-8 text-orange-800" />
         </div>
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Message envoyé !</h3>
         <p className="text-gray-600 mb-4">
@@ -137,18 +137,18 @@ const ContactForm: React.FC = () => {
         </p>
         <div className="bg-white rounded-lg p-4 mb-6">
           <p className="text-sm text-gray-500 mb-1">Votre numéro de référence</p>
-          <p className="text-lg font-bold text-blue-800">{reference}</p>
+          <p className="text-lg font-bold text-orange-800">{reference}</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             to="/suivi"
-            className="px-6 py-2 bg-blue-800 text-white rounded-lg font-medium hover:bg-blue-900 transition-colors"
+            className="px-6 py-2 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors"
           >
             Suivre ma demande
           </Link>
           <button
             onClick={() => setSubmitStatus('idle')}
-            className="text-blue-800 font-medium hover:text-blue-700"
+            className="text-orange-700 font-medium hover:text-orange-800"
           >
             Envoyer un autre message
           </button>
@@ -181,7 +181,7 @@ const ContactForm: React.FC = () => {
             value={formData.name}
             onChange={handleChange}
             className={`w-full px-4 py-3 rounded-lg border ${
-              errors.name ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-600'
+              errors.name ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-orange-600'
             } focus:outline-none focus:ring-2 focus:border-transparent transition-colors`}
             placeholder="Votre nom"
           />
@@ -199,7 +199,7 @@ const ContactForm: React.FC = () => {
             value={formData.email}
             onChange={handleChange}
             className={`w-full px-4 py-3 rounded-lg border ${
-              errors.email ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-600'
+              errors.email ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-orange-600'
             } focus:outline-none focus:ring-2 focus:border-transparent transition-colors`}
             placeholder="votre@email.com"
           />
@@ -219,7 +219,7 @@ const ContactForm: React.FC = () => {
             value={formData.phone}
             onChange={handleChange}
             className={`w-full px-4 py-3 rounded-lg border ${
-              errors.phone ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-600'
+              errors.phone ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-orange-600'
             } focus:outline-none focus:ring-2 focus:border-transparent transition-colors`}
             placeholder="+225 XX XX XX XX XX"
           />
@@ -236,7 +236,7 @@ const ContactForm: React.FC = () => {
             value={formData.subject}
             onChange={handleChange}
             className={`w-full px-4 py-3 rounded-lg border ${
-              errors.subject ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-600'
+              errors.subject ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-orange-600'
             } focus:outline-none focus:ring-2 focus:border-transparent transition-colors bg-white`}
           >
             <option value="">Sélectionnez un sujet</option>
@@ -259,7 +259,7 @@ const ContactForm: React.FC = () => {
           onChange={handleChange}
           rows={6}
           className={`w-full px-4 py-3 rounded-lg border ${
-            errors.message ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-600'
+            errors.message ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-orange-600'
           } focus:outline-none focus:ring-2 focus:border-transparent transition-colors resize-none`}
           placeholder="Votre message..."
         />
@@ -269,7 +269,7 @@ const ContactForm: React.FC = () => {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-gradient-to-r from-blue-800 to-blue-700 text-white py-4 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full bg-gradient-to-r from-orange-600 to-orange-500 text-white py-4 rounded-lg font-semibold hover:from-orange-500 hover:to-orange-600 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {isSubmitting ? (
           <>

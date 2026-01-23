@@ -76,7 +76,7 @@ const MarkdownPage: React.FC<MarkdownPageProps> = ({ pageName, showHero = true, 
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
-            className="prose prose-lg"
+            className="prose prose-lg prose-orange"
             dangerouslySetInnerHTML={{ __html: content.html }}
           />
         </div>

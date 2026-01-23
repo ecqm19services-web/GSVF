@@ -72,7 +72,7 @@ const SuiviPage: React.FC = () => {
       case 'under_review':
         return <Clock className="w-5 h-5 text-yellow-500" />;
       case 'interview_scheduled':
-        return <Calendar className="w-5 h-5 text-blue-500" />;
+        return <Calendar className="w-5 h-5 text-orange-500" />;
       case 'processed':
       case 'approved':
         return <CheckCircle className="w-5 h-5 text-green-500" />;
@@ -109,7 +109,7 @@ const SuiviPage: React.FC = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 py-16">
+      <section className="bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-6">
             <FileText className="w-8 h-8 text-white" />
@@ -117,7 +117,7 @@ const SuiviPage: React.FC = () => {
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Suivi de votre demande
           </h1>
-          <p className="text-lg text-blue-100 max-w-2xl mx-auto">
+          <p className="text-lg text-orange-100 max-w-2xl mx-auto">
             Entrez votre numéro de référence pour consulter l'état d'avancement de votre demande.
           </p>
         </div>
@@ -136,12 +136,12 @@ const SuiviPage: React.FC = () => {
                 value={reference}
                 onChange={(e) => setReference(e.target.value.toUpperCase())}
                 placeholder="Ex: ADM-2026-1234"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg font-mono"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-lg font-mono"
               />
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-6 py-3 bg-blue-800 text-white rounded-xl font-semibold hover:bg-blue-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-3 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isLoading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -168,10 +168,10 @@ const SuiviPage: React.FC = () => {
           {result && (
             <div className="mt-8 bg-white rounded-2xl shadow-lg overflow-hidden">
               {/* Header */}
-              <div className="bg-gradient-to-r from-blue-800 to-blue-900 p-6 text-white">
+              <div className="bg-gradient-to-r from-orange-600 to-orange-700 p-6 text-white">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-blue-200 text-sm mb-1">
+                    <p className="text-orange-200 text-sm mb-1">
                       {result.type === 'contact' ? 'Demande de contact' : 'Demande d\'admission'}
                     </p>
                     <p className="text-2xl font-bold font-mono">{result.submission.reference}</p>
@@ -180,7 +180,7 @@ const SuiviPage: React.FC = () => {
                     {getStatusLabel(result.type, result.submission.status)}
                   </span>
                 </div>
-                <p className="text-blue-200 text-sm mt-2">
+                <p className="text-orange-200 text-sm mt-2">
                   Soumise le {formatDate(result.submission.$createdAt)}
                 </p>
               </div>
@@ -209,7 +209,7 @@ const SuiviPage: React.FC = () => {
                   {result.history.map((item, index) => (
                     <div key={item.$id} className="flex gap-4">
                       <div className="flex flex-col items-center">
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
                           {getStatusIcon(item.newStatus)}
                         </div>
                         {index < result.history.length - 1 && (
@@ -234,7 +234,7 @@ const SuiviPage: React.FC = () => {
                   {result.history.length === 0 && result.submission.status !== 'new' && (
                     <div className="flex gap-4">
                       <div className="flex flex-col items-center">
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
                           {getStatusIcon(result.submission.status)}
                         </div>
                       </div>
@@ -249,9 +249,9 @@ const SuiviPage: React.FC = () => {
 
                 {/* Public notes for admissions */}
                 {result.type === 'admission' && (result.submission as AdmissionSubmission).publicNotes && (
-                  <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
-                    <h4 className="font-semibold text-blue-900 mb-2">Message de l'administration</h4>
-                    <p className="text-blue-800">{(result.submission as AdmissionSubmission).publicNotes}</p>
+                  <div className="mt-6 bg-orange-50 border border-orange-200 rounded-xl p-4">
+                    <h4 className="font-semibold text-orange-900 mb-2">Message de l'administration</h4>
+                    <p className="text-orange-800">{(result.submission as AdmissionSubmission).publicNotes}</p>
                   </div>
                 )}
               </div>
@@ -281,7 +281,7 @@ const SuiviPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href={`mailto:${siteConfig.email}`}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-100 text-blue-800 rounded-xl font-semibold hover:bg-blue-200 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-orange-100 text-orange-800 rounded-xl font-semibold hover:bg-orange-200 transition-colors"
             >
               <Mail className="w-5 h-5" />
               {siteConfig.email}

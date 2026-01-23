@@ -25,8 +25,8 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
       {subtitle && (
         <span className={`inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-4 ${
           light 
-            ? 'bg-white/10 text-blue-200' 
-            : 'bg-blue-100 text-blue-800'
+            ? 'bg-white/10 text-orange-200' 
+            : 'bg-orange-100 text-orange-800'
         }`}>
           {subtitle}
         </span>
@@ -38,7 +38,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
       </h2>
       {description && (
         <p className={`text-lg ${
-          light ? 'text-blue-100' : 'text-gray-600'
+          light ? 'text-orange-100' : 'text-gray-600'
         }`}>
           {description}
         </p>

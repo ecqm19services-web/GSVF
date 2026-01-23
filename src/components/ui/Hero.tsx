@@ -44,7 +44,7 @@ const Hero: React.FC<HeroProps> = ({
 
   return (
     <section 
-      className={`relative ${sizeClasses[size]} bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 overflow-hidden`}
+      className={`relative ${sizeClasses[size]} bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950 overflow-hidden`}
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
@@ -54,13 +54,13 @@ const Hero: React.FC<HeroProps> = ({
       </div>
 
       {/* Decorative Elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-400/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`flex flex-col ${alignClasses[align]} max-w-4xl ${align === 'center' ? 'mx-auto' : ''}`}>
           {subtitle && (
-            <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-blue-200 text-sm font-medium mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-orange-200 text-sm font-medium mb-6">
               <span className="w-2 h-2 bg-orange-400 rounded-full animate-pulse" />
               {subtitle}
             </span>
@@ -71,7 +71,7 @@ const Hero: React.FC<HeroProps> = ({
           </h1>
           
           {description && (
-            <p className="text-lg md:text-xl text-blue-100 mb-10 max-w-2xl leading-relaxed">
+            <p className="text-lg md:text-xl text-orange-100 mb-10 max-w-2xl leading-relaxed">
               {description}
             </p>
           )}
@@ -81,7 +81,7 @@ const Hero: React.FC<HeroProps> = ({
               {ctaPrimary && (
                 <Link
                   to={ctaPrimary.link}
-                  className="inline-flex items-center justify-center gap-2 bg-white text-blue-900 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                  className="inline-flex items-center justify-center gap-2 bg-white text-orange-900 px-8 py-4 rounded-xl font-semibold hover:bg-orange-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                 >
                   {ctaPrimary.text}
                   <ArrowRight className="w-5 h-5" />

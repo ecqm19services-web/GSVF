@@ -139,9 +139,9 @@ const AdmissionsForm: React.FC = () => {
 
   if (submitStatus === 'success') {
     return (
-      <div className="bg-blue-50 border border-blue-200 rounded-2xl p-8 text-center">
-        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <CheckCircle className="w-8 h-8 text-blue-800" />
+      <div className="bg-orange-50 border border-orange-200 rounded-2xl p-8 text-center">
+        <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <CheckCircle className="w-8 h-8 text-orange-800" />
         </div>
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Demande envoyée !</h3>
         <p className="text-gray-600 mb-4">
@@ -149,12 +149,12 @@ const AdmissionsForm: React.FC = () => {
         </p>
         <div className="bg-white rounded-lg p-4 mb-6">
           <p className="text-sm text-gray-500 mb-1">Votre numéro de référence</p>
-          <p className="text-lg font-bold text-blue-800">{reference}</p>
+          <p className="text-lg font-bold text-orange-800">{reference}</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             to="/suivi"
-            className="px-6 py-2 bg-blue-800 text-white rounded-lg font-medium hover:bg-blue-900 transition-colors"
+            className="px-6 py-2 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors"
           >
             Suivre ma demande
           </Link>
@@ -181,20 +181,20 @@ const AdmissionsForm: React.FC = () => {
             <div className="flex flex-col items-center">
               <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
                 currentStep >= step.number 
-                  ? 'bg-blue-800 text-white' 
+                  ? 'bg-orange-600 text-white' 
                   : 'bg-gray-200 text-gray-500'
               }`}>
                 <step.icon className="w-5 h-5" />
               </div>
               <span className={`mt-2 text-sm font-medium ${
-                currentStep >= step.number ? 'text-blue-800' : 'text-gray-500'
+                currentStep >= step.number ? 'text-orange-700' : 'text-gray-500'
               }`}>
                 {step.title}
               </span>
             </div>
             {index < steps.length - 1 && (
               <div className={`flex-1 h-1 mx-4 rounded ${
-                currentStep > step.number ? 'bg-blue-800' : 'bg-gray-200'
+                currentStep > step.number ? 'bg-orange-600' : 'bg-gray-200'
               }`} />
             )}
           </React.Fragment>
@@ -227,7 +227,7 @@ const AdmissionsForm: React.FC = () => {
                   onChange={handleChange}
                   className={`w-full px-4 py-3 rounded-lg border ${
                     errors.studentFirstName ? 'border-red-300' : 'border-gray-300'
-                  } focus:outline-none focus:ring-2 focus:ring-blue-600`}
+                  } focus:outline-none focus:ring-2 focus:ring-orange-600`}
                   placeholder="Prénom de l'élève"
                 />
                 {errors.studentFirstName && <p className="mt-1 text-sm text-red-500">{errors.studentFirstName}</p>}
@@ -242,7 +242,7 @@ const AdmissionsForm: React.FC = () => {
                   onChange={handleChange}
                   className={`w-full px-4 py-3 rounded-lg border ${
                     errors.studentLastName ? 'border-red-300' : 'border-gray-300'
-                  } focus:outline-none focus:ring-2 focus:ring-blue-600`}
+                  } focus:outline-none focus:ring-2 focus:ring-orange-600`}
                   placeholder="Nom de l'élève"
                 />
                 {errors.studentLastName && <p className="mt-1 text-sm text-red-500">{errors.studentLastName}</p>}
@@ -259,7 +259,7 @@ const AdmissionsForm: React.FC = () => {
                   onChange={handleChange}
                   className={`w-full px-4 py-3 rounded-lg border ${
                     errors.studentBirthDate ? 'border-red-300' : 'border-gray-300'
-                  } focus:outline-none focus:ring-2 focus:ring-blue-600`}
+                  } focus:outline-none focus:ring-2 focus:ring-orange-600`}
                 />
                 {errors.studentBirthDate && <p className="mt-1 text-sm text-red-500">{errors.studentBirthDate}</p>}
               </div>
@@ -272,7 +272,7 @@ const AdmissionsForm: React.FC = () => {
                   onChange={handleChange}
                   className={`w-full px-4 py-3 rounded-lg border ${
                     errors.desiredGrade ? 'border-red-300' : 'border-gray-300'
-                  } focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white`}
+                  } focus:outline-none focus:ring-2 focus:ring-orange-600 bg-white`}
                 >
                   <option value="">Sélectionnez un niveau</option>
                   {grades.map((grade) => (
@@ -290,7 +290,7 @@ const AdmissionsForm: React.FC = () => {
                 name="previousSchool"
                 value={formData.previousSchool}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-600"
                 placeholder="Nom de l'établissement actuel"
               />
             </div>
@@ -312,7 +312,7 @@ const AdmissionsForm: React.FC = () => {
                   onChange={handleChange}
                   className={`w-full px-4 py-3 rounded-lg border ${
                     errors.parentFirstName ? 'border-red-300' : 'border-gray-300'
-                  } focus:outline-none focus:ring-2 focus:ring-blue-600`}
+                  } focus:outline-none focus:ring-2 focus:ring-orange-600`}
                   placeholder="Votre prénom"
                 />
                 {errors.parentFirstName && <p className="mt-1 text-sm text-red-500">{errors.parentFirstName}</p>}
@@ -327,7 +327,7 @@ const AdmissionsForm: React.FC = () => {
                   onChange={handleChange}
                   className={`w-full px-4 py-3 rounded-lg border ${
                     errors.parentLastName ? 'border-red-300' : 'border-gray-300'
-                  } focus:outline-none focus:ring-2 focus:ring-blue-600`}
+                  } focus:outline-none focus:ring-2 focus:ring-orange-600`}
                   placeholder="Votre nom"
                 />
                 {errors.parentLastName && <p className="mt-1 text-sm text-red-500">{errors.parentLastName}</p>}
@@ -344,7 +344,7 @@ const AdmissionsForm: React.FC = () => {
                   onChange={handleChange}
                   className={`w-full px-4 py-3 rounded-lg border ${
                     errors.parentEmail ? 'border-red-300' : 'border-gray-300'
-                  } focus:outline-none focus:ring-2 focus:ring-blue-600`}
+                  } focus:outline-none focus:ring-2 focus:ring-orange-600`}
                   placeholder="votre@email.com"
                 />
                 {errors.parentEmail && <p className="mt-1 text-sm text-red-500">{errors.parentEmail}</p>}
@@ -359,7 +359,7 @@ const AdmissionsForm: React.FC = () => {
                   onChange={handleChange}
                   className={`w-full px-4 py-3 rounded-lg border ${
                     errors.parentPhone ? 'border-red-300' : 'border-gray-300'
-                  } focus:outline-none focus:ring-2 focus:ring-blue-600`}
+                  } focus:outline-none focus:ring-2 focus:ring-orange-600`}
                   placeholder="+225 XX XX XX XX XX"
                 />
                 {errors.parentPhone && <p className="mt-1 text-sm text-red-500">{errors.parentPhone}</p>}
@@ -373,7 +373,7 @@ const AdmissionsForm: React.FC = () => {
                 name="parentAddress"
                 value={formData.parentAddress}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-600"
                 placeholder="Votre adresse complète"
               />
             </div>
@@ -413,7 +413,7 @@ const AdmissionsForm: React.FC = () => {
                 value={formData.message}
                 onChange={handleChange}
                 rows={4}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-600 resize-none"
                 placeholder="Informations supplémentaires, questions..."
               />
             </div>
@@ -438,7 +438,7 @@ const AdmissionsForm: React.FC = () => {
             <button
               type="button"
               onClick={nextStep}
-              className="px-6 py-3 bg-blue-800 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              className="px-6 py-3 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors"
             >
               Suivant
             </button>
@@ -446,7 +446,7 @@ const AdmissionsForm: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-8 py-3 bg-gradient-to-r from-blue-800 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-8 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg font-semibold hover:from-orange-500 hover:to-orange-600 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isSubmitting ? (
                 <>

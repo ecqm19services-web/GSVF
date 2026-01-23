@@ -13,10 +13,10 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100">
       <div className="text-center p-12 max-w-lg">
-        <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-8">
-          <span className="text-5xl font-bold text-blue-800">404</span>
+        <div className="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-8">
+          <span className="text-5xl font-bold text-orange-800">404</span>
         </div>
         <h1 className="text-3xl font-bold text-gray-900 mb-4">
           Page non trouvée
@@ -27,14 +27,14 @@ const NotFound = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link 
             to="/" 
-            className="inline-flex items-center justify-center gap-2 bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center justify-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-700 transition-colors"
           >
             <Home className="w-5 h-5" />
             Retour à l'accueil
           </Link>
           <button 
             onClick={() => window.history.back()}
-            className="inline-flex items-center justify-center gap-2 border-2 border-blue-800 text-blue-800 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+            className="inline-flex items-center justify-center gap-2 border-2 border-orange-600 text-orange-700 px-6 py-3 rounded-lg font-semibold hover:bg-orange-50 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             Page précédente

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { navigation, siteConfig } from '@/data/content';
-import { Menu, X, Phone, Mail, ChevronDown } from 'lucide-react';
+import { Menu, X, Phone, Mail } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,21 +23,21 @@ const Header: React.FC = () => {
   return (
     <>
       {/* Top Bar */}
-      <div className="bg-blue-900 text-white py-2 hidden md:block">
+      <div className="bg-primary text-primary-foreground py-2 hidden md:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center text-sm">
             <div className="flex items-center gap-6">
-              <a href={`tel:${siteConfig.phone}`} className="flex items-center gap-2 hover:text-blue-200 transition-colors">
+              <a href={`tel:${siteConfig.phone}`} className="flex items-center gap-2 hover:text-primary-foreground/80 transition-colors">
                 <Phone className="w-4 h-4" />
                 {siteConfig.phone}
               </a>
-              <a href={`mailto:${siteConfig.email}`} className="flex items-center gap-2 hover:text-blue-200 transition-colors">
+              <a href={`mailto:${siteConfig.email}`} className="flex items-center gap-2 hover:text-primary-foreground/80 transition-colors">
                 <Mail className="w-4 h-4" />
                 {siteConfig.email}
               </a>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-blue-200">{siteConfig.location}</span>
+              <span className="text-primary-foreground/80">{siteConfig.location}</span>
             </div>
           </div>
         </div>
@@ -55,7 +55,7 @@ const Header: React.FC = () => {
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-800 to-blue-900 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-blue-200 transition-shadow">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-orange-200 transition-shadow">
                 <span className="text-white font-bold text-lg">VF</span>
               </div>
               <div className="hidden sm:block">
@@ -72,8 +72,8 @@ const Header: React.FC = () => {
                   to={item.path}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     location.pathname === item.path
-                      ? 'bg-blue-100 text-blue-900'
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-blue-800'
+                      ? 'bg-orange-100 text-orange-900'
+                      : 'text-gray-700 hover:bg-orange-50 hover:text-orange-800'
                   }`}
                 >
                   {item.name}
@@ -85,7 +85,7 @@ const Header: React.FC = () => {
             <div className="hidden lg:flex items-center gap-4">
               <Link
                 to="/admissions"
-                className="bg-gradient-to-r from-blue-800 to-blue-900 text-white px-6 py-2.5 rounded-lg font-medium hover:from-blue-900 hover:to-blue-950 transition-all shadow-md hover:shadow-lg"
+                className="bg-gradient-to-r from-orange-500 to-orange-700 text-white px-6 py-2.5 rounded-lg font-medium hover:from-orange-600 hover:to-orange-800 transition-all shadow-md hover:shadow-lg"
               >
                 Inscription
               </Link>
@@ -120,7 +120,7 @@ const Header: React.FC = () => {
                   to={item.path}
                   className={`px-4 py-3 rounded-lg font-medium transition-colors ${
                     location.pathname === item.path
-                      ? 'bg-blue-100 text-blue-900'
+                      ? 'bg-orange-100 text-orange-900'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
@@ -129,18 +129,18 @@ const Header: React.FC = () => {
               ))}
               <Link
                 to="/admissions"
-                className="mt-4 bg-gradient-to-r from-blue-800 to-blue-900 text-white px-6 py-3 rounded-lg font-medium text-center"
+                className="mt-4 bg-gradient-to-r from-orange-500 to-orange-700 text-white px-6 py-3 rounded-lg font-medium text-center"
               >
                 Inscription
               </Link>
             </nav>
             <div className="mt-6 pt-6 border-t border-gray-100">
               <a href={`tel:${siteConfig.phone}`} className="flex items-center gap-3 text-gray-600 py-2">
-                <Phone className="w-5 h-5 text-blue-800" />
+                <Phone className="w-5 h-5 text-orange-600" />
                 {siteConfig.phone}
               </a>
               <a href={`mailto:${siteConfig.email}`} className="flex items-center gap-3 text-gray-600 py-2">
-                <Mail className="w-5 h-5 text-blue-800" />
+                <Mail className="w-5 h-5 text-orange-600" />
                 {siteConfig.email}
               </a>
             </div>
