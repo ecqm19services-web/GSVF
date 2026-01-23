@@ -9,6 +9,7 @@ const COLLECTIONS = {
   CONTACTS: 'contact_submissions',
   ADMISSIONS: 'admission_submissions',
   STATUS_HISTORY: 'status_history',
+  SITE_PAGES: 'site_pages',
 };
 
 function getDatabases() {

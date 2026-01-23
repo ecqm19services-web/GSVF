@@ -46,6 +46,19 @@ const collections = {
       { key: 'status_idx', type: 'key', attributes: ['status'] },
     ]
   },
+  site_pages: {
+    name: 'Site Pages',
+    attributes: [
+      { key: 'page', type: 'string', size: 60, required: true },
+      { key: 'kind', type: 'string', size: 20, required: true },
+      { key: 'payload', type: 'string', size: 65535, required: true },
+      { key: 'updatedAt', type: 'string', size: 40, required: false },
+    ],
+    indexes: [
+      { key: 'page_idx', type: 'unique', attributes: ['page'] },
+      { key: 'kind_idx', type: 'key', attributes: ['kind'] },
+    ]
+  },
   admission_submissions: {
     name: 'Admission Submissions',
     attributes: [
@@ -249,6 +262,7 @@ async function main() {
     console.log('\n✅ Configuration Appwrite terminée !');
     console.log('\n📋 Collections créées:');
     console.log('  - contact_submissions');
+    console.log('  - site_pages');
     console.log('  - admission_submissions');
     console.log('  - status_history');
     

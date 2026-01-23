@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import SuiviPage from "./pages/SuiviPage";
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminContentEditor from "./pages/admin/AdminContentEditor";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/admin/dashboard" element={<Navigate to="/ecqm19-admin/dashboard" replace />} />
             <Route path="/ecqm19-admin" element={<AdminLoginPage />} />
             <Route path="/ecqm19-admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/ecqm19-admin/content" element={<AdminContentEditor />} />
             <Route path="/*" element={<Index />} />
           </Routes>
         </BrowserRouter>

@@ -16,6 +16,10 @@ export interface ParsedContent {
   html: string;
 }
 
+export function renderMarkdownToHtml(pageName: string, markdown: string): string {
+  return marked(transformGalleries(markdown, pageName)) as string;
+}
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -177,14 +181,63 @@ const contentFiles: Record<string, string> = {
   confidentialite: '/content/confidentialite.md',
 };
 
+export function getContentFilePath(pageName: string): string | null {
+  return contentFiles[pageName] || null;
+}
+
 // Cache for loaded content
 const contentCache: Map<string, ParsedContent> = new Map();
+
+async function tryLoadPublishedMarkdown(pageName: string): Promise<string | null> {
+  try {
+    const res = await fetch(`/api/page-content?page=${encodeURIComponent(pageName)}`);
+    if (!res.ok) return null;
+    const data = (await res.json()) as { document?: unknown };
+    const doc = data && (data as any).document;
+    if (!doc) return null;
+    if (doc.kind !== 'markdown') return null;
+    if (typeof doc.payload !== 'string') return null;
+    return doc.payload;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Load and parse a markdown content file
  */
 export async function loadContent(pageName: string): Promise<ParsedContent | null> {
-  // Check cache first
+  const publishedMarkdown = await tryLoadPublishedMarkdown(pageName);
+  if (publishedMarkdown) {
+    const { meta: extractedMeta, body } = extractFrontmatter(publishedMarkdown);
+    const content = body;
+    const titleFromBody = inferTitleFromMarkdown(body);
+    const meta: ContentMeta = {
+      title: '',
+      ...(extractedMeta as ContentMeta),
+    };
+    if (!meta.title && titleFromBody) meta.title = titleFromBody;
+
+    let html = '';
+    try {
+      html = renderMarkdownToHtml(pageName, content);
+    } catch (e) {
+      console.error(`Error rendering markdown for ${pageName}:`, e);
+      const escaped = content
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      html = `<pre>${escaped}</pre>`;
+    }
+
+    const parsed: ParsedContent = {
+      meta,
+      content,
+      html,
+    };
+    return parsed;
+  }
+
   if (contentCache.has(pageName)) {
     return contentCache.get(pageName)!;
   }
@@ -213,7 +266,7 @@ export async function loadContent(pageName: string): Promise<ParsedContent | nul
 
     let html = '';
     try {
-      html = marked(transformGalleries(content, pageName)) as string;
+      html = renderMarkdownToHtml(pageName, content);
     } catch (e) {
       console.error(`Error rendering markdown for ${pageName}:`, e);
       const escaped = content

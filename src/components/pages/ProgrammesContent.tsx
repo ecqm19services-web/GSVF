@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Hero from '@/components/ui/Hero';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { programmesContent } from '@/data/content';
+import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import { 
   Heart,
   BookOpen,
@@ -42,6 +43,7 @@ const specialIconMap: Record<string, LucideIcon> = {
 
 const ProgrammesContent: React.FC = () => {
   const [expandedCycle, setExpandedCycle] = useState<string | null>('maternelle');
+  const { value: programmesData } = usePageJsonContent('programmes', programmesContent);
 
   const toggleCycle = (id: string) => {
     setExpandedCycle(expandedCycle === id ? null : id);
@@ -50,9 +52,9 @@ const ProgrammesContent: React.FC = () => {
   return (
     <>
       <Hero
-        title={programmesContent.hero.title}
-        subtitle={programmesContent.hero.subtitle}
-        description={programmesContent.hero.description}
+        title={programmesData.hero.title}
+        subtitle={programmesData.hero.subtitle}
+        description={programmesData.hero.description}
         size="medium"
       />
 
@@ -60,7 +62,7 @@ const ProgrammesContent: React.FC = () => {
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-xl text-gray-700 leading-relaxed text-center">
-            {programmesContent.intro}
+            {programmesData.intro}
           </p>
         </div>
       </section>
@@ -69,7 +71,7 @@ const ProgrammesContent: React.FC = () => {
       <section className="py-8 bg-gray-50 hidden lg:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-4 gap-6">
-            {programmesContent.cycles.map((cycle) => {
+            {programmesData.cycles.map((cycle) => {
               const Icon = cycleIcons[cycle.id] || GraduationCap;
               return (
                 <a
@@ -93,7 +95,7 @@ const ProgrammesContent: React.FC = () => {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-8">
-            {programmesContent.cycles.map((cycle) => {
+            {programmesData.cycles.map((cycle) => {
               const Icon = cycleIcons[cycle.id] || GraduationCap;
               const isExpanded = expandedCycle === cycle.id;
 
@@ -140,7 +142,7 @@ const ProgrammesContent: React.FC = () => {
                           <ul className="space-y-3">
                             {cycle.features.map((feature, fIndex) => (
                               <li key={fIndex} className="flex items-start gap-3">
-                                <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                                <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                                 <span className="text-gray-700">{feature}</span>
                               </li>
                             ))}
@@ -172,11 +174,11 @@ const ProgrammesContent: React.FC = () => {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {programmesContent.specialPrograms.map((program, index) => {
+            {programmesData.specialPrograms.map((program, index) => {
               const Icon = specialIconMap[program.icon] || Star;
               const colors = [
-                'bg-blue-100 text-blue-600',
-                'bg-blue-100 text-blue-800',
+                'bg-orange-100 text-orange-700',
+                'bg-orange-100 text-orange-900',
                 'bg-purple-100 text-purple-600',
                 'bg-amber-100 text-amber-600'
               ];
@@ -198,17 +200,17 @@ const ProgrammesContent: React.FC = () => {
       </section>
 
       {/* Pedagogical Approach */}
-      <section className="py-20 bg-blue-900">
+      <section className="py-20 bg-orange-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <span className="inline-block px-4 py-1.5 bg-white/10 text-blue-200 rounded-full text-sm font-semibold mb-6">
+              <span className="inline-block px-4 py-1.5 bg-white/10 text-orange-200 rounded-full text-sm font-semibold mb-6">
                 Notre approche
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
                 Une pédagogie innovante
               </h2>
-              <p className="text-lg text-blue-100 mb-8 leading-relaxed">
+              <p className="text-lg text-orange-100 mb-8 leading-relaxed">
                 Notre approche pédagogique combine les méthodes traditionnelles éprouvées 
                 avec les innovations éducatives modernes pour offrir le meilleur à chaque élève.
               </p>
@@ -221,7 +223,7 @@ const ProgrammesContent: React.FC = () => {
                   'Évaluation formative continue'
                 ].map((item, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" />
+                    <CheckCircle className="w-6 h-6 text-orange-400 flex-shrink-0 mt-0.5" />
                     <span className="text-white">{item}</span>
                   </li>
                 ))}
@@ -236,7 +238,7 @@ const ProgrammesContent: React.FC = () => {
               ].map((stat, index) => (
                 <div key={index} className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
                   <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-                  <div className="text-blue-200 text-sm">{stat.label}</div>
+                  <div className="text-orange-200 text-sm">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -256,14 +258,14 @@ const ProgrammesContent: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/admissions"
-              className="inline-flex items-center justify-center gap-2 bg-blue-800 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-xl font-semibold hover:bg-primary/90 transition-colors"
             >
               Processus d'admission
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               to="/visite"
-              className="inline-flex items-center justify-center gap-2 border-2 border-blue-800 text-blue-800 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 border-2 border-primary text-primary px-8 py-4 rounded-xl font-semibold hover:bg-primary/10 transition-colors"
             >
               Visiter le campus
             </Link>

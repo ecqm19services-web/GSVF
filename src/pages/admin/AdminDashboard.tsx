@@ -4,6 +4,7 @@ import {
   LayoutDashboard, 
   MessageSquare, 
   GraduationCap, 
+  FileText,
   LogOut, 
   Search,
   Filter,
@@ -204,6 +205,14 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <nav className="space-y-2">
+          <Link
+            to="/ecqm19-admin/content"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-orange-200 hover:text-white hover:bg-white/10"
+          >
+            <FileText className="w-5 h-5" />
+            Contenu du site
+          </Link>
+
           <button
             onClick={() => { setActiveTab('admissions'); setStatusFilter('all'); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
