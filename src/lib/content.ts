@@ -1,7 +1,6 @@
 // Utility to load and parse markdown content files
 // This provides a centralized way to manage site content
 
-import matter from 'gray-matter';
 import { marked } from 'marked';
 
 export interface ContentMeta {
@@ -15,6 +14,75 @@ export interface ParsedContent {
   meta: ContentMeta;
   content: string;
   html: string;
+}
+
+function parseFrontmatterValue(raw: string): string {
+  const v = raw.trim();
+  if (!v) return '';
+  if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+    return v.slice(1, -1);
+  }
+  return v;
+}
+
+function parseFrontmatterBlock(block: string): Record<string, unknown> {
+  const meta: Record<string, unknown> = {};
+  const lines = block.split(/\r?\n/);
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    const m = /^([A-Za-z0-9_-]+)\s*:\s*(.*)$/.exec(trimmed);
+    if (!m) continue;
+    const key = m[1];
+    const value = parseFrontmatterValue(m[2]);
+    meta[key] = value;
+  }
+  return meta;
+}
+
+function extractFrontmatter(raw: string): { meta: Record<string, unknown>; body: string } {
+  const normalized = raw.replace(/^\uFEFF/, '');
+  const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(normalized);
+  if (!match) {
+    const lines = normalized.split(/\r?\n/);
+    const metaLines: string[] = [];
+    let i = 0;
+
+    while (i < lines.length) {
+      const line = lines[i];
+      if (!line.trim()) {
+        i += 1;
+        break;
+      }
+
+      if (!/^([A-Za-z0-9_-]+)\s*:\s*(.*)$/.test(line.trim())) {
+        return { meta: {}, body: normalized };
+      }
+
+      metaLines.push(line);
+      i += 1;
+    }
+
+    if (!metaLines.length) {
+      return { meta: {}, body: normalized };
+    }
+
+    return {
+      meta: parseFrontmatterBlock(metaLines.join('\n')),
+      body: lines.slice(i).join('\n'),
+    };
+  }
+
+  const metaBlock = match[1] || '';
+  const body = normalized.slice(match[0].length);
+  return { meta: parseFrontmatterBlock(metaBlock), body };
+}
+
+function inferTitleFromMarkdown(body: string): string | undefined {
+  const m = /^#\s+(.+)\s*$/m.exec(body);
+  if (!m) return undefined;
+  const t = m[1].trim();
+  return t ? t : undefined;
 }
 
 // Content files mapping
@@ -56,15 +124,14 @@ export async function loadContent(pageName: string): Promise<ParsedContent | nul
     }
 
     const rawContent = await res.text();
-    let data: Record<string, unknown> = {};
-    let content = rawContent;
-    try {
-      const parsed = matter(rawContent);
-      data = (parsed && typeof parsed.data === 'object' && parsed.data) ? (parsed.data as Record<string, unknown>) : {};
-      content = typeof parsed.content === 'string' ? parsed.content : rawContent;
-    } catch (e) {
-      console.error(`Error parsing frontmatter for ${pageName}:`, e);
-    }
+    const { meta: extractedMeta, body } = extractFrontmatter(rawContent);
+    const content = body;
+    const titleFromBody = inferTitleFromMarkdown(body);
+    const meta: ContentMeta = {
+      title: '',
+      ...(extractedMeta as ContentMeta),
+    };
+    if (!meta.title && titleFromBody) meta.title = titleFromBody;
 
     let html = '';
     try {
@@ -79,7 +146,7 @@ export async function loadContent(pageName: string): Promise<ParsedContent | nul
     }
 
     const parsed: ParsedContent = {
-      meta: { title: '', ...(data as ContentMeta) },
+      meta,
       content,
       html,
     };
