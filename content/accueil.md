@@ -25,6 +25,11 @@ Un programme rigoureux aligné sur les standards internationaux avec un suivi pe
 ## Infrastructures Modernes
 Campus de 5 hectares avec laboratoires, bibliothèque et installations sportives.
 
+### Galerie
+- accueil_ecole.jpeg | Notre campus
+- accueil_ecole_eleves.jpeg | Nos élèves
+- accueil_ecole_eleves_alt.jpeg | Vie sur le campus
+
 ## Encadrement Bienveillant
 Un ratio élève-enseignant optimal pour un accompagnement individualisé.
 

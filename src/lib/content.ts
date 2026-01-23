@@ -16,6 +16,84 @@ export interface ParsedContent {
   html: string;
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function encodePathSegments(path: string): string {
+  return path
+    .split('/')
+    .map(segment => encodeURIComponent(segment))
+    .join('/');
+}
+
+function resolveGalleryImageSrc(pageName: string, file: string): string {
+  const trimmed = file.trim();
+  if (!trimmed) return '';
+  if (/^(https?:)?\/\//i.test(trimmed)) return trimmed;
+  if (trimmed.startsWith('/')) return trimmed;
+  return `/images/${pageName}/${encodePathSegments(trimmed)}`;
+}
+
+type GalleryItem = { file: string; caption?: string };
+
+function renderGalleryHtml(items: GalleryItem[], pageName: string): string {
+  const figures = items
+    .map(({ file, caption }) => {
+      const src = resolveGalleryImageSrc(pageName, file);
+      const safeSrc = escapeHtml(src);
+      const safeCaption = escapeHtml((caption || file).trim());
+      const safeAlt = safeCaption || escapeHtml(file.trim());
+
+      return `\n<figure class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">\n  <img src="${safeSrc}" alt="${safeAlt}" loading="lazy" class="h-56 w-full object-cover" />\n  <figcaption class="px-3 py-2 text-sm text-gray-600">${safeCaption}</figcaption>\n</figure>`;
+    })
+    .join('');
+
+  return `<div class="not-prose my-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">${figures}\n</div>`;
+}
+
+function transformGalleries(markdown: string, pageName: string): string {
+  const lines = markdown.split(/\r?\n/);
+  const out: string[] = [];
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    out.push(line);
+
+    if (!/^#{2,6}\s+Galerie\s*$/i.test(line.trim())) continue;
+
+    const items: GalleryItem[] = [];
+    let j = i + 1;
+
+    while (j < lines.length && !lines[j].trim()) j += 1;
+
+    while (j < lines.length) {
+      const m = /^\s*[-*]\s+(.+)\s*$/.exec(lines[j]);
+      if (!m) break;
+
+      const raw = m[1].trim();
+      if (!raw) break;
+      const [filePart, captionPart] = raw.split('|').map(s => s.trim());
+      if (!filePart) break;
+      items.push({ file: filePart, caption: captionPart });
+      j += 1;
+    }
+
+    if (!items.length) continue;
+
+    out.push('');
+    out.push(renderGalleryHtml(items, pageName));
+    i = j - 1;
+  }
+
+  return out.join('\n');
+}
+
 function parseFrontmatterValue(raw: string): string {
   const v = raw.trim();
   if (!v) return '';
@@ -135,7 +213,7 @@ export async function loadContent(pageName: string): Promise<ParsedContent | nul
 
     let html = '';
     try {
-      html = marked(content) as string;
+      html = marked(transformGalleries(content, pageName)) as string;
     } catch (e) {
       console.error(`Error rendering markdown for ${pageName}:`, e);
       const escaped = content
