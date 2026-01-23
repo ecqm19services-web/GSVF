@@ -3,6 +3,7 @@ import Hero from '@/components/ui/Hero';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { programmesContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
+import EditableText from '@/components/admin/EditableText';
 import { 
   Heart,
   BookOpen,
@@ -61,9 +62,13 @@ const ProgrammesContent: React.FC = () => {
       {/* Introduction */}
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-xl text-gray-700 leading-relaxed text-center">
-            {programmesData.intro}
-          </p>
+          <EditableText
+            as="p"
+            multiline
+            path="intro"
+            value={programmesData.intro}
+            className="text-xl text-gray-700 leading-relaxed text-center"
+          />
         </div>
       </section>
 

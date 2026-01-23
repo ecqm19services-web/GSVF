@@ -2,6 +2,8 @@ import React from 'react';
 import Hero from '@/components/ui/Hero';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { excellenceContent } from '@/data/content';
+import { usePageJsonContent } from '@/hooks/usePageJsonContent';
+import EditableText from '@/components/admin/EditableText';
 import { 
   Trophy,
   Award,
@@ -15,13 +17,16 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+type ExcellenceData = typeof excellenceContent;
+
 const ExcellenceContent: React.FC = () => {
+  const { value: data } = usePageJsonContent<ExcellenceData>('excellence', excellenceContent);
   return (
     <>
       <Hero
-        title={excellenceContent.hero.title}
-        subtitle={excellenceContent.hero.subtitle}
-        description={excellenceContent.hero.description}
+        title={data.hero.title}
+        subtitle={data.hero.subtitle}
+        description={data.hero.description}
         size="medium"
       />
 
@@ -30,12 +35,13 @@ const ExcellenceContent: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
             subtitle="Résultats 2025"
-            title={excellenceContent.results.title}
+            title={data.results.title}
+            titlePath="results.title"
             description="Des performances exceptionnelles qui témoignent de la qualité de notre enseignement."
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {excellenceContent.results.exams.map((exam, index) => {
+            {data.results.exams.map((exam, index) => {
               const icons = [Trophy, Award, Medal];
               const Icon = icons[index % icons.length];
               const colors = [
@@ -52,10 +58,32 @@ const ExcellenceContent: React.FC = () => {
                   <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${colors[index]} flex items-center justify-center mx-auto mb-6`}>
                     <Icon className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{exam.name}</h3>
-                  <div className="text-5xl font-bold text-blue-800 mb-2">{exam.rate}</div>
-                  <p className="text-gray-600 mb-2">{exam.mentions}</p>
-                  <p className="text-sm text-blue-800 font-medium">{exam.rank}</p>
+                  <EditableText
+                    as="h3"
+                    path={`results.exams.${index}.name`}
+                    value={exam.name}
+                    className="text-xl font-bold text-gray-900 mb-2"
+                  />
+                  <EditableText
+                    as="div"
+                    path={`results.exams.${index}.rate`}
+                    value={exam.rate}
+                    className="text-5xl font-bold text-blue-800 mb-2"
+                  />
+                  <EditableText
+                    as="p"
+                    multiline
+                    path={`results.exams.${index}.mentions`}
+                    value={exam.mentions}
+                    className="text-gray-600 mb-2"
+                  />
+                  <EditableText
+                    as="p"
+                    multiline
+                    path={`results.exams.${index}.rank`}
+                    value={exam.rank}
+                    className="text-sm text-blue-800 font-medium"
+                  />
                 </div>
               );
             })}
@@ -73,7 +101,7 @@ const ExcellenceContent: React.FC = () => {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {excellenceContent.distinctions.map((distinction, index) => (
+            {data.distinctions.map((distinction, index) => (
               <div 
                 key={index}
                 className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm hover:shadow-lg transition-shadow"
@@ -83,10 +111,16 @@ const ExcellenceContent: React.FC = () => {
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-bold text-gray-900">{distinction.title}</h3>
-                    <span className="text-sm text-gray-500">({distinction.year})</span>
+                    <EditableText as="h3" path={`distinctions.${index}.title`} value={distinction.title} className="font-bold text-gray-900" />
+                    <EditableText as="span" path={`distinctions.${index}.year`} value={distinction.year} className="text-sm text-gray-500" />
                   </div>
-                  <p className="text-gray-600">{distinction.achievement}</p>
+                  <EditableText
+                    as="p"
+                    multiline
+                    path={`distinctions.${index}.achievement`}
+                    value={distinction.achievement}
+                    className="text-gray-600"
+                  />
                 </div>
               </div>
             ))}
@@ -104,7 +138,7 @@ const ExcellenceContent: React.FC = () => {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {excellenceContent.alumni.map((alum, index) => (
+            {data.alumni.map((alum, index) => (
               <div 
                 key={index}
                 className="bg-gray-50 rounded-2xl p-6 hover:bg-white hover:shadow-lg transition-all group"
@@ -114,11 +148,20 @@ const ExcellenceContent: React.FC = () => {
                     <User className="w-8 h-8 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900">{alum.name}</h3>
-                    <p className="text-sm text-blue-800">Promotion {alum.promotion}</p>
+                    <EditableText as="h3" path={`alumni.${index}.name`} value={alum.name} className="font-bold text-gray-900" />
+                    <div className="text-sm text-blue-800">
+                      Promotion{' '}
+                      <EditableText as="span" path={`alumni.${index}.promotion`} value={alum.promotion} />
+                    </div>
                   </div>
                 </div>
-                <p className="text-gray-600">{alum.achievement}</p>
+                <EditableText
+                  as="p"
+                  multiline
+                  path={`alumni.${index}.achievement`}
+                  value={alum.achievement}
+                  className="text-gray-600"
+                />
               </div>
             ))}
           </div>
@@ -135,18 +178,32 @@ const ExcellenceContent: React.FC = () => {
           />
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {excellenceContent.testimonials.map((testimonial, index) => (
+            {data.testimonials.map((testimonial, index) => (
               <div 
                 key={index}
                 className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20"
               >
                 <Quote className="w-10 h-10 text-blue-400 mb-4" />
-                <p className="text-white text-lg mb-6 italic leading-relaxed">
-                  "{testimonial.quote}"
-                </p>
+                <EditableText
+                  as="p"
+                  multiline
+                  path={`testimonials.${index}.quote`}
+                  value={testimonial.quote}
+                  className="text-white text-lg mb-6 italic leading-relaxed"
+                />
                 <div className="border-t border-white/20 pt-4">
-                  <p className="text-white font-semibold">{testimonial.author}</p>
-                  <p className="text-blue-200 text-sm">{testimonial.role}</p>
+                  <EditableText
+                    as="p"
+                    path={`testimonials.${index}.author`}
+                    value={testimonial.author}
+                    className="text-white font-semibold"
+                  />
+                  <EditableText
+                    as="p"
+                    path={`testimonials.${index}.role`}
+                    value={testimonial.role}
+                    className="text-blue-200 text-sm"
+                  />
                 </div>
               </div>
             ))}

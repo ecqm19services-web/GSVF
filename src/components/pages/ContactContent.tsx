@@ -2,12 +2,17 @@ import React from 'react';
 import Hero from '@/components/ui/Hero';
 import ContactForm from '@/components/forms/ContactForm';
 import { contactContent, siteConfig } from '@/data/content';
+import { usePageJsonContent } from '@/hooks/usePageJsonContent';
+import EditableText from '@/components/admin/EditableText';
 import { MapPin, Phone, Mail, Clock, ArrowRight } from 'lucide-react';
 
+type ContactData = typeof contactContent;
+
 const ContactContent: React.FC = () => {
+  const { value: data } = usePageJsonContent<ContactData>('contact', contactContent);
   return (
     <>
-      <Hero title={contactContent.hero.title} subtitle={contactContent.hero.subtitle} description={contactContent.hero.description} size="medium" />
+      <Hero title={data.hero.title} subtitle={data.hero.subtitle} description={data.hero.description} size="medium" />
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-12">
@@ -16,19 +21,19 @@ const ContactContent: React.FC = () => {
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><MapPin className="w-6 h-6 text-blue-800" /></div>
-                  <div><h3 className="font-semibold text-gray-900 mb-1">Adresse</h3>{contactContent.info.address.lines.map((line, i) => <p key={i} className="text-gray-600">{line}</p>)}</div>
+                  <div><EditableText as="h3" path="info.address.title" value={data.info.address.title} className="font-semibold text-gray-900 mb-1" />{data.info.address.lines.map((line, i) => <EditableText key={i} as="p" path={`info.address.lines.${i}`} value={line} className="text-gray-600" />)}</div>
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><Phone className="w-6 h-6 text-blue-800" /></div>
-                  <div><h3 className="font-semibold text-gray-900 mb-1">Téléphone</h3>{contactContent.info.phone.numbers.map((num, i) => <a key={i} href={`tel:${num}`} className="block text-gray-600 hover:text-blue-800">{num}</a>)}</div>
+                  <div><EditableText as="h3" path="info.phone.title" value={data.info.phone.title} className="font-semibold text-gray-900 mb-1" />{data.info.phone.numbers.map((num, i) => <a key={i} href={`tel:${num}`} className="block text-gray-600 hover:text-blue-800"><EditableText as="span" path={`info.phone.numbers.${i}`} value={num} /></a>)}</div>
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><Mail className="w-6 h-6 text-blue-800" /></div>
-                  <div><h3 className="font-semibold text-gray-900 mb-1">Email</h3>{contactContent.info.email.addresses.map((email, i) => <a key={i} href={`mailto:${email}`} className="block text-gray-600 hover:text-blue-800">{email}</a>)}</div>
+                  <div><EditableText as="h3" path="info.email.title" value={data.info.email.title} className="font-semibold text-gray-900 mb-1" />{data.info.email.addresses.map((email, i) => <a key={i} href={`mailto:${email}`} className="block text-gray-600 hover:text-blue-800"><EditableText as="span" path={`info.email.addresses.${i}`} value={email} /></a>)}</div>
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><Clock className="w-6 h-6 text-blue-800" /></div>
-                  <div><h3 className="font-semibold text-gray-900 mb-1">Horaires</h3>{contactContent.info.hours.schedule.map((time, i) => <p key={i} className="text-gray-600">{time}</p>)}</div>
+                  <div><EditableText as="h3" path="info.hours.title" value={data.info.hours.title} className="font-semibold text-gray-900 mb-1" />{data.info.hours.schedule.map((time, i) => <EditableText key={i} as="p" path={`info.hours.schedule.${i}`} value={time} className="text-gray-600" />)}</div>
                 </div>
               </div>
             </div>

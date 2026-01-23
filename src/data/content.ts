@@ -623,6 +623,63 @@ export const contactContent = {
   ]
 };
 
+export const mentionsLegalesContent = {
+  hero: {
+    title: "Mentions légales",
+    subtitle: "Informations légales",
+    description: "Mentions légales du site Vision Future",
+  },
+  sections: [
+    {
+      title: "Éditeur du site",
+      content: "Groupe Scolaire Vision Future",
+    },
+    {
+      title: "Hébergement",
+      content: "Ce site est hébergé sur une infrastructure de type Netlify.",
+    },
+    {
+      title: "Propriété intellectuelle",
+      content:
+        "Le contenu de ce site (textes, images, logos) est la propriété de Groupe Scolaire Vision Future, sauf mention contraire.",
+    },
+    {
+      title: "Contact",
+      content: "Pour toute question, veuillez nous contacter via la page Contact.",
+    },
+  ],
+};
+
+export const confidentialiteContent = {
+  hero: {
+    title: "Politique de confidentialité",
+    subtitle: "Protection des données",
+    description: "Politique de confidentialité du site Vision Future",
+  },
+  sections: [
+    {
+      title: "Données collectées",
+      content:
+        "Les formulaires du site peuvent collecter des informations nécessaires au traitement de votre demande (contact, admissions, suivi).",
+    },
+    {
+      title: "Finalité",
+      content:
+        "Les données sont utilisées uniquement pour répondre à votre demande et assurer le suivi administratif.",
+    },
+    {
+      title: "Conservation",
+      content:
+        "Les données sont conservées pendant la durée nécessaire au traitement, puis archivées ou supprimées selon les obligations applicables.",
+    },
+    {
+      title: "Vos droits",
+      content:
+        "Vous pouvez demander l’accès, la rectification ou la suppression de vos données en nous contactant via la page Contact.",
+    },
+  ],
+};
+
 export const navigation = [
   { name: "Accueil", path: "/" },
   { name: "Visite", path: "/visite" },

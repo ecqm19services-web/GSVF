@@ -5,11 +5,13 @@ const APPWRITE_PROJECT_ID = process.env.APPWRITE_PROJECT_ID;
 const APPWRITE_API_KEY = process.env.APPWRITE_API_KEY;
 const DATABASE_ID = process.env.APPWRITE_DATABASE_ID || 'school_db';
 
+const SITE_PAGES_COLLECTION_ID = process.env.APPWRITE_SITE_PAGES_COLLECTION_ID || 'site_pages';
+
 const COLLECTIONS = {
   CONTACTS: 'contact_submissions',
   ADMISSIONS: 'admission_submissions',
   STATUS_HISTORY: 'status_history',
-  SITE_PAGES: 'site_pages',
+  SITE_PAGES: SITE_PAGES_COLLECTION_ID,
 };
 
 function getDatabases() {

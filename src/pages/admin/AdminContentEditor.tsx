@@ -1,9 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
-import { pageNames, getContentFilePath, renderMarkdownToHtml } from '@/lib/content';
-import { fetchPageContent, publishPageContent, type PageContentKind } from '@/lib/pageContentApi';
-import { programmesContent, admissionsContent } from '@/data/content';
+import { fetchPageContent, publishPageContent } from '@/lib/pageContentApi';
+import {
+  homeContent,
+  visiteContent,
+  visionContent,
+  histoireContent,
+  excellenceContent,
+  contactContent,
+  mentionsLegalesContent,
+  confidentialiteContent,
+  programmesContent,
+  admissionsContent,
+} from '@/data/content';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -15,29 +25,58 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/components/ui/use-toast';
-import { FileText, LogOut, Settings } from 'lucide-react';
+import { FileText, LogOut, Monitor, Settings } from 'lucide-react';
 
 type Source = 'published' | 'local' | 'empty';
 
-function defaultKindForPage(page: string): PageContentKind {
-  if (page === 'programmes' || page === 'admissions') return 'json';
-  return 'markdown';
-}
-
 function getDefaultJsonPayload(page: string): string {
-  if (page === 'programmes') return JSON.stringify(programmesContent, null, 2);
-  if (page === 'admissions') return JSON.stringify(admissionsContent, null, 2);
-  return JSON.stringify({}, null, 2);
+  switch (page) {
+    case 'accueil':
+      return JSON.stringify(homeContent, null, 2);
+    case 'visite':
+      return JSON.stringify(visiteContent, null, 2);
+    case 'vision':
+      return JSON.stringify(visionContent, null, 2);
+    case 'histoire':
+      return JSON.stringify(histoireContent, null, 2);
+    case 'excellence':
+      return JSON.stringify(excellenceContent, null, 2);
+    case 'contact':
+      return JSON.stringify(contactContent, null, 2);
+    case 'mentions-legales':
+      return JSON.stringify(mentionsLegalesContent, null, 2);
+    case 'confidentialite':
+      return JSON.stringify(confidentialiteContent, null, 2);
+    case 'programmes':
+      return JSON.stringify(programmesContent, null, 2);
+    case 'admissions':
+      return JSON.stringify(admissionsContent, null, 2);
+    default:
+      return JSON.stringify({}, null, 2);
+  }
 }
 
 const AdminContentEditor: React.FC = () => {
   const { isAuthenticated, isLoading: authLoading, logout, token } = useAdminAuth();
   const navigate = useNavigate();
 
-  const allPages = useMemo(() => pageNames, []);
+  const allPages = useMemo(
+    () => [
+      'accueil',
+      'visite',
+      'vision',
+      'histoire',
+      'excellence',
+      'contact',
+      'mentions-legales',
+      'confidentialite',
+      'programmes',
+      'admissions',
+    ],
+    []
+  );
 
   const [page, setPage] = useState<string>(allPages[0] || 'accueil');
-  const [kind, setKind] = useState<PageContentKind>(defaultKindForPage(allPages[0] || 'accueil'));
   const [payload, setPayload] = useState<string>('');
   const [source, setSource] = useState<Source>('empty');
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -59,55 +98,19 @@ const AdminContentEditor: React.FC = () => {
         const published = await fetchPageContent(page);
         if (published && published.kind && typeof published.payload === 'string') {
           if (isMounted) {
-            setKind(published.kind);
             setPayload(published.payload);
             setSource('published');
           }
           return;
         }
 
-        const defaultKind = defaultKindForPage(page);
-
-        if (defaultKind === 'json') {
-          if (isMounted) {
-            setKind('json');
-            setPayload(getDefaultJsonPayload(page));
-            setSource('local');
-          }
-          return;
-        }
-
-        const filePath = getContentFilePath(page);
-        if (!filePath) {
-          if (isMounted) {
-            setKind('markdown');
-            setPayload('');
-            setSource('empty');
-          }
-          return;
-        }
-
-        const res = await fetch(filePath);
-        if (!res.ok) {
-          if (isMounted) {
-            setKind('markdown');
-            setPayload('');
-            setSource('empty');
-          }
-          return;
-        }
-
-        const text = await res.text();
         if (isMounted) {
-          setKind('markdown');
-          setPayload(text);
+          setPayload(getDefaultJsonPayload(page));
           setSource('local');
         }
       } catch {
         if (isMounted) {
-          const defaultKind = defaultKindForPage(page);
-          setKind(defaultKind);
-          setPayload(defaultKind === 'json' ? getDefaultJsonPayload(page) : '');
+          setPayload(getDefaultJsonPayload(page));
           setSource('empty');
         }
       } finally {
@@ -122,34 +125,23 @@ const AdminContentEditor: React.FC = () => {
     };
   }, [page]);
 
-  const previewHtml = useMemo(() => {
-    if (kind !== 'markdown') return '';
-    try {
-      return renderMarkdownToHtml(page, payload);
-    } catch {
-      return '';
-    }
-  }, [kind, page, payload]);
-
   const canPublish = useMemo(() => {
     if (!token) return false;
     if (!payload.trim()) return false;
-    if (kind === 'json') {
-      try {
-        JSON.parse(payload);
-      } catch {
-        return false;
-      }
+    try {
+      JSON.parse(payload);
+    } catch {
+      return false;
     }
     return true;
-  }, [kind, payload, token]);
+  }, [payload, token]);
 
   const onPublish = async () => {
     if (!token) return;
 
     setIsPublishing(true);
     try {
-      await publishPageContent(token, page, kind, payload);
+      await publishPageContent(token, page, 'json', payload);
       setSource('published');
       toast({
         title: 'Publié',
@@ -199,6 +191,14 @@ const AdminContentEditor: React.FC = () => {
             <FileText className="w-5 h-5" />
             Contenu du site
           </div>
+
+          <Link
+            to="/ecqm19-admin/visual"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-orange-200 hover:text-white"
+          >
+            <Monitor className="w-5 h-5" />
+            Éditeur visuel
+          </Link>
         </nav>
 
         <div className="absolute bottom-6 left-6 right-6">
@@ -247,19 +247,6 @@ const AdminContentEditor: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
-
-                <div>
-                  <Label className="mb-2 block">Type</Label>
-                  <Select value={kind} onValueChange={(v) => setKind(v as PageContentKind)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="markdown">markdown</SelectItem>
-                      <SelectItem value="json">json</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
               </div>
 
               <div>
@@ -270,32 +257,18 @@ const AdminContentEditor: React.FC = () => {
                   className="min-h-[420px] font-mono"
                   disabled={isLoading}
                 />
-                {kind === 'json' && (
-                  <div className="mt-2 text-xs text-gray-500">
-                    Le JSON doit être valide pour publier.
-                  </div>
-                )}
+                <div className="mt-2 text-xs text-gray-500">Le JSON doit être valide pour publier.</div>
               </div>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Aperçu</h3>
-                {kind === 'markdown' && (
-                  <div className="text-xs text-gray-500">HTML rendu</div>
-                )}
               </div>
 
-              {kind === 'markdown' ? (
-                <div
-                  className="prose prose-lg prose-orange max-w-none"
-                  dangerouslySetInnerHTML={{ __html: previewHtml }}
-                />
-              ) : (
-                <pre className="text-xs text-gray-700 whitespace-pre-wrap break-words bg-gray-50 border border-gray-200 rounded-xl p-4">
-                  {payload}
-                </pre>
-              )}
+              <pre className="text-xs text-gray-700 whitespace-pre-wrap break-words bg-gray-50 border border-gray-200 rounded-xl p-4">
+                {payload}
+              </pre>
             </div>
           </div>
         </div>

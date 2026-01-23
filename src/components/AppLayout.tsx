@@ -1,10 +1,16 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
-import ContactForm from '@/components/forms/ContactForm';
-import MarkdownPage from '@/components/pages/MarkdownPage';
+import HomeContent from '@/components/pages/HomeContent';
+import VisionContent from '@/components/pages/VisionContent';
+import HistoireContent from '@/components/pages/HistoireContent';
 import ProgrammesContent from '@/components/pages/ProgrammesContent';
+import ExcellenceContent from '@/components/pages/ExcellenceContent';
+import VisiteContent from '@/components/pages/VisiteContent';
 import AdmissionsContent from '@/components/pages/AdmissionsContent';
+import ContactContent from '@/components/pages/ContactContent';
+import MentionsLegalesContent from '@/components/pages/MentionsLegalesContent';
+import ConfidentialiteContent from '@/components/pages/ConfidentialiteContent';
 import NotFound from '@/pages/NotFound';
 
 const AppLayout: React.FC = () => {
@@ -13,38 +19,27 @@ const AppLayout: React.FC = () => {
   const renderPage = () => {
     switch (location.pathname) {
       case '/':
-        return <MarkdownPage pageName="accueil" />;
+        return <HomeContent />;
       case '/vision':
-        return <MarkdownPage pageName="vision" />;
+        return <VisionContent />;
       case '/histoire':
-        return <MarkdownPage pageName="histoire" />;
+        return <HistoireContent />;
       case '/programmes':
         return <ProgrammesContent />;
       case '/excellence':
-        return <MarkdownPage pageName="excellence" />;
+        return <ExcellenceContent />;
       case '/visite':
-        return <MarkdownPage pageName="visite" />;
+        return <VisiteContent />;
       case '/admissions':
         return <AdmissionsContent />;
       case '/contact':
-        return (
-          <>
-            <MarkdownPage pageName="contact" />
-            <section className="py-20 bg-gray-50">
-              <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="bg-white rounded-2xl p-8 shadow-sm">
-                  <ContactForm />
-                </div>
-              </div>
-            </section>
-          </>
-        );
+        return <ContactContent />;
 
       case '/mentions-legales':
-        return <MarkdownPage pageName="mentions-legales" />;
+        return <MentionsLegalesContent />;
 
       case '/confidentialite':
-        return <MarkdownPage pageName="confidentialite" />;
+        return <ConfidentialiteContent />;
 
       default:
         return <NotFound />;

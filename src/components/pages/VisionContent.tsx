@@ -2,6 +2,8 @@ import React from 'react';
 import Hero from '@/components/ui/Hero';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { visionContent } from '@/data/content';
+import { usePageJsonContent } from '@/hooks/usePageJsonContent';
+import EditableText from '@/components/admin/EditableText';
 import { 
   Star, 
   Shield, 
@@ -26,13 +28,16 @@ const iconMap: Record<string, LucideIcon> = {
   target: Target
 };
 
+type VisionData = typeof visionContent;
+
 const VisionContent: React.FC = () => {
+  const { value: data } = usePageJsonContent<VisionData>('vision', visionContent);
   return (
     <>
       <Hero
-        title={visionContent.hero.title}
-        subtitle={visionContent.hero.subtitle}
-        description={visionContent.hero.description}
+        title={data.hero.title}
+        subtitle={data.hero.subtitle}
+        description={data.hero.description}
         size="medium"
       />
 
@@ -45,12 +50,19 @@ const VisionContent: React.FC = () => {
               <div className="w-16 h-16 bg-blue-800 rounded-2xl flex items-center justify-center mb-6">
                 <Eye className="w-8 h-8 text-white" />
               </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                {visionContent.vision.title}
-              </h2>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                {visionContent.vision.content}
-              </p>
+              <EditableText
+                as="h2"
+                path="vision.title"
+                value={data.vision.title}
+                className="text-3xl font-bold text-gray-900 mb-4"
+              />
+              <EditableText
+                as="p"
+                multiline
+                path="vision.content"
+                value={data.vision.content}
+                className="text-lg text-gray-700 leading-relaxed"
+              />
             </div>
 
             {/* Mission */}
@@ -58,12 +70,19 @@ const VisionContent: React.FC = () => {
               <div className="w-16 h-16 bg-amber-600 rounded-2xl flex items-center justify-center mb-6">
                 <Compass className="w-8 h-8 text-white" />
               </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                {visionContent.mission.title}
-              </h2>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                {visionContent.mission.content}
-              </p>
+              <EditableText
+                as="h2"
+                path="mission.title"
+                value={data.mission.title}
+                className="text-3xl font-bold text-gray-900 mb-4"
+              />
+              <EditableText
+                as="p"
+                multiline
+                path="mission.content"
+                value={data.mission.content}
+                className="text-lg text-gray-700 leading-relaxed"
+              />
             </div>
           </div>
         </div>
@@ -79,7 +98,7 @@ const VisionContent: React.FC = () => {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {visionContent.values.map((value, index) => {
+            {data.values.map((value, index) => {
               const Icon = iconMap[value.icon] || Star;
               const colors = [
                 'from-blue-600 to-blue-800',
@@ -97,8 +116,19 @@ const VisionContent: React.FC = () => {
                   <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${colors[index % colors.length]} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                     <Icon className="w-7 h-7 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{value.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{value.description}</p>
+                  <EditableText
+                    as="h3"
+                    path={`values.${index}.title`}
+                    value={value.title}
+                    className="text-xl font-bold text-gray-900 mb-3"
+                  />
+                  <EditableText
+                    as="p"
+                    multiline
+                    path={`values.${index}.description`}
+                    value={value.description}
+                    className="text-gray-600 leading-relaxed"
+                  />
                 </div>
               );
             })}
@@ -114,18 +144,21 @@ const VisionContent: React.FC = () => {
               <span className="inline-block px-4 py-1.5 bg-white/10 text-blue-200 rounded-full text-sm font-semibold mb-6">
                 Notre engagement
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                {visionContent.commitment.title}
-              </h2>
+              <EditableText
+                as="h2"
+                path="commitment.title"
+                value={data.commitment.title}
+                className="text-3xl md:text-4xl font-bold text-white mb-6"
+              />
               <p className="text-lg text-blue-100 mb-8 leading-relaxed">
                 Nous nous engageons chaque jour à offrir le meilleur environnement d'apprentissage 
                 pour le développement académique et personnel de chaque élève.
               </p>
               <ul className="space-y-4">
-                {visionContent.commitment.points.map((point, index) => (
+                {data.commitment.points.map((point, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <CheckCircle className="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-white">{point}</span>
+                    <EditableText as="span" path={`commitment.points.${index}`} value={point} className="text-white" />
                   </li>
                 ))}
               </ul>

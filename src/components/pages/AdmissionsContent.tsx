@@ -4,6 +4,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import AdmissionsForm from '@/components/forms/AdmissionsForm';
 import { admissionsContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
+import EditableText from '@/components/admin/EditableText';
 import { FileText, Calendar, CheckCircle, Info, ArrowRight, Phone, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -14,7 +15,13 @@ const AdmissionsContent: React.FC = () => {
       <Hero title={admissionsData.hero.title} subtitle={admissionsData.hero.subtitle} description={admissionsData.hero.description} size="medium" />
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-xl text-gray-700 leading-relaxed text-center">{admissionsData.intro}</p>
+          <EditableText
+            as="p"
+            multiline
+            path="intro"
+            value={admissionsData.intro}
+            className="text-xl text-gray-700 leading-relaxed text-center"
+          />
         </div>
       </section>
       <section className="py-20 bg-gray-50">

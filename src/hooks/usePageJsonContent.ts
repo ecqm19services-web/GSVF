@@ -1,15 +1,25 @@
 import { useEffect, useState } from 'react';
 import { fetchPageContent } from '@/lib/pageContentApi';
+import { usePageJsonOverride } from '@/contexts/PageJsonOverrideContext';
 
 type Source = 'published' | 'fallback';
 
 export function usePageJsonContent<T>(page: string, fallback: T) {
+  const override = usePageJsonOverride<T>(page);
   const [value, setValue] = useState<T>(fallback);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [source, setSource] = useState<Source>('fallback');
 
   useEffect(() => {
+    if (override) {
+      setValue(override);
+      setSource('fallback');
+      setError(null);
+      setIsLoading(false);
+      return;
+    }
+
     let isMounted = true;
 
     const run = async () => {
@@ -47,7 +57,7 @@ export function usePageJsonContent<T>(page: string, fallback: T) {
     return () => {
       isMounted = false;
     };
-  }, [page, fallback]);
+  }, [page, fallback, override]);
 
   return { value, isLoading, error, source };
 }

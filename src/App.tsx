@@ -10,6 +10,7 @@ import SuiviPage from "./pages/SuiviPage";
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminContentEditor from "./pages/admin/AdminContentEditor";
+import AdminVisualEditor from "./pages/admin/AdminVisualEditor";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/ecqm19-admin" element={<AdminLoginPage />} />
             <Route path="/ecqm19-admin/dashboard" element={<AdminDashboard />} />
             <Route path="/ecqm19-admin/content" element={<AdminContentEditor />} />
+            <Route path="/ecqm19-admin/visual" element={<AdminVisualEditor />} />
             <Route path="/*" element={<Index />} />
           </Routes>
         </BrowserRouter>

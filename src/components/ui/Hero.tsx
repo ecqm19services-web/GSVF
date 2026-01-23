@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Play } from 'lucide-react';
+import EditableText from '@/components/admin/EditableText';
+import { useEditSession } from '@/contexts/EditSessionContext';
 
 interface HeroProps {
   title: string;
@@ -31,6 +33,9 @@ const Hero: React.FC<HeroProps> = ({
   size = 'large',
   align = 'center'
 }) => {
+  const editSession = useEditSession<Record<string, unknown> | unknown[]>();
+  const isEditing = !!editSession?.isEditing;
+
   const sizeClasses = {
     small: 'py-16 md:py-24',
     medium: 'py-24 md:py-32',
@@ -62,18 +67,41 @@ const Hero: React.FC<HeroProps> = ({
           {subtitle && (
             <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-orange-200 text-sm font-medium mb-6">
               <span className="w-2 h-2 bg-orange-400 rounded-full animate-pulse" />
-              {subtitle}
+              {isEditing ? (
+                <EditableText as="span" path="hero.subtitle" value={subtitle} />
+              ) : (
+                subtitle
+              )}
             </span>
           )}
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-            {title}
-          </h1>
+          {isEditing ? (
+            <EditableText
+              as="h1"
+              path="hero.title"
+              value={title}
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
+            />
+          ) : (
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+              {title}
+            </h1>
+          )}
           
           {description && (
-            <p className="text-lg md:text-xl text-orange-100 mb-10 max-w-2xl leading-relaxed">
-              {description}
-            </p>
+            isEditing ? (
+              <EditableText
+                as="p"
+                multiline
+                path="hero.description"
+                value={description}
+                className="text-lg md:text-xl text-orange-100 mb-10 max-w-2xl leading-relaxed"
+              />
+            ) : (
+              <p className="text-lg md:text-xl text-orange-100 mb-10 max-w-2xl leading-relaxed">
+                {description}
+              </p>
+            )
           )}
           
           {(ctaPrimary || ctaSecondary) && (

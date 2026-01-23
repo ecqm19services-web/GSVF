@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import Hero from '@/components/ui/Hero';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { homeContent } from '@/data/content';
+import { usePageJsonContent } from '@/hooks/usePageJsonContent';
+import EditableText from '@/components/admin/EditableText';
 import { 
   GraduationCap, 
   Building2, 
@@ -26,16 +28,19 @@ const iconMap: Record<string, LucideIcon> = {
   globe: Globe
 };
 
+type HomeData = typeof homeContent;
+
 const HomeContent: React.FC = () => {
+  const { value: homeData } = usePageJsonContent<HomeData>('accueil', homeContent);
   return (
     <>
       {/* Hero Section */}
       <Hero
-        title={homeContent.hero.title}
-        subtitle="Excellence éducative depuis 1998"
-        description={homeContent.hero.description}
-        ctaPrimary={{ text: homeContent.hero.ctaPrimary, link: '/programmes' }}
-        ctaSecondary={{ text: homeContent.hero.ctaSecondary, link: '/visite' }}
+        title={homeData.hero.title}
+        subtitle={homeData.hero.subtitle || 'Excellence éducative depuis 1998'}
+        description={homeData.hero.description}
+        ctaPrimary={{ text: homeData.hero.ctaPrimary, link: '/programmes' }}
+        ctaSecondary={{ text: homeData.hero.ctaSecondary, link: '/visite' }}
         size="large"
       />
 
@@ -43,15 +48,23 @@ const HomeContent: React.FC = () => {
       <section className="py-16 bg-white relative -mt-8 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {homeContent.stats.map((stat, index) => (
+            {homeData.stats.map((stat, index) => (
               <div 
                 key={index}
                 className="bg-white rounded-2xl p-6 text-center shadow-lg border border-gray-100 hover:shadow-xl transition-shadow"
               >
-                <div className="text-4xl md:text-5xl font-bold text-blue-800 mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
+                <EditableText
+                  as="div"
+                  path={`stats.${index}.value`}
+                  value={stat.value}
+                  className="text-4xl md:text-5xl font-bold text-blue-800 mb-2"
+                />
+                <EditableText
+                  as="div"
+                  path={`stats.${index}.label`}
+                  value={stat.label}
+                  className="text-gray-600 font-medium"
+                />
               </div>
             ))}
           </div>
@@ -68,7 +81,7 @@ const HomeContent: React.FC = () => {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {homeContent.features.map((feature, index) => {
+            {homeData.features.map((feature, index) => {
               const Icon = iconMap[feature.icon] || GraduationCap;
               return (
                 <div 
@@ -78,8 +91,19 @@ const HomeContent: React.FC = () => {
                   <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-800 transition-colors">
                     <Icon className="w-7 h-7 text-blue-800 group-hover:text-white transition-colors" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                  <EditableText
+                    as="h3"
+                    path={`features.${index}.title`}
+                    value={feature.title}
+                    className="text-xl font-bold text-gray-900 mb-3"
+                  />
+                  <EditableText
+                    as="p"
+                    multiline
+                    path={`features.${index}.description`}
+                    value={feature.description}
+                    className="text-gray-600 leading-relaxed"
+                  />
                 </div>
               );
             })}
@@ -204,19 +228,38 @@ const HomeContent: React.FC = () => {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {homeContent.testimonials.map((testimonial, index) => (
+            {homeData.testimonials.map((testimonial, index) => (
               <div 
                 key={index}
                 className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow"
               >
                 <Quote className="w-10 h-10 text-blue-200 mb-4" />
-                <p className="text-gray-700 mb-6 leading-relaxed italic">
-                  "{testimonial.quote}"
-                </p>
+                <EditableText
+                  as="p"
+                  multiline
+                  path={`testimonials.${index}.quote`}
+                  value={testimonial.quote}
+                  className="text-gray-700 mb-6 leading-relaxed italic"
+                />
                 <div className="border-t border-gray-100 pt-6">
-                  <div className="font-semibold text-gray-900">{testimonial.author}</div>
-                  <div className="text-sm text-gray-500">{testimonial.role}</div>
-                  <div className="text-sm text-blue-800 font-medium mt-1">{testimonial.achievement}</div>
+                  <EditableText
+                    as="div"
+                    path={`testimonials.${index}.author`}
+                    value={testimonial.author}
+                    className="font-semibold text-gray-900"
+                  />
+                  <EditableText
+                    as="div"
+                    path={`testimonials.${index}.role`}
+                    value={testimonial.role}
+                    className="text-sm text-gray-500"
+                  />
+                  <EditableText
+                    as="div"
+                    path={`testimonials.${index}.achievement`}
+                    value={testimonial.achievement}
+                    className="text-sm text-blue-800 font-medium mt-1"
+                  />
                 </div>
               </div>
             ))}
@@ -234,7 +277,7 @@ const HomeContent: React.FC = () => {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {homeContent.news.map((item, index) => (
+            {homeData.news.map((item, index) => (
               <article 
                 key={index}
                 className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow border border-gray-100 group"
@@ -245,11 +288,25 @@ const HomeContent: React.FC = () => {
                   </div>
                 </div>
                 <div className="p-6">
-                  <div className="text-sm text-blue-800 font-medium mb-2">{item.date}</div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-800 transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4">{item.excerpt}</p>
+                  <EditableText
+                    as="div"
+                    path={`news.${index}.date`}
+                    value={item.date}
+                    className="text-sm text-blue-800 font-medium mb-2"
+                  />
+                  <EditableText
+                    as="h3"
+                    path={`news.${index}.title`}
+                    value={item.title}
+                    className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-800 transition-colors"
+                  />
+                  <EditableText
+                    as="p"
+                    multiline
+                    path={`news.${index}.excerpt`}
+                    value={item.excerpt}
+                    className="text-gray-600 mb-4"
+                  />
                   <button className="inline-flex items-center text-blue-800 font-medium hover:text-blue-700">
                     Lire la suite
                     <ChevronRight className="w-4 h-4 ml-1" />

@@ -1,6 +1,8 @@
 import React from 'react';
 import Hero from '@/components/ui/Hero';
 import { histoireContent } from '@/data/content';
+import { usePageJsonContent } from '@/hooks/usePageJsonContent';
+import EditableText from '@/components/admin/EditableText';
 import { 
   Star,
   ArrowRight,
@@ -9,22 +11,29 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+type HistoireData = typeof histoireContent;
+
 const HistoireContent: React.FC = () => {
+  const { value: data } = usePageJsonContent<HistoireData>('histoire', histoireContent);
   return (
     <>
       <Hero
-        title={histoireContent.hero.title}
-        subtitle={histoireContent.hero.subtitle}
-        description={histoireContent.hero.description}
+        title={data.hero.title}
+        subtitle={data.hero.subtitle}
+        description={data.hero.description}
         size="medium"
       />
 
       {/* Introduction */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-xl text-gray-700 leading-relaxed text-center">
-            {histoireContent.intro}
-          </p>
+          <EditableText
+            as="p"
+            multiline
+            path="intro"
+            value={data.intro}
+            className="text-xl text-gray-700 leading-relaxed text-center"
+          />
         </div>
       </section>
 
@@ -41,7 +50,7 @@ const HistoireContent: React.FC = () => {
 
             {/* Timeline Items */}
             <div className="space-y-12">
-              {histoireContent.timeline.map((item, index) => (
+              {data.timeline.map((item, index) => (
                 <div 
                   key={index}
                   className={`relative flex items-center ${
@@ -54,13 +63,29 @@ const HistoireContent: React.FC = () => {
                       item.milestone ? 'border-2 border-blue-600' : 'border border-gray-100'
                     }`}>
                       <div className={`flex items-center gap-3 mb-3 ${index % 2 === 0 ? 'md:justify-end' : ''}`}>
-                        <span className="text-2xl font-bold text-blue-800">{item.year}</span>
+                        <EditableText
+                          as="span"
+                          path={`timeline.${index}.year`}
+                          value={item.year}
+                          className="text-2xl font-bold text-blue-800"
+                        />
                         {item.milestone && (
                           <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
                         )}
                       </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                      <p className="text-gray-600">{item.description}</p>
+                      <EditableText
+                        as="h3"
+                        path={`timeline.${index}.title`}
+                        value={item.title}
+                        className="text-xl font-bold text-gray-900 mb-2"
+                      />
+                      <EditableText
+                        as="p"
+                        multiline
+                        path={`timeline.${index}.description`}
+                        value={item.description}
+                        className="text-gray-600"
+                      />
                     </div>
                   </div>
 
@@ -91,7 +116,7 @@ const HistoireContent: React.FC = () => {
           </p>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {histoireContent.founders.map((founder, index) => (
+            {data.founders.map((founder, index) => (
               <div 
                 key={index}
                 className="bg-gray-50 rounded-2xl p-8 flex flex-col items-center text-center"
@@ -99,9 +124,25 @@ const HistoireContent: React.FC = () => {
                 <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center mb-6">
                   <User className="w-12 h-12 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">{founder.name}</h3>
-                <p className="text-blue-800 font-medium mb-4">{founder.role}</p>
-                <p className="text-gray-600">{founder.bio}</p>
+                <EditableText
+                  as="h3"
+                  path={`founders.${index}.name`}
+                  value={founder.name}
+                  className="text-xl font-bold text-gray-900 mb-1"
+                />
+                <EditableText
+                  as="p"
+                  path={`founders.${index}.role`}
+                  value={founder.role}
+                  className="text-blue-800 font-medium mb-4"
+                />
+                <EditableText
+                  as="p"
+                  multiline
+                  path={`founders.${index}.bio`}
+                  value={founder.bio}
+                  className="text-gray-600"
+                />
               </div>
             ))}
           </div>

@@ -1,4 +1,6 @@
 import React from 'react';
+import EditableText from '@/components/admin/EditableText';
+import { useEditSession } from '@/contexts/EditSessionContext';
 
 interface SectionTitleProps {
   title: string;
@@ -6,6 +8,9 @@ interface SectionTitleProps {
   description?: string;
   align?: 'left' | 'center';
   light?: boolean;
+  titlePath?: string;
+  subtitlePath?: string;
+  descriptionPath?: string;
 }
 
 const SectionTitle: React.FC<SectionTitleProps> = ({
@@ -13,8 +18,14 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
   subtitle,
   description,
   align = 'center',
-  light = false
+  light = false,
+  titlePath,
+  subtitlePath,
+  descriptionPath
 }) => {
+  const editSession = useEditSession<Record<string, unknown> | unknown[]>();
+  const isEditing = !!editSession?.isEditing;
+
   const alignClasses = {
     left: 'text-left',
     center: 'text-center mx-auto'
@@ -28,20 +39,39 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
             ? 'bg-white/10 text-orange-200' 
             : 'bg-orange-100 text-orange-800'
         }`}>
-          {subtitle}
+          {isEditing && subtitlePath ? (
+            <EditableText as="span" path={subtitlePath} value={subtitle} />
+          ) : (
+            subtitle
+          )}
         </span>
       )}
-      <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${
-        light ? 'text-white' : 'text-gray-900'
-      }`}>
-        {title}
-      </h2>
+      {isEditing && titlePath ? (
+        <EditableText
+          as="h2"
+          path={titlePath}
+          value={title}
+          className={`text-3xl md:text-4xl font-bold mb-4 ${light ? 'text-white' : 'text-gray-900'}`}
+        />
+      ) : (
+        <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${light ? 'text-white' : 'text-gray-900'}`}>
+          {title}
+        </h2>
+      )}
       {description && (
-        <p className={`text-lg ${
-          light ? 'text-orange-100' : 'text-gray-600'
-        }`}>
-          {description}
-        </p>
+        isEditing && descriptionPath ? (
+          <EditableText
+            as="p"
+            multiline
+            path={descriptionPath}
+            value={description}
+            className={`text-lg ${light ? 'text-orange-100' : 'text-gray-600'}`}
+          />
+        ) : (
+          <p className={`text-lg ${light ? 'text-orange-100' : 'text-gray-600'}`}>
+            {description}
+          </p>
+        )
       )}
     </div>
   );

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Hero from '@/components/ui/Hero';
 import { visiteContent } from '@/data/content';
+import { usePageJsonContent } from '@/hooks/usePageJsonContent';
+import EditableText from '@/components/admin/EditableText';
 import { 
   X, 
   ChevronLeft, 
@@ -11,7 +13,10 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+type VisiteData = typeof visiteContent;
+
 const VisiteContent: React.FC = () => {
+  const { value: data } = usePageJsonContent<VisiteData>('visite', visiteContent);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
   const [currentImage, setCurrentImage] = useState(0);
@@ -27,10 +32,11 @@ const VisiteContent: React.FC = () => {
   };
 
   const nextImage = () => {
-    const section = visiteContent.sections[currentSection];
+    const section = data.sections[currentSection];
+    if (!section) return;
     if (currentImage < section.images.length - 1) {
       setCurrentImage(prev => prev + 1);
-    } else if (currentSection < visiteContent.sections.length - 1) {
+    } else if (currentSection < data.sections.length - 1) {
       setCurrentSection(prev => prev + 1);
       setCurrentImage(0);
     }
@@ -41,16 +47,16 @@ const VisiteContent: React.FC = () => {
       setCurrentImage(prev => prev - 1);
     } else if (currentSection > 0) {
       setCurrentSection(prev => prev - 1);
-      setCurrentImage(visiteContent.sections[currentSection - 1].images.length - 1);
+      setCurrentImage(data.sections[currentSection - 1].images.length - 1);
     }
   };
 
   return (
     <>
       <Hero
-        title={visiteContent.hero.title}
-        subtitle={visiteContent.hero.subtitle}
-        description={visiteContent.hero.description}
+        title={data.hero.title}
+        subtitle={data.hero.subtitle}
+        description={data.hero.description}
         size="medium"
       />
 
@@ -58,13 +64,13 @@ const VisiteContent: React.FC = () => {
       <section className="py-8 bg-white sticky top-20 z-30 border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            {visiteContent.sections.map((section) => (
+            {data.sections.map((section, index) => (
               <a
                 key={section.id}
                 href={`#${section.id}`}
                 className="flex-shrink-0 px-5 py-2.5 rounded-full bg-gray-100 text-gray-700 font-medium hover:bg-blue-100 hover:text-blue-700 transition-colors whitespace-nowrap"
               >
-                {section.title}
+                <EditableText as="span" path={`sections.${index}.title`} value={section.title} />
               </a>
             ))}
           </div>
@@ -72,7 +78,7 @@ const VisiteContent: React.FC = () => {
       </section>
 
       {/* Tour Sections */}
-      {visiteContent.sections.map((section, sectionIndex) => (
+      {data.sections.map((section, sectionIndex) => (
         <section 
           key={section.id}
           id={section.id}
@@ -93,11 +99,15 @@ const VisiteContent: React.FC = () => {
                   </span>
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                  {section.title}
+                  <EditableText as="span" path={`sections.${sectionIndex}.title`} value={section.title} />
                 </h2>
-                <p className="text-lg text-gray-600 leading-relaxed mb-8">
-                  {section.description}
-                </p>
+                <EditableText
+                  as="p"
+                  multiline
+                  path={`sections.${sectionIndex}.description`}
+                  value={section.description}
+                  className="text-lg text-gray-600 leading-relaxed mb-8"
+                />
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => openLightbox(sectionIndex, 0)}
@@ -134,7 +144,12 @@ const VisiteContent: React.FC = () => {
                       </div>
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-                      <p className="text-white text-sm font-medium">{image.caption}</p>
+                      <EditableText
+                        as="p"
+                        path={`sections.${sectionIndex}.images.${imageIndex}.caption`}
+                        value={image.caption}
+                        className="text-white text-sm font-medium"
+                      />
                     </div>
                   </button>
                 ))}
@@ -185,16 +200,16 @@ const VisiteContent: React.FC = () => {
               <div className="text-center">
                 <Camera className="w-20 h-20 text-blue-400 mx-auto mb-4" />
                 <p className="text-blue-200 text-lg">
-                  {visiteContent.sections[currentSection].images[currentImage].caption}
+                  {data.sections[currentSection].images[currentImage].caption}
                 </p>
               </div>
             </div>
             <div className="mt-4 text-center">
               <p className="text-white font-medium">
-                {visiteContent.sections[currentSection].title}
+                {data.sections[currentSection].title}
               </p>
               <p className="text-white/60 text-sm">
-                Image {currentImage + 1} sur {visiteContent.sections[currentSection].images.length}
+                Image {currentImage + 1} sur {data.sections[currentSection].images.length}
               </p>
             </div>
           </div>
