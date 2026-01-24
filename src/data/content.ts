@@ -747,6 +747,142 @@ export const admissionsContent = {
       { event: "Rentrée scolaire", date: "Septembre 2025" }
     ]
   },
+  infoSheet: {
+    title: "Fiche de renseignements",
+    subtitle: "Rentrée scolaire 2025 - 2026",
+    disclaimer: "NB : les montants ci-dessous sont indicatifs et peuvent évoluer. Veuillez contacter l'administration pour confirmation.",
+    servicesTitle: "Services",
+    services: [
+      "Infirmerie",
+      "Philosophie à partir de la classe de 2nde",
+      "Suivi avec psychologue",
+      "Informatique / Robotique",
+      "Allemand / Espagnol à partir de la 6ème"
+    ],
+    annexFees: {
+      title: "Frais annexes",
+      columns: ["6e à la 4e", "3e", "2nde / 1re", "Tle"],
+      rows: [
+        { label: "Tenue de sport", values: ["6 000", "6 000", "9 000", "9 000"] },
+        { label: "Tenue scolaire", values: ["12 000", "14 000", "14 000", "14 000"] },
+        { label: "Polo", values: ["7 000", "7 000", "7 000", "7 000"] },
+        { label: "Parquet marker (12)", values: ["6 000", "6 000", "6 000", "6 000"] },
+        { label: "Rame", values: ["6 000", "6 000", "6 000", "6 000"] },
+        { label: "Feuilles de copie", values: ["6 000", "6 000", "6 000", "6 000"] },
+        { label: "Frais d'examen / visite médicale", values: ["5 000", "9 000", "5 000", "12 000"] },
+        { label: "Photo", values: ["2 000", "2 000", "2 000", "2 000"] },
+        { label: "Assurance scolaire", values: ["1 000", "1 000", "1 000", "1 000"] },
+        { label: "Livre scolaire 6ème", values: ["2 000", "2 000", "2 000", "2 000"] },
+        { label: "Robotique", values: ["75 000", "75 000", "75 000", "75 000"] }
+      ],
+      totalLabel: "TOTAL",
+      totals: ["128 000", "132 000", "131 000", "138 000"]
+    },
+    transport: {
+      title: "Transport",
+      routes: [
+        {
+          label: "Les Cités / Rond point ANANI / Akissi Delta / Modeste",
+          amount: "60 000",
+          currency: "F",
+          period: "Trimestre"
+        },
+        {
+          label: "Grand Bassam Mossou / Gonzague-ville / Jean folly / Adjouffou",
+          amount: "75 000",
+          currency: "F",
+          period: "Trimestre"
+        },
+        {
+          label: "Port Bouet / Palmier / Autoroute / Cité la Paix / et autres destinations",
+          amount: "90 000",
+          currency: "F",
+          period: "Trimestre"
+        }
+      ],
+      canteen: {
+        label: "Cantine",
+        amount: "60 000",
+        currency: "FCFA",
+        period: "Trimestre"
+      },
+      notes: [
+        "Test d'entrée obligatoire pour les classes de 5e, 4e, 3e, 2nde, 1ère et Tle.",
+        "Reçu d'inscription en ligne obligatoire à l'inscription.",
+        "Pas de réduction pour affectés de l'État."
+      ]
+    },
+    tuition: {
+      title: "Écolage",
+      columns: [
+        "6ème à la 3ème (Affectés)",
+        "6ème à la 3ème (Non affectés)",
+        "2nde à la Tle (Affectés)",
+        "2nde à la Tle (Non affectés)"
+      ],
+      rows: [
+        { label: "Écolage", values: ["200 000", "350 000", "250 000", "400 000"] },
+        { label: "Inscription", values: ["100 000", "200 000", "150 000", "200 000"] },
+        { label: "Septembre", values: ["40 000", "30 000", "25 000", "40 000"] },
+        { label: "Octobre", values: ["20 000", "30 000", "25 000", "40 000"] },
+        { label: "Novembre", values: ["20 000", "30 000", "25 000", "40 000"] },
+        { label: "Décembre", values: ["20 000", "30 000", "25 000", "40 000"] },
+        { label: "Janvier", values: ["", "30 000", "25 000", "40 000"] }
+      ],
+      note: "NB : Prévoir 100 FCFA de timbre fiscal pour tout versement à effectuer (obligatoire)."
+    },
+    extracurricular: {
+      title: "Activité extrascolaire",
+      membership: "Adhésion : 10 000 F",
+      quarterly: "15 000 F / trimestre",
+      activities: ["TAEKWONDO", "ESCRIME", "KUNG FU"],
+      music: "Cours de musique (gratuit pour le collège)",
+      facility: "Salle équipée"
+    },
+    uniforms: {
+      title: "Tenues scolaires",
+      girlsTitle: "Filles",
+      girls: [
+        "Chemises blanches, manches courtes",
+        "Jupe bleue marine, avec fentes",
+        "Cheveux courts, pas de tissage",
+        "Ni de perruques, ni de tresses",
+        "Chaussures fermées"
+      ],
+      boysTitle: "Garçons",
+      boys: [
+        "Pantalon bleu marine avec chemise manches courtes",
+        "Cheveux courts",
+        "Chaussures fermées"
+      ]
+    },
+    registrationFile: {
+      title: "Dossier à fournir à l'inscription",
+      sections: [
+        {
+          title: "Pour les élèves de la Sixième (6e) à la Quatrième (4e)",
+          items: [
+            "1 extrait d'acte de naissance (copie originale)",
+            "1 relevé de note obtenue à l'entrée en 6e (collante) pour les élèves de 6e",
+            "Le dernier bulletin de l'année scolaire 2024-2025 (pour les élèves de la 5e et de la 4e)",
+            "1 livret scolaire de la 5e et de la 4e"
+          ]
+        },
+        {
+          title: "Pour les élèves de la 3e et Tle",
+          items: [
+            "2 copies d'acte de naissance (copie originale)",
+            "Candidats de plus de 16 ans en 2025 : 1 CNI (Carte Nationale d'identité) - Ivoirien + CMU",
+            "Candidats de plus de 16 ans en 2025 : 1 Carte Consulaire - Non Ivoirien + CMU"
+          ]
+        }
+      ],
+      notes: [
+        "Pas d'admission en classe pour tout dossier incomplet.",
+        "NB : ces pièces doivent être remises à la Direction de l'école, à l'inscription (obligatoire)."
+      ]
+    }
+  },
   ui: {
     processSection: {
       subtitle: "Processus",
