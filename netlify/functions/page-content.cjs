@@ -31,7 +31,14 @@ async function getPageDocument(db, page) {
     Query.equal('page', page),
     Query.limit(1),
   ]);
-  return (res.documents && res.documents[0]) || null;
+  const doc = (res.documents && res.documents[0]) || null;
+  if (!doc) return null;
+  // Normalize for clients that expect kind/payload
+  return {
+    ...doc,
+    kind: doc.kind || 'json',
+    payload: doc.payload || doc.content,
+  };
 }
 
 exports.handler = async (event, context) => {
@@ -74,20 +81,30 @@ exports.handler = async (event, context) => {
 
       const baseData = {
         page,
-        kind,
-        payload: rawPayload,
-        content: rawPayload, // support required "content" attribute in schema
+        content: rawPayload, // only fields present in schema
         updatedAt,
       };
 
       if (!existing) {
         const created = await db.createDocument(DATABASE_ID, COLLECTIONS.SITE_PAGES, ID.unique(), baseData);
-        return json(200, { document: created });
+        return json(200, {
+          document: {
+            ...created,
+            kind,
+            payload: rawPayload,
+          },
+        });
       }
 
       const updated = await db.updateDocument(DATABASE_ID, COLLECTIONS.SITE_PAGES, existing.$id, baseData);
 
-      return json(200, { document: updated });
+      return json(200, {
+        document: {
+          ...updated,
+          kind,
+          payload: rawPayload,
+        },
+      });
     } catch (error) {
       return json(500, { error: error.message || 'Internal error' });
     }
