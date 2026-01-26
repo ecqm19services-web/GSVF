@@ -72,21 +72,20 @@ exports.handler = async (event, context) => {
       const existing = await getPageDocument(db, page);
       const updatedAt = new Date().toISOString();
 
+      const baseData = {
+        page,
+        kind,
+        payload: rawPayload,
+        content: rawPayload, // support required "content" attribute in schema
+        updatedAt,
+      };
+
       if (!existing) {
-        const created = await db.createDocument(DATABASE_ID, COLLECTIONS.SITE_PAGES, ID.unique(), {
-          page,
-          kind,
-          payload: rawPayload,
-          updatedAt,
-        });
+        const created = await db.createDocument(DATABASE_ID, COLLECTIONS.SITE_PAGES, ID.unique(), baseData);
         return json(200, { document: created });
       }
 
-      const updated = await db.updateDocument(DATABASE_ID, COLLECTIONS.SITE_PAGES, existing.$id, {
-        kind,
-        payload: rawPayload,
-        updatedAt,
-      });
+      const updated = await db.updateDocument(DATABASE_ID, COLLECTIONS.SITE_PAGES, existing.$id, baseData);
 
       return json(200, { document: updated });
     } catch (error) {
