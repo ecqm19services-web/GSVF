@@ -77,12 +77,10 @@ exports.handler = async (event, context) => {
     try {
       const db = getDatabases();
       const existing = await getPageDocument(db, page);
-      const updatedAt = new Date().toISOString();
 
       const baseData = {
         page,
         content: rawPayload, // only fields present in schema
-        updatedAt,
       };
 
       if (!existing) {
