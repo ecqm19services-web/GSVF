@@ -148,24 +148,19 @@ VITE_ADMIN_PASSWORD=votre_mot_de_passe_admin
 
 ---
 
-## 6. Déploiement sur Netlify
+## 6. Déploiement sur Hostinger
 
-### Variables d'environnement Netlify
+### Build et upload
 
-Dans Netlify > Site settings > Environment variables, ajoutez :
-
-| Variable | Valeur |
-|----------|--------|
-| `VITE_APPWRITE_ENDPOINT` | `https://cloud.appwrite.io/v1` |
-| `VITE_APPWRITE_PROJECT_ID` | Votre Project ID |
-| `VITE_APPWRITE_DATABASE_ID` | `school_db` |
-| `VITE_ADMIN_PASSWORD` | Mot de passe admin |
+1. Lancez `npm run build` pour générer le dossier `dist/`
+2. Recréez les fichiers serveur dans `dist/` : `.htaccess`, `_secure/`, `api/page-content/`
+3. Uploadez le contenu de `dist/` sur Hostinger via le File Manager
 
 ### Configurer Appwrite pour la production
 
 Dans Appwrite Console > Settings > Platforms :
 
-1. Ajoutez votre domaine Netlify (ex: `votre-site.netlify.app`)
+1. Ajoutez votre domaine Hostinger (ex: `votre-domaine.com`)
 2. Ajoutez aussi `localhost` pour le développement
 
 ---
@@ -206,8 +201,8 @@ Le mot de passe par défaut est défini dans `.env` via `VITE_ADMIN_PASSWORD`.
 
 Pour le changer :
 1. Modifiez la valeur dans `.env`
-2. Si en production, mettez à jour la variable sur Netlify
-3. Redéployez si nécessaire
+2. En production, mettez à jour le hash dans `dist/_secure/.htpasswd`
+3. Re-uploadez sur Hostinger si nécessaire
 
 > 🔐 Utilisez un mot de passe fort (12+ caractères, majuscules, chiffres, symboles)
 
@@ -217,7 +212,7 @@ Pour le changer :
 
 Pour toute question ou problème :
 - Documentation Appwrite : [appwrite.io/docs](https://appwrite.io/docs)
-- Documentation Netlify : [docs.netlify.com](https://docs.netlify.com)
+- Documentation Hostinger : [support.hostinger.com](https://support.hostinger.com)
 
 ---
 

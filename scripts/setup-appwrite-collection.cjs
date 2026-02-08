@@ -96,7 +96,7 @@ async function setupCollection() {
     console.log(`  - Attributs : page (string, 100), content (string, 1000000)`);
     console.log(`  - Index : page_unique (unique)`);
     console.log(`  - Permissions : Any (read)`);
-    console.log('\n🎉 Tu peux maintenant tester : https://cpvf.netlify.app/api/page-content?page=accueil');
+    console.log('\n🎉 Tu peux maintenant tester : https://votre-domaine.com/api/page-content?page=accueil');
 
   } catch (error) {
     if (error.code === 409) {

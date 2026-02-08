@@ -956,7 +956,7 @@ export const mentionsLegalesContent = {
     },
     {
       title: "Hébergement",
-      content: "Ce site est hébergé sur une infrastructure de type Netlify.",
+      content: "Ce site est hébergé sur Hostinger.",
     },
     {
       title: "Propriété intellectuelle",

@@ -1,5 +1,0 @@
- /api/*  /.netlify/functions/:splat  200
- /ecqm19  /ecqm19/index.html  200
- /ecqm19/  /ecqm19/index.html  200
- /ecqm19/*  /ecqm19/:splat  200
- /*    /index.html   200

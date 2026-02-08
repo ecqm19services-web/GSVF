@@ -50,9 +50,9 @@ npm run setup:appwrite
 
 ### Après l'exécution
 
-Teste l'API :
+Teste l'API sur ton domaine Hostinger :
 ```
-https://cpvf.netlify.app/api/page-content?page=accueil
+https://votre-domaine.com/api/page-content?page=accueil
 ```
 
 Tu devrais avoir `404` (normal, aucun document créé) au lieu de `500 Unauthorized`.

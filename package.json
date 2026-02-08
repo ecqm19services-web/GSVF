@@ -10,7 +10,6 @@
     "appwrite:setup": "node scripts/setup-appwrite.cjs",
     "setup:collection": "node -r dotenv/config scripts/setup-appwrite-collection.cjs dotenv_config_path=.env.local",
     "get:database-id": "node -r dotenv/config scripts/get-database-id.cjs dotenv_config_path=.env.local",
-    "test:netlify-api": "node scripts/test-netlify-api.cjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
