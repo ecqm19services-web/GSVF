@@ -988,6 +988,7 @@ export const navigation = [
   { name: "Visite", path: "/visite" },
   { name: "Programmes", path: "/programmes" },
   { name: "Excellence", path: "/excellence" },
+  { name: "Actualités", path: "/actualites" },
   { name: "Admissions", path: "/admissions" },
   { name: "Contact", path: "/contact" }
 ];

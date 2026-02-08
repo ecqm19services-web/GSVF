@@ -8,6 +8,7 @@ import ExcellenceContent from '@/components/pages/ExcellenceContent';
 import VisiteContent from '@/components/pages/VisiteContent';
 import AdmissionsContent from '@/components/pages/AdmissionsContent';
 import ContactContent from '@/components/pages/ContactContent';
+import ActualitesContent from '@/components/pages/ActualitesContent';
 import MentionsLegalesContent from '@/components/pages/MentionsLegalesContent';
 import ConfidentialiteContent from '@/components/pages/ConfidentialiteContent';
 import NotFound from '@/pages/NotFound';
@@ -31,6 +32,8 @@ const AppLayout: React.FC = () => {
         return <VisiteContent />;
       case '/admissions':
         return <AdmissionsContent />;
+      case '/actualites':
+        return <ActualitesContent />;
       case '/contact':
         return <ContactContent />;
 

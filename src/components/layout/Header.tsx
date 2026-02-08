@@ -66,7 +66,7 @@ const Header: React.FC = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
-              {navigation.map((item) => (
+              {navigation.filter(item => item.path !== '/admissions').map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
@@ -87,7 +87,7 @@ const Header: React.FC = () => {
                 to="/admissions"
                 className="bg-gradient-to-r from-orange-500 to-orange-700 text-white px-6 py-2.5 rounded-lg font-medium hover:from-orange-600 hover:to-orange-800 transition-all shadow-md hover:shadow-lg"
               >
-                Inscription
+                Admissions
               </Link>
             </div>
 
@@ -114,7 +114,7 @@ const Header: React.FC = () => {
         >
           <div className="bg-white border-t border-gray-100 px-4 py-4">
             <nav className="flex flex-col gap-1">
-              {navigation.map((item) => (
+              {navigation.filter(item => item.path !== '/admissions').map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
@@ -131,7 +131,7 @@ const Header: React.FC = () => {
                 to="/admissions"
                 className="mt-4 bg-gradient-to-r from-orange-500 to-orange-700 text-white px-6 py-3 rounded-lg font-medium text-center"
               >
-                Inscription
+                Admissions
               </Link>
             </nav>
             <div className="mt-6 pt-6 border-t border-gray-100">

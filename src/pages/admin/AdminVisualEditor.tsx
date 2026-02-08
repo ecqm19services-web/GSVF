@@ -10,6 +10,7 @@ import MentionsLegalesContent from '@/components/pages/MentionsLegalesContent';
 import ConfidentialiteContent from '@/components/pages/ConfidentialiteContent';
 import ProgrammesContent from '@/components/pages/ProgrammesContent';
 import AdmissionsContent from '@/components/pages/AdmissionsContent';
+import ActualitesContent from '@/components/pages/ActualitesContent';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import {
@@ -45,7 +46,8 @@ type EditablePage =
   | 'mentions-legales'
   | 'confidentialite'
   | 'programmes'
-  | 'admissions';
+  | 'admissions'
+  | 'actualites';
 
 type JsonObject = Record<string, unknown>;
 
@@ -69,6 +71,8 @@ function getFallback(page: EditablePage): JsonObject {
       return programmesContent as unknown as JsonObject;
     case 'admissions':
       return admissionsContent as unknown as JsonObject;
+    case 'actualites':
+      return {} as JsonObject;
   }
 }
 
@@ -87,6 +91,7 @@ const AdminVisualEditor: React.FC = () => {
       'confidentialite',
       'programmes',
       'admissions',
+      'actualites',
     ],
     []
   );
@@ -117,6 +122,8 @@ const AdminVisualEditor: React.FC = () => {
         return <ProgrammesContent />;
       case 'admissions':
         return <AdmissionsContent />;
+      case 'actualites':
+        return <ActualitesContent />;
     }
   };
 
