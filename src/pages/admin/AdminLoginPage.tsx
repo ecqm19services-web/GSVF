@@ -1,37 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, AlertCircle } from 'lucide-react';
-import { getNetlifyIdentity } from '@/lib/netlifyIdentity';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 
 const AdminLoginPage: React.FC = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const { isAuthenticated, isLoading: authLoading } = useAdminAuth();
+  const { isAuthenticated, isLoading, login } = useAdminAuth();
 
   useEffect(() => {
-    if (!authLoading && isAuthenticated) {
-      navigate('/ecqm19-admin/dashboard');
+    if (isAuthenticated) {
+      navigate('/ecqm19-admin/visual');
     }
-  }, [authLoading, isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate]);
 
-  const handleLogin = async () => {
-    setIsLoading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError(null);
 
-    try {
-      const identity = getNetlifyIdentity();
-      if (!identity) {
-        setError('Netlify Identity n\'est pas disponible sur cette page.');
-        return;
-      }
-      identity.open('login');
-    } catch {
-      setError('Impossible d\'ouvrir la fenêtre de connexion.');
-    } finally {
-      setIsLoading(false);
+    if (!username.trim() || !password.trim()) {
+      setError('Veuillez remplir tous les champs.');
+      return;
+    }
+
+    const ok = await login(username.trim(), password);
+    if (!ok) {
+      setError('Identifiants incorrects.');
     }
   };
 
@@ -49,8 +46,36 @@ const AdminLoginPage: React.FC = () => {
           </div>
 
           {/* Form */}
-          <div className="space-y-6">
-            
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                Nom d'utilisateur
+              </label>
+              <input
+                id="username"
+                type="text"
+                autoComplete="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                placeholder="admin"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Mot de passe
+              </label>
+              <input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+              />
+            </div>
+
             {error && (
               <div className="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-xl">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
@@ -59,8 +84,7 @@ const AdminLoginPage: React.FC = () => {
             )}
 
             <button
-              type="button"
-              onClick={handleLogin}
+              type="submit"
               disabled={isLoading}
               className="w-full py-3 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
@@ -70,14 +94,14 @@ const AdminLoginPage: React.FC = () => {
                   Connexion...
                 </>
               ) : (
-                'Se connecter (Netlify Identity)'
+                'Se connecter'
               )}
             </button>
-          </div>
+          </form>
 
           {/* Footer */}
           <p className="mt-8 text-center text-sm text-gray-500">
-            Accès réservé (invite-only)
+            Accès réservé aux administrateurs
           </p>
         </div>
       </div>

@@ -33,10 +33,16 @@ const HomePage: React.FC = () => {
       {/* Hero Section */}
       <Hero
         title={homeContent.hero.title}
-        subtitle="Excellence éducative depuis 1998"
+        subtitle="L'excellence, Notre devise"
         description={homeContent.hero.description}
         ctaPrimary={{ text: homeContent.hero.ctaPrimary, link: '/programmes' }}
         ctaSecondary={{ text: homeContent.hero.ctaSecondary, link: '/visite' }}
+        backgroundImages={[
+          '/images/accueil/accueil_ecole.jpeg',
+          '/images/accueil/accueil_ecole_eleves.jpeg',
+          '/images/accueil/accueil_ecole_eleves_alt.jpeg',
+        ]}
+        slideDuration={5000}
         size="large"
       />
 
@@ -65,7 +71,7 @@ const HomePage: React.FC = () => {
           <SectionTitle
             subtitle="Pourquoi nous choisir"
             title="Une éducation d'excellence"
-            description="Découvrez ce qui fait de Vision Future un établissement de référence en Côte d'Ivoire."
+            description="Découvrez ce qui fait du Collège Privé la Vision Future un établissement de référence à Grand-Bassam."
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -97,26 +103,26 @@ const HomePage: React.FC = () => {
                 Notre histoire
               </span>
               <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                25 ans d'engagement pour l'éducation
+                Depuis 2019, un engagement fort pour l'éducation
               </h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Fondé en 1998 à Grand-Bassam, le Groupe Scolaire Vision Future est né de la vision 
-                d'éducateurs passionnés qui croyaient en une éducation de qualité accessible à tous.
+                Fondé en 2019 à Grand-Bassam, le Collège Privé la Vision Future est né de la vision 
+                de M. Dégboué Euloge Yao, convaincu qu'une éducation de qualité peut transformer des vies.
               </p>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                Aujourd'hui, nous sommes fiers d'avoir formé des milliers d'élèves qui excellent 
-                dans tous les domaines, de la médecine à l'ingénierie, du droit à l'entrepreneuriat.
+                Aujourd'hui, nous sommes fiers d'accompagner nos élèves vers l'excellence, avec des 
+                enseignants tous qualifiés et disposant de toutes les autorisations requises.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
-                  to="/histoire"
+                  to="/notre-ecole"
                   className="inline-flex items-center gap-2 bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-900 transition-colors"
                 >
                   Notre histoire
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link
-                  to="/vision"
+                  to="/notre-ecole"
                   className="inline-flex items-center gap-2 border-2 border-blue-800 text-blue-800 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
                 >
                   Notre vision
@@ -138,8 +144,8 @@ const HomePage: React.FC = () => {
                     <Award className="w-6 h-6 text-blue-800" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-900">98%</div>
-                    <div className="text-sm text-gray-500">Réussite au BAC</div>
+                    <div className="text-2xl font-bold text-gray-900">100%</div>
+                    <div className="text-sm text-gray-500">Réussite CEPE 2024-2025</div>
                   </div>
                 </div>
               </div>

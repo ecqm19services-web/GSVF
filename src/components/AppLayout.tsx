@@ -2,8 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import HomeContent from '@/components/pages/HomeContent';
-import VisionContent from '@/components/pages/VisionContent';
-import HistoireContent from '@/components/pages/HistoireContent';
+import NotreEcoleContent from '@/components/pages/NotreEcoleContent';
 import ProgrammesContent from '@/components/pages/ProgrammesContent';
 import ExcellenceContent from '@/components/pages/ExcellenceContent';
 import VisiteContent from '@/components/pages/VisiteContent';
@@ -20,10 +19,10 @@ const AppLayout: React.FC = () => {
     switch (location.pathname) {
       case '/':
         return <HomeContent />;
+      case '/notre-ecole':
       case '/vision':
-        return <VisionContent />;
       case '/histoire':
-        return <HistoireContent />;
+        return <NotreEcoleContent />;
       case '/programmes':
         return <ProgrammesContent />;
       case '/excellence':

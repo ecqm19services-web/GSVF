@@ -126,10 +126,10 @@ const HistoirePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { value: '1998', label: 'Année de fondation' },
-              { value: '25+', label: 'Années d\'excellence' },
-              { value: '5000+', label: 'Diplômés' },
-              { value: '120+', label: 'Enseignants' }
+              { value: '2019', label: 'Année de fondation' },
+              { value: '7 ans', label: 'D\'excellence' },
+              { value: '100%', label: 'Réussite CEPE' },
+              { value: '100%', label: 'Enseignants qualifiés' }
             ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-4xl md:text-5xl font-bold text-blue-800 mb-2">

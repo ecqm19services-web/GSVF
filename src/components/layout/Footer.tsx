@@ -58,16 +58,14 @@ const Footer: React.FC = () => {
           {/* About */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-lg">VF</span>
-              </div>
+              <img src="/logo-vf.svg" alt="Collège Privé la Vision Future" className="w-12 h-12 rounded-xl object-contain" />
               <div>
-                <h4 className="text-white font-bold">Vision Future</h4>
-                <p className="text-sm text-gray-400">Grand-Bassam</p>
+                <h4 className="text-white font-bold">Collège Privé la Vision Future</h4>
+                <p className="text-sm text-gray-400">L'excellence, Notre devise</p>
               </div>
             </div>
             <p className="text-gray-400 mb-6 leading-relaxed">
-              Former les leaders de demain dans un environnement d'excellence depuis 1998.
+              Depuis 2019, nous formons les leaders de demain dans un environnement d'excellence à Grand-Bassam.
             </p>
             <div className="flex gap-4">
               <a
@@ -181,7 +179,7 @@ const Footer: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-500 text-sm text-center md:text-left">
-              © {currentYear} Groupe Scolaire Vision Future. Tous droits réservés.
+              © {currentYear} Collège Privé la Vision Future. Tous droits réservés.
             </p>
             <div className="flex gap-6 text-sm">
               <Link to="/mentions-legales" className="text-gray-500 hover:text-orange-400 transition-colors">

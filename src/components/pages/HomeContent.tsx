@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Hero from '@/components/ui/Hero';
 import SectionTitle from '@/components/ui/SectionTitle';
+import FacebookPageEmbed from '@/components/ui/FacebookPageEmbed';
 import { homeContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
@@ -42,6 +43,12 @@ const HomeContent: React.FC = () => {
         description={homeData.hero.description}
         ctaPrimary={{ text: homeData.hero.ctaPrimary, link: '/programmes' }}
         ctaSecondary={{ text: homeData.hero.ctaSecondary, link: '/visite' }}
+        backgroundImages={[
+          '/images/accueil/accueil_ecole.jpeg',
+          '/images/accueil/accueil_ecole_eleves.jpeg',
+          '/images/accueil/accueil_ecole_eleves_alt.jpeg',
+        ]}
+        slideDuration={5000}
         size="large"
       />
 
@@ -145,14 +152,14 @@ const HomeContent: React.FC = () => {
               />
               <div className="flex flex-wrap gap-4">
                 <Link
-                  to="/histoire"
+                  to="/notre-ecole"
                   className="inline-flex items-center gap-2 bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                 >
                   <EditableText as="span" path="sections.aboutPreview.ctaPrimary" value={sections.aboutPreview.ctaPrimary} />
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link
-                  to="/vision"
+                  to="/notre-ecole"
                   className="inline-flex items-center gap-2 border-2 border-blue-800 text-blue-800 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
                 >
                   <EditableText as="span" path="sections.aboutPreview.ctaSecondary" value={sections.aboutPreview.ctaSecondary} />
@@ -366,6 +373,30 @@ const HomeContent: React.FC = () => {
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Facebook Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <span className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-4">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              Suivez-nous
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Nos actualités
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Restez informé des événements et actualités de notre établissement
+            </p>
+          </div>
+          <FacebookPageEmbed
+            pageUrl="https://www.facebook.com/lavisionfuture"
+            tabs="timeline"
+            width={500}
+            height={600}
+          />
         </div>
       </section>
 

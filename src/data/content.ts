@@ -1,26 +1,26 @@
-// Content data for Groupe Scolaire Vision Future
+// Content data for Collège Privé la Vision Future
 // This simulates Markdown content that would be editable via CMS
 
 export const siteConfig = {
-  name: "Groupe Scolaire Vision Future",
-  shortName: "GSVF",
+  name: "Collège Privé la Vision Future",
+  shortName: "CPVF",
   location: "Grand-Bassam, Côte d'Ivoire",
   phone: "+225 27 21 30 45 67",
   email: "contact@visionfuture.ci",
   address: "Boulevard de la République, Grand-Bassam, Côte d'Ivoire",
   socialLinks: {
-    facebook: "https://facebook.com/gsvf",
-    instagram: "https://instagram.com/gsvf",
-    linkedin: "https://linkedin.com/company/gsvf",
-    youtube: "https://youtube.com/@gsvf"
+    facebook: "https://facebook.com/cpvf",
+    instagram: "https://instagram.com/cpvf",
+    linkedin: "https://linkedin.com/company/cpvf",
+    youtube: "https://youtube.com/@cpvf"
   }
 };
 
 export const homeContent = {
   hero: {
-    title: "Groupe Scolaire Vision Future",
-    subtitle: "Former les leaders de demain dans un environnement d'excellence",
-    description: "Depuis 1998, nous accompagnons chaque élève vers la réussite académique et l'épanouissement personnel à Grand-Bassam.",
+    title: "Collège Privé la Vision Future",
+    subtitle: "L'excellence, Notre devise",
+    description: "Depuis 2019, nous formons les leaders de demain en accompagnant chaque élève vers la réussite académique et l'épanouissement personnel à Grand-Bassam.",
     ctaPrimary: "Découvrir nos programmes",
     ctaSecondary: "Visite virtuelle"
   },
@@ -28,21 +28,21 @@ export const homeContent = {
     features: {
       subtitle: "Pourquoi nous choisir",
       title: "Une éducation d'excellence",
-      description: "Découvrez ce qui fait de Vision Future un établissement de référence en Côte d'Ivoire."
+      description: "Découvrez ce qui fait du Collège Privé la Vision Future un établissement de référence à Grand-Bassam."
     },
     aboutPreview: {
       badge: "Notre histoire",
-      title: "25 ans d'engagement pour l'éducation",
+      title: "Depuis 2019, un engagement fort pour l'éducation",
       paragraphs: [
-        "Fondé en 1998 à Grand-Bassam, le Groupe Scolaire Vision Future est né de la vision d'éducateurs passionnés qui croyaient en une éducation de qualité accessible à tous.",
-        "Aujourd'hui, nous sommes fiers d'avoir formé des milliers d'élèves qui excellent dans tous les domaines, de la médecine à l'ingénierie, du droit à l'entrepreneuriat."
+        "Fondé en 2019 à Grand-Bassam, le Collège Privé la Vision Future est né de la vision de M. Dégboué Euloge Yao, convaincu qu'une éducation de qualité peut transformer des vies.",
+        "Aujourd'hui, nous sommes fiers d'accompagner nos élèves vers l'excellence, avec des enseignants tous qualifiés et disposant de toutes les autorisations requises."
       ],
       ctaPrimary: "Notre histoire",
       ctaSecondary: "Notre vision",
       imageCaption: "Campus Vision Future",
       highlight: {
-        value: "98%",
-        label: "Réussite au BAC"
+        value: "100%",
+        label: "Réussite au CEPE 2024-2025"
       }
     },
     programmesPreview: {
@@ -70,17 +70,17 @@ export const homeContent = {
       readMore: "Lire la suite"
     },
     cta: {
-      title: "Prêt à rejoindre Vision Future ?",
+      title: "Prêt à rejoindre la Vision Future ?",
       description: "Inscrivez votre enfant dès maintenant et offrez-lui les meilleures chances de réussite.",
       primary: "Demander une inscription",
       secondary: "Nous contacter"
     }
   },
   stats: [
-    { value: "25+", label: "Années d'excellence" },
-    { value: "98%", label: "Taux de réussite au BAC" },
-    { value: "1500+", label: "Élèves formés" },
-    { value: "120+", label: "Enseignants qualifiés" }
+    { value: "2019", label: "Année de fondation" },
+    { value: "100%", label: "Réussite CEPE 2024-2025" },
+    { value: "7 ans", label: "D'excellence éducative" },
+    { value: "100%", label: "Enseignants qualifiés & autorisés" }
   ],
   features: [
     {
@@ -106,7 +106,7 @@ export const homeContent = {
   ],
   testimonials: [
     {
-      quote: "Vision Future a transformé ma vie. Les enseignants m'ont donné confiance en mes capacités.",
+      quote: "Le Collège Privé la Vision Future a transformé ma vie. Les enseignants m'ont donné confiance en mes capacités.",
       author: "Aminata Koné",
       role: "Ancienne élève, promotion 2022",
       achievement: "Admise à Sciences Po Paris"
@@ -126,9 +126,9 @@ export const homeContent = {
   ],
   news: [
     {
-      title: "Résultats exceptionnels au BAC 2025",
-      date: "15 Juillet 2025",
-      excerpt: "98% de réussite avec 45% de mentions Très Bien.",
+      title: "100% de réussite au CEPE 2024-2025",
+      date: "Juillet 2025",
+      excerpt: "Taux de réussite de 100% au CEPE, confirmant l'excellence de notre enseignement.",
       image: "/images/home/news1.webp"
     },
     {
@@ -180,11 +180,11 @@ export const visiteContent = {
     {
       id: "classes",
       title: "Salles de Classe",
-      description: "Des espaces d'apprentissage lumineux et bien équipés, conçus pour favoriser la concentration et l'interaction.",
+      description: "Des espaces d'apprentissage dédiés à chaque niveau, incluant une salle de robotique et informatique pour l'initiation aux nouvelles technologies.",
       images: [
         { src: "/images/visite/C1.webp", caption: "Salle de classe primaire" },
         { src: "/images/visite/C2.webp", caption: "Salle de classe secondaire" },
-        { src: "/images/visite/C3.webp", caption: "Salle multimédia" },
+        { src: "/images/visite/C3.webp", caption: "Salle de robotique & informatique" },
         { src: "/images/visite/C4.webp", caption: "Bibliothèque" }
       ]
     },
@@ -200,19 +200,17 @@ export const visiteContent = {
     },
     {
       id: "sport",
-      title: "Installations Sportives",
-      description: "Un complexe sportif complet pour le développement physique et l'esprit d'équipe.",
+      title: "Espace Sportif",
+      description: "Un terrain polyvalent en plein air servant à la pratique du football, du basketball, du handball et du tennis. Un espace simple mais fonctionnel où les élèves développent leur esprit d'équipe et leur condition physique.",
       images: [
-        { src: "/images/visite/SP1.webp", caption: "Terrain de football" },
-        { src: "/images/visite/SP2.webp", caption: "Gymnase" },
-        { src: "/images/visite/SP3.webp", caption: "Piscine" },
-        { src: "/images/visite/SP4.webp", caption: "Courts de tennis" }
+        { src: "/images/visite/SP1.webp", caption: "Terrain polyvalent" },
+        { src: "/images/visite/SP2.webp", caption: "Activités sportives" }
       ]
     },
     {
       id: "restauration",
       title: "Restauration & Détente",
-      description: "Une cantine moderne servant des repas équilibrés et des espaces de détente pour les pauses.",
+      description: "Un espace de restauration où les élèves prennent leurs repas dans un cadre convivial, avec des espaces de détente pour les pauses.",
       images: [
         { src: "/images/visite/R1.webp", caption: "Cantine principale" },
         { src: "/images/visite/R2.webp", caption: "Espace détente" }
@@ -300,7 +298,7 @@ export const visionContent = {
     cta: {
       title: "Partagez-vous nos valeurs ?",
       description: "Rejoignez une communauté éducative engagée pour l'excellence et l'épanouissement de chaque élève.",
-      primary: "Rejoindre Vision Future",
+      primary: "Rejoindre la Vision Future",
       secondary: "Découvrir notre histoire"
     }
   }
@@ -309,104 +307,81 @@ export const visionContent = {
 export const histoireContent = {
   hero: {
     title: "Notre Histoire",
-    subtitle: "25 ans d'excellence éducative à Grand-Bassam",
-    description: "Retracez le parcours d'une institution qui a formé des générations de leaders."
+    subtitle: "L'excellence éducative à Grand-Bassam depuis 2019",
+    description: "Retracez le parcours d'un établissement qui forme les leaders de demain."
   },
-  intro: "Fondé en 1998 par un groupe d'éducateurs visionnaires, le Groupe Scolaire Vision Future est né de la conviction que chaque enfant mérite une éducation de qualité. Ce qui a commencé comme une petite école de 50 élèves est devenu aujourd'hui un établissement de référence accueillant plus de 1500 élèves.",
+  intro: "Fondé en 2019, le Collège Privé la Vision Future est né de la conviction de M. Dégboué Euloge Yao qu'une éducation de qualité peut transformer des vies. Depuis sa création, l'établissement n'a cessé de grandir et de s'affirmer comme une référence éducative à Grand-Bassam.",
   timeline: [
     {
-      year: "1998",
-      title: "Fondation",
-      description: "Création de l'école primaire avec 50 élèves et 5 enseignants dans un bâtiment modeste.",
-      milestone: true
-    },
-    {
-      year: "2002",
-      title: "Premier Agrandissement",
-      description: "Construction de nouveaux bâtiments et ouverture du collège.",
-      milestone: false
-    },
-    {
-      year: "2006",
-      title: "Ouverture du Lycée",
-      description: "Lancement du cycle secondaire avec les filières scientifiques et littéraires.",
-      milestone: true
-    },
-    {
-      year: "2010",
-      title: "Première Promotion de Bacheliers",
-      description: "95% de réussite au baccalauréat pour notre première promotion.",
-      milestone: true
-    },
-    {
-      year: "2012",
-      title: "Complexe Sportif",
-      description: "Inauguration du complexe sportif avec gymnase et piscine.",
-      milestone: false
-    },
-    {
-      year: "2015",
-      title: "Partenariats Internationaux",
-      description: "Signature de conventions avec des établissements français et canadiens.",
-      milestone: true
-    },
-    {
-      year: "2018",
-      title: "20 ans - Jubilé",
-      description: "Célébration des 20 ans avec plus de 3000 anciens élèves réunis.",
+      year: "2019",
+      title: "Fondation du Collège",
+      description: "Création du Collège Privé la Vision Future à Grand-Bassam par M. Dégboué Euloge Yao, avec une équipe d'enseignants qualifiés et autorisés.",
       milestone: true
     },
     {
       year: "2020",
-      title: "Transformation Numérique",
-      description: "Déploiement de la plateforme e-learning et équipement numérique des salles.",
+      title: "Consolidation",
+      description: "Renforcement de l'équipe pédagogique et mise en place des programmes du 1er cycle (6e à 3e).",
       milestone: false
     },
     {
-      year: "2023",
-      title: "Nouveau Campus Maternelle",
-      description: "Ouverture d'un campus dédié à la petite enfance avec pédagogie Montessori.",
+      year: "2021",
+      title: "Croissance",
+      description: "Augmentation des effectifs et amélioration continue des infrastructures.",
+      milestone: false
+    },
+    {
+      year: "2022",
+      title: "Ouverture du 2nd Cycle",
+      description: "Lancement des classes de 2nde à Terminale (séries A, D et C).",
       milestone: true
     },
     {
-      year: "2025",
+      year: "2023",
+      title: "Développement",
+      description: "Accueil des élèves affectés et non-affectés. Renforcement des partenariats éducatifs.",
+      milestone: false
+    },
+    {
+      year: "2024-2025",
+      title: "100% de réussite au CEPE",
+      description: "Taux de réussite de 100% au CEPE, confirmant la qualité de l'enseignement dispensé.",
+      milestone: true
+    },
+    {
+      year: "2026",
       title: "Cap sur l'Avenir",
-      description: "Lancement du programme d'excellence scientifique et des classes préparatoires.",
+      description: "Poursuite de l'excellence avec des enseignants tous qualifiés et disposant de toutes les autorisations.",
       milestone: false
     }
   ],
   founders: [
     {
-      name: "Dr. Kouamé Yao",
-      role: "Fondateur & Président",
-      bio: "Ancien professeur à l'Université de Cocody, visionnaire de l'éducation en Côte d'Ivoire."
-    },
-    {
-      name: "Mme Adjoua Koffi",
-      role: "Co-fondatrice & Directrice Pédagogique",
-      bio: "30 ans d'expérience dans l'enseignement, spécialiste des méthodes actives."
+      name: "M. Dégboué Euloge Yao",
+      role: "Fondateur & Directeur Général",
+      bio: "Visionnaire de l'éducation en Côte d'Ivoire, il a consacré sa vie à offrir une éducation de qualité accessible à tous les enfants de Grand-Bassam et au-delà."
     }
   ],
   ui: {
     timelineTitle: "Notre parcours",
     founders: {
-      title: "Nos Fondateurs",
-      description: "Des visionnaires qui ont cru en une éducation d'excellence pour tous."
+      title: "Notre Fondateur",
+      description: "Un visionnaire qui a cru en une éducation d'excellence pour tous."
     },
     quote: {
       text: "\"Chaque enfant mérite une éducation de qualité qui lui permet de réaliser son plein potentiel.\"",
-      author: "— Dr. Kouamé Yao, Fondateur"
+      author: "— M. Dégboué Euloge Yao, Fondateur"
     },
     stats: [
-      { value: "1998", label: "Année de fondation" },
-      { value: "25+", label: "Années d'excellence" },
-      { value: "5000+", label: "Diplômés" },
-      { value: "120+", label: "Enseignants" }
+      { value: "2019", label: "Année de fondation" },
+      { value: "7 ans", label: "D'excellence" },
+      { value: "100%", label: "Réussite CEPE" },
+      { value: "100%", label: "Enseignants qualifiés" }
     ],
     cta: {
       title: "Écrivez l'histoire avec nous",
-      description: "Rejoignez une institution qui a fait ses preuves depuis plus de 25 ans.",
-      primary: "Rejoindre Vision Future",
+      description: "Rejoignez un établissement en pleine croissance depuis 2019.",
+      primary: "Rejoindre la Vision Future",
       secondary: "Nos résultats"
     }
   }
@@ -418,7 +393,7 @@ export const programmesContent = {
     subtitle: "Un parcours éducatif complet de la maternelle au lycée",
     description: "Découvrez nos cycles d'enseignement et nos spécialités."
   },
-  intro: "Le Groupe Scolaire Vision Future propose un parcours éducatif complet, de la maternelle au baccalauréat. Chaque cycle est conçu pour développer les compétences académiques, sociales et personnelles de nos élèves.",
+  intro: "Le Collège Privé la Vision Future propose un parcours éducatif structuré avec un 1er cycle (de la 6e à la 3e) et un 2nd cycle (de la 2nde à la Terminale A, D et C). Les élèves affectés et non-affectés sont les bienvenus.",
   cycles: [
     {
       id: "maternelle",
@@ -450,29 +425,29 @@ export const programmesContent = {
     },
     {
       id: "college",
-      title: "Collège",
-      ages: "12-15 ans",
-      description: "Approfondir les connaissances et développer l'autonomie.",
+      title: "1er Cycle (Collège)",
+      ages: "6e à 3e",
+      description: "Le premier cycle couvre de la 6e à la 3e. Nous accueillons les élèves affectés et non-affectés pour approfondir les connaissances et développer l'autonomie.",
       features: [
-        "Toutes les matières du programme national",
-        "LV2 : Espagnol ou Allemand",
-        "Laboratoires de sciences équipés",
+        "Programme national complet de la 6e à la 3e",
         "Préparation au BEPC",
-        "Clubs et activités périscolaires"
+        "Encadrement par des enseignants qualifiés et autorisés",
+        "Accueil des élèves affectés et non-affectés",
+        "Suivi personnalisé de chaque élève"
       ],
       image: "/images/programmes/CO1.webp"
     },
     {
       id: "lycee",
-      title: "Lycée",
-      ages: "16-18 ans",
-      description: "Préparer l'excellence au baccalauréat et l'entrée dans le supérieur.",
+      title: "2nd Cycle (Lycée)",
+      ages: "2nde à Terminale",
+      description: "Le second cycle prépare les élèves au baccalauréat avec les séries A, D et C. Les affectés comme les non-affectés sont accueillis.",
       features: [
         "Séries : A, C, D",
-        "Classes à effectifs réduits",
+        "De la 2nde à la Terminale",
         "Préparation intensive au BAC",
-        "Orientation et coaching",
-        "Partenariats universitaires"
+        "Accueil des affectés et non-affectés",
+        "Orientation et coaching personnalisé"
       ],
       image: "/images/programmes/L1.webp"
     }
@@ -480,22 +455,22 @@ export const programmesContent = {
   specialPrograms: [
     {
       title: "Section Internationale",
-      description: "Programme bilingue français-anglais préparant aux certifications Cambridge.",
+      description: "⚠️ À MODIFIER — Exemple : Programme bilingue français-anglais préparant aux certifications Cambridge. Remplacez par le vrai contenu de votre section internationale.",
       icon: "globe"
     },
     {
       title: "Excellence Scientifique",
-      description: "Parcours renforcé en mathématiques et sciences pour les élèves à haut potentiel.",
+      description: "⚠️ À MODIFIER — Exemple : Parcours renforcé en mathématiques et sciences pour les élèves à haut potentiel. Remplacez par le vrai contenu de votre programme scientifique.",
       icon: "flask"
     },
     {
       title: "Arts & Culture",
-      description: "Option arts plastiques, musique et théâtre avec spectacles annuels.",
+      description: "⚠️ À MODIFIER — Exemple : Option arts plastiques, musique et théâtre avec spectacles annuels. Remplacez par le vrai contenu de votre programme artistique.",
       icon: "palette"
     },
     {
       title: "Sport-Études",
-      description: "Aménagement des horaires pour les sportifs de haut niveau.",
+      description: "⚠️ À MODIFIER — Exemple : Aménagement des horaires pour les sportifs de haut niveau. Remplacez par le vrai contenu de votre programme sportif.",
       icon: "trophy"
     }
   ],
@@ -528,7 +503,7 @@ export const programmesContent = {
     },
     cta: {
       title: "Prêt à inscrire votre enfant ?",
-      description: "Découvrez notre processus d'admission et les prochaines étapes pour rejoindre Vision Future.",
+      description: "Découvrez notre processus d'admission et les prochaines étapes pour rejoindre la Vision Future.",
       primary: "Processus d'admission",
       secondary: "Visiter le campus"
     }
@@ -545,10 +520,10 @@ export const excellenceContent = {
     title: "Résultats aux Examens 2025",
     exams: [
       {
-        name: "Baccalauréat",
-        rate: "98%",
-        mentions: "45% Très Bien, 30% Bien",
-        rank: "1er établissement de Grand-Bassam"
+        name: "CEPE 2024-2025",
+        rate: "100%",
+        mentions: "Tous les candidats admis",
+        rank: "Excellence confirmée"
       },
       {
         name: "BEPC",
@@ -626,7 +601,7 @@ export const excellenceContent = {
   ],
   testimonials: [
     {
-      quote: "Vision Future m'a donné les bases solides qui m'ont permis de réussir à Sciences Po puis à Harvard.",
+      quote: "La Vision Future m'a donné les bases solides qui m'ont permis de réussir à Sciences Po puis à Harvard.",
       author: "Aminata Koné",
       role: "Promotion 2015"
     },
@@ -648,7 +623,7 @@ export const excellenceContent = {
     },
     alumni: {
       subtitle: "Nos anciens",
-      title: "Ils ont réussi avec Vision Future",
+      title: "Ils ont réussi avec la Vision Future",
       description: "Découvrez les parcours inspirants de nos anciens élèves.",
       promotionLabel: "Promotion"
     },
@@ -660,15 +635,15 @@ export const excellenceContent = {
       title: "L'excellence en chiffres",
       description: "Des résultats qui parlent d'eux-mêmes et témoignent de notre engagement pour la réussite de chaque élève.",
       stats: [
-        { value: "98%", label: "Réussite BAC", icon: "graduationcap" },
-        { value: "85%", label: "Mentions", icon: "award" },
-        { value: "100%", label: "Orientation réussie", icon: "trending" },
-        { value: "5000+", label: "Diplômés", icon: "trophy" }
+        { value: "100%", label: "Réussite CEPE 2024-2025", icon: "graduationcap" },
+        { value: "100%", label: "Enseignants qualifiés", icon: "award" },
+        { value: "2019", label: "Année de fondation", icon: "trending" },
+        { value: "7 ans", label: "D'excellence", icon: "trophy" }
       ]
     },
     cta: {
       title: "Rejoignez l'excellence",
-      description: "Offrez à votre enfant les meilleures chances de réussite en rejoignant Vision Future.",
+      description: "Offrez à votre enfant les meilleures chances de réussite en rejoignant la Vision Future.",
       primary: "Demander une inscription",
       secondary: "Découvrir nos programmes"
     }
@@ -678,10 +653,10 @@ export const excellenceContent = {
 export const admissionsContent = {
   hero: {
     title: "Admissions",
-    subtitle: "Rejoignez la famille Vision Future",
+    subtitle: "Rejoignez la famille de la Vision Future",
     description: "Découvrez notre processus d'admission et les étapes pour inscrire votre enfant."
   },
-  intro: "Nous accueillons les élèves de la maternelle au lycée. Notre processus d'admission vise à identifier les élèves motivés et à assurer une bonne adéquation avec notre projet pédagogique.",
+  intro: "Nous accueillons les élèves du 1er cycle (6e à 3e) et du 2nd cycle (2nde à Terminale A, D et C). Les affectés et non-affectés sont les bienvenus. Notre processus d'admission est simple et transparent.",
   process: [
     {
       step: 1,
@@ -917,7 +892,7 @@ export const contactContent = {
     address: {
       title: "Adresse",
       lines: [
-        "Groupe Scolaire Vision Future",
+        "Collège Privé la Vision Future",
         "Boulevard de la République",
         "Grand-Bassam, Côte d'Ivoire"
       ]
@@ -972,12 +947,12 @@ export const mentionsLegalesContent = {
   hero: {
     title: "Mentions légales",
     subtitle: "Informations légales",
-    description: "Mentions légales du site Vision Future",
+    description: "Mentions légales du site du Collège Privé la Vision Future",
   },
   sections: [
     {
       title: "Éditeur du site",
-      content: "Groupe Scolaire Vision Future",
+      content: "Collège Privé la Vision Future",
     },
     {
       title: "Hébergement",
@@ -986,7 +961,7 @@ export const mentionsLegalesContent = {
     {
       title: "Propriété intellectuelle",
       content:
-        "Le contenu de ce site (textes, images, logos) est la propriété de Groupe Scolaire Vision Future, sauf mention contraire.",
+        "Le contenu de ce site (textes, images, logos) est la propriété du Collège Privé la Vision Future, sauf mention contraire.",
     },
     {
       title: "Contact",
@@ -999,7 +974,7 @@ export const confidentialiteContent = {
   hero: {
     title: "Politique de confidentialité",
     subtitle: "Protection des données",
-    description: "Politique de confidentialité du site Vision Future",
+    description: "Politique de confidentialité du site du Collège Privé la Vision Future",
   },
   sections: [
     {
@@ -1027,9 +1002,8 @@ export const confidentialiteContent = {
 
 export const navigation = [
   { name: "Accueil", path: "/" },
+  { name: "Notre École", path: "/notre-ecole" },
   { name: "Visite", path: "/visite" },
-  { name: "Vision", path: "/vision" },
-  { name: "Histoire", path: "/histoire" },
   { name: "Programmes", path: "/programmes" },
   { name: "Excellence", path: "/excellence" },
   { name: "Admissions", path: "/admissions" },

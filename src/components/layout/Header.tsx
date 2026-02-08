@@ -55,12 +55,10 @@ const Header: React.FC = () => {
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-orange-200 transition-shadow">
-                <span className="text-white font-bold text-lg">VF</span>
-              </div>
+              <img src="/logo-vf.svg" alt="Collège Privé la Vision Future" className="w-12 h-12 rounded-xl object-contain shadow-lg group-hover:shadow-orange-200 transition-shadow" />
               <div className="hidden sm:block">
-                <h1 className="text-lg font-bold text-gray-900 leading-tight">Vision Future</h1>
-                <p className="text-xs text-orange-500 font-medium">Grand-Bassam</p>
+                <h1 className="text-lg font-bold text-gray-900 leading-tight">Collège Privé la Vision Future</h1>
+                <p className="text-xs text-orange-500 font-medium">L'excellence, Notre devise</p>
               </div>
             </Link>
 

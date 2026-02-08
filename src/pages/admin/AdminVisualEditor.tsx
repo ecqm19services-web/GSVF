@@ -3,8 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import HomeContent from '@/components/pages/HomeContent';
 import VisiteContent from '@/components/pages/VisiteContent';
-import VisionContent from '@/components/pages/VisionContent';
-import HistoireContent from '@/components/pages/HistoireContent';
+import NotreEcoleContent from '@/components/pages/NotreEcoleContent';
 import ExcellenceContent from '@/components/pages/ExcellenceContent';
 import ContactContent from '@/components/pages/ContactContent';
 import MentionsLegalesContent from '@/components/pages/MentionsLegalesContent';
@@ -26,8 +25,6 @@ import { fetchPageContent, publishPageContent } from '@/lib/pageContentApi';
 import {
   homeContent,
   visiteContent,
-  visionContent,
-  histoireContent,
   excellenceContent,
   contactContent,
   mentionsLegalesContent,
@@ -42,8 +39,7 @@ import { FileText, LogOut, Monitor, Settings } from 'lucide-react';
 type EditablePage =
   | 'accueil'
   | 'visite'
-  | 'vision'
-  | 'histoire'
+  | 'notre-ecole'
   | 'excellence'
   | 'contact'
   | 'mentions-legales'
@@ -59,10 +55,8 @@ function getFallback(page: EditablePage): JsonObject {
       return homeContent as unknown as JsonObject;
     case 'visite':
       return visiteContent as unknown as JsonObject;
-    case 'vision':
-      return visionContent as unknown as JsonObject;
-    case 'histoire':
-      return histoireContent as unknown as JsonObject;
+    case 'notre-ecole':
+      return {} as JsonObject;
     case 'excellence':
       return excellenceContent as unknown as JsonObject;
     case 'contact':
@@ -86,8 +80,7 @@ const AdminVisualEditor: React.FC = () => {
     () => [
       'accueil',
       'visite',
-      'vision',
-      'histoire',
+      'notre-ecole',
       'excellence',
       'contact',
       'mentions-legales',
@@ -110,10 +103,8 @@ const AdminVisualEditor: React.FC = () => {
         return <HomeContent />;
       case 'visite':
         return <VisiteContent />;
-      case 'vision':
-        return <VisionContent />;
-      case 'histoire':
-        return <HistoireContent />;
+      case 'notre-ecole':
+        return <NotreEcoleContent />;
       case 'excellence':
         return <ExcellenceContent />;
       case 'contact':

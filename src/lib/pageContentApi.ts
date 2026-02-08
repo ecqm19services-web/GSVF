@@ -29,7 +29,7 @@ export async function publishPageContent(
   const res = await fetch(`/api/page-content?page=${encodeURIComponent(page)}`, {
     method: 'PUT',
     headers: {
-      Authorization: `Bearer ${token}`,
+      'Authorization': `Basic ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ kind, payload }),

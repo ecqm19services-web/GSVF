@@ -149,7 +149,7 @@ const ExcellenceContent: React.FC = () => {
         </div>
       </section>
 
-      {/* Alumni */}
+      {/* Alumni & Testimonials Combined */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
@@ -162,77 +162,43 @@ const ExcellenceContent: React.FC = () => {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {data.alumni.map((alum, index) => (
-              <div 
-                key={index}
-                className="bg-gray-50 rounded-2xl p-6 hover:bg-white hover:shadow-lg transition-all group"
-              >
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center">
-                    <User className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <EditableText as="h3" path={`alumni.${index}.name`} value={alum.name} className="font-bold text-gray-900" />
-                    <div className="text-sm text-blue-800">
-                      <EditableText as="span" path="ui.alumni.promotionLabel" value={ui.alumni.promotionLabel} />{' '}
-                      <EditableText as="span" path={`alumni.${index}.promotion`} value={alum.promotion} />
+            {data.alumni.map((alum, index) => {
+              const testimonial = data.testimonials.find(t => t.author === alum.name);
+              return (
+                <div 
+                  key={index}
+                  className="bg-gray-50 rounded-2xl p-6 hover:bg-white hover:shadow-lg transition-all group flex flex-col"
+                >
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center flex-shrink-0">
+                      <User className="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                      <EditableText as="h3" path={`alumni.${index}.name`} value={alum.name} className="font-bold text-gray-900" />
+                      <div className="text-sm text-blue-800">
+                        <EditableText as="span" path="ui.alumni.promotionLabel" value={ui.alumni.promotionLabel} />{' '}
+                        <EditableText as="span" path={`alumni.${index}.promotion`} value={alum.promotion} />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <EditableText
-                  as="p"
-                  multiline
-                  path={`alumni.${index}.achievement`}
-                  value={alum.achievement}
-                  className="text-gray-600"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 bg-blue-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionTitle
-            subtitle={ui.testimonials.subtitle}
-            title={ui.testimonials.title}
-            subtitlePath="ui.testimonials.subtitle"
-            titlePath="ui.testimonials.title"
-            light
-          />
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {data.testimonials.map((testimonial, index) => (
-              <div 
-                key={index}
-                className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20"
-              >
-                <Quote className="w-10 h-10 text-blue-400 mb-4" />
-                <EditableText
-                  as="p"
-                  multiline
-                  path={`testimonials.${index}.quote`}
-                  value={testimonial.quote}
-                  className="text-white text-lg mb-6 italic leading-relaxed"
-                />
-                <div className="border-t border-white/20 pt-4">
                   <EditableText
                     as="p"
-                    path={`testimonials.${index}.author`}
-                    value={testimonial.author}
-                    className="text-white font-semibold"
+                    multiline
+                    path={`alumni.${index}.achievement`}
+                    value={alum.achievement}
+                    className="text-gray-600 mb-3"
                   />
-                  <EditableText
-                    as="p"
-                    path={`testimonials.${index}.role`}
-                    value={testimonial.role}
-                    className="text-blue-200 text-sm"
-                  />
+                  {testimonial && (
+                    <div className="mt-auto pt-4 border-t border-gray-200">
+                      <Quote className="w-5 h-5 text-blue-400 mb-2" />
+                      <p className="text-gray-700 text-sm italic leading-relaxed">
+                        {testimonial.quote}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
