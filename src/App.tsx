@@ -11,6 +11,7 @@ import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminContentEditor from "./pages/admin/AdminContentEditor";
 import AdminVisualEditor from "./pages/admin/AdminVisualEditor";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/suivi" element={<SuiviPage />} />
             <Route path="/admin" element={<Navigate to="/ecqm19-admin" replace />} />

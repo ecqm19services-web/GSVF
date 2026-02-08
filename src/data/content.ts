@@ -90,7 +90,7 @@ export const homeContent = {
     },
     {
       title: "Infrastructures Modernes",
-      description: "Campus de 5 hectares avec laboratoires, bibliothèque et installations sportives.",
+      description: "Campus moderne avec laboratoires, bibliothèque et installations sportives.",
       icon: "building"
     },
     {
@@ -150,7 +150,7 @@ export const visiteContent = {
   hero: {
     title: "Visite Virtuelle du Campus",
     subtitle: "Découvrez nos installations et notre environnement d'apprentissage",
-    description: "Explorez notre campus de 5 hectares à travers cette visite guidée interactive."
+    description: "Explorez notre campus à travers cette visite guidée interactive."
   },
   ui: {
     zoneLabel: "Zone",
@@ -482,24 +482,6 @@ export const programmesContent = {
       subtitle: "Programmes spéciaux",
       title: "Des parcours d'excellence",
       description: "En plus du programme national, nous proposons des parcours spécialisés pour développer les talents de chaque élève."
-    },
-    pedagogy: {
-      badge: "Notre approche",
-      title: "Une pédagogie innovante",
-      description: "Notre approche pédagogique combine les méthodes traditionnelles éprouvées avec les innovations éducatives modernes pour offrir le meilleur à chaque élève.",
-      points: [
-        "Apprentissage par projets et expérimentation",
-        "Suivi individualisé de chaque élève",
-        "Intégration des outils numériques",
-        "Développement des compétences du 21ème siècle",
-        "Évaluation formative continue"
-      ],
-      stats: [
-        { value: "25", label: "Élèves max/classe" },
-        { value: "1:12", label: "Ratio enseignant" },
-        { value: "8h", label: "Anglais/semaine" },
-        { value: "100%", label: "Équipement numérique" }
-      ]
     },
     cta: {
       title: "Prêt à inscrire votre enfant ?",

@@ -198,53 +198,6 @@ const ProgrammesPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Pedagogical Approach */}
-      <section className="py-20 bg-blue-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <span className="inline-block px-4 py-1.5 bg-white/10 text-blue-200 rounded-full text-sm font-semibold mb-6">
-                Notre approche
-              </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                Une pédagogie innovante
-              </h2>
-              <p className="text-lg text-blue-100 mb-8 leading-relaxed">
-                Notre approche pédagogique combine les méthodes traditionnelles éprouvées 
-                avec les innovations éducatives modernes pour offrir le meilleur à chaque élève.
-              </p>
-              <ul className="space-y-4">
-                {[
-                  'Apprentissage par projets et expérimentation',
-                  'Suivi individualisé de chaque élève',
-                  'Intégration des outils numériques',
-                  'Développement des compétences du 21ème siècle',
-                  'Évaluation formative continue'
-                ].map((item, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-white">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { value: '25', label: 'Élèves max/classe' },
-                { value: '1:12', label: 'Ratio enseignant' },
-                { value: '8h', label: 'Anglais/semaine' },
-                { value: '100%', label: 'Équipement numérique' }
-              ].map((stat, index) => (
-                <div key={index} className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
-                  <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-                  <div className="text-blue-200 text-sm">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
