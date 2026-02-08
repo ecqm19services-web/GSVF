@@ -52,12 +52,14 @@ const Header: React.FC = () => {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-14">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 group">
-              <img src="/logo-vf.svg" alt="Collège Privé la Vision Future" className="w-12 h-12 rounded-xl object-contain shadow-lg group-hover:shadow-orange-200 transition-shadow" />
+            <Link to="/" className="flex items-center gap-3 group relative">
+              <div className="relative -my-6 z-10">
+                <img src="/logo-vf.svg" alt="Collège Privé la Vision Future" className="w-16 h-16 md:w-20 md:h-20 rounded-full object-contain bg-white shadow-lg ring-2 ring-white group-hover:shadow-orange-200 transition-shadow" />
+              </div>
               <div className="hidden sm:block">
-                <h1 className="text-lg font-bold text-gray-900 leading-tight">Collège Privé la Vision Future</h1>
+                <h1 className="text-base lg:text-lg font-bold text-gray-900 leading-tight">Collège Privé la Vision Future</h1>
                 <p className="text-xs text-orange-500 font-medium">L'excellence, Notre devise</p>
               </div>
             </Link>

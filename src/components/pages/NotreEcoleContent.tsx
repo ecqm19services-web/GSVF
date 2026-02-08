@@ -77,15 +77,18 @@ const NotreEcoleContent: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Video à gauche */}
-            <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-blue-900 to-blue-800 shadow-xl">
-              {/* Remplacer ce placeholder par une vraie vidéo quand disponible */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 hover:bg-white/30 transition-colors cursor-pointer">
-                  <Play className="w-10 h-10 text-white ml-1" />
+            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-xl group cursor-pointer">
+              {/* Photo du fondateur en couverture */}
+              {/* Remplacer par /images/fondateur.webp quand la photo sera disponible */}
+              <div className="absolute inset-0 bg-[url('/images/accueil/accueil_ecole.jpeg')] bg-cover bg-center" />
+              <div className="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-transparent to-transparent" />
+              {/* Bouton play en bas */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 flex items-center gap-4">
+                <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:bg-white/40 transition-colors flex-shrink-0">
+                  <Play className="w-7 h-7 text-white ml-1" />
                 </div>
-                <p className="text-blue-200 text-sm font-medium">Vidéo de présentation</p>
+                <p className="text-white text-sm md:text-base font-medium">Cliquez ici pour voir la vidéo de présentation</p>
               </div>
-              <div className="absolute inset-0 bg-[url('/images/accueil/accueil_ecole.jpeg')] bg-cover bg-center opacity-30" />
             </div>
 
             {/* Texte à droite */}
