@@ -178,11 +178,11 @@ const AdmissionsPage: React.FC = () => {
               +225 27 21 30 45 69
             </a>
             <a
-              href="mailto:admissions@visionfuture.ci"
+              href="mailto:admissions@lavisionfuture.ci"
               className="flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm text-white px-6 py-4 rounded-xl border border-white/20 hover:bg-white/20 transition-colors"
             >
               <Mail className="w-5 h-5" />
-              admissions@visionfuture.ci
+              admissions@lavisionfuture.ci
             </a>
           </div>
           <Link

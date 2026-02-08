@@ -6,7 +6,7 @@ export const siteConfig = {
   shortName: "CPVF",
   location: "Grand-Bassam, Côte d'Ivoire",
   phone: "+225 27 21 30 45 67",
-  email: "contact@visionfuture.ci",
+  email: "contact@lavisionfuture.ci",
   address: "Boulevard de la République, Grand-Bassam, Côte d'Ivoire",
   socialLinks: {
     facebook: "https://facebook.com/cpvf",
@@ -889,8 +889,8 @@ export const contactContent = {
     email: {
       title: "Email",
       addresses: [
-        "contact@visionfuture.ci",
-        "admissions@visionfuture.ci"
+        "contact@lavisionfuture.ci",
+        "admissions@lavisionfuture.ci"
       ]
     },
     hours: {
@@ -904,22 +904,22 @@ export const contactContent = {
   departments: [
     {
       name: "Direction Générale",
-      email: "direction@visionfuture.ci",
+      email: "direction@lavisionfuture.ci",
       phone: "+225 27 21 30 45 68"
     },
     {
       name: "Service Admissions",
-      email: "admissions@visionfuture.ci",
+      email: "admissions@lavisionfuture.ci",
       phone: "+225 27 21 30 45 69"
     },
     {
       name: "Service Scolarité",
-      email: "scolarite@visionfuture.ci",
+      email: "scolarite@lavisionfuture.ci",
       phone: "+225 27 21 30 45 70"
     },
     {
       name: "Comptabilité",
-      email: "comptabilite@visionfuture.ci",
+      email: "comptabilite@lavisionfuture.ci",
       phone: "+225 27 21 30 45 71"
     }
   ]
