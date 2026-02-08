@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Hero from '@/components/ui/Hero';
-import SectionTitle from '@/components/ui/SectionTitle';
 import { programmesContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
@@ -10,10 +9,6 @@ import {
   GraduationCap,
   Star,
   CheckCircle,
-  Globe,
-  FlaskConical,
-  Palette,
-  Trophy,
   ArrowRight,
   ChevronDown,
   ChevronUp,
@@ -33,13 +28,6 @@ const cycleColors: { [key: string]: string } = {
   primaire: 'from-blue-500 to-cyan-500',
   college: 'from-purple-500 to-violet-500',
   lycee: 'from-amber-500 to-orange-500'
-};
-
-const specialIconMap: Record<string, LucideIcon> = {
-  globe: Globe,
-  flask: FlaskConical,
-  palette: Palette,
-  trophy: Trophy
 };
 
 const ProgrammesContent: React.FC = () => {
@@ -202,55 +190,6 @@ const ProgrammesContent: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Special Programs */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionTitle
-            subtitle={ui.specialPrograms.subtitle}
-            title={ui.specialPrograms.title}
-            description={ui.specialPrograms.description}
-            subtitlePath="ui.specialPrograms.subtitle"
-            titlePath="ui.specialPrograms.title"
-            descriptionPath="ui.specialPrograms.description"
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {programmesData.specialPrograms.map((program, index) => {
-              const Icon = specialIconMap[program.icon] || Star;
-              const colors = [
-                'bg-orange-100 text-orange-700',
-                'bg-orange-100 text-orange-900',
-                'bg-purple-100 text-purple-600',
-                'bg-amber-100 text-amber-600'
-              ];
-              return (
-                <div 
-                  key={index}
-                  className="bg-gray-50 rounded-2xl p-6 hover:bg-white hover:shadow-lg transition-all"
-                >
-                  <div className={`w-12 h-12 rounded-xl ${colors[index % colors.length]} flex items-center justify-center mb-4`}>
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <EditableText
-                    as="h3"
-                    path={`specialPrograms.${index}.title`}
-                    value={program.title}
-                    className="text-lg font-bold text-gray-900 mb-2"
-                  />
-                  <EditableText
-                    as="p"
-                    multiline
-                    path={`specialPrograms.${index}.description`}
-                    value={program.description}
-                    className="text-gray-600 text-sm"
-                  />
                 </div>
               );
             })}

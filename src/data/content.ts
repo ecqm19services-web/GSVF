@@ -452,36 +452,27 @@ export const programmesContent = {
       image: "/images/programmes/L1.webp"
     }
   ],
-  specialPrograms: [
-    {
-      title: "Section Internationale",
-      description: "⚠️ À MODIFIER — Exemple : Programme bilingue français-anglais préparant aux certifications Cambridge. Remplacez par le vrai contenu de votre section internationale.",
-      icon: "globe"
-    },
-    {
-      title: "Excellence Scientifique",
-      description: "⚠️ À MODIFIER — Exemple : Parcours renforcé en mathématiques et sciences pour les élèves à haut potentiel. Remplacez par le vrai contenu de votre programme scientifique.",
-      icon: "flask"
-    },
-    {
-      title: "Arts & Culture",
-      description: "⚠️ À MODIFIER — Exemple : Option arts plastiques, musique et théâtre avec spectacles annuels. Remplacez par le vrai contenu de votre programme artistique.",
-      icon: "palette"
-    },
-    {
-      title: "Sport-Études",
-      description: "⚠️ À MODIFIER — Exemple : Aménagement des horaires pour les sportifs de haut niveau. Remplacez par le vrai contenu de votre programme sportif.",
-      icon: "trophy"
-    }
-  ],
+  specialPrograms: [],
   ui: {
     cycles: {
       keyPointsTitle: "Points clés du programme :"
     },
-    specialPrograms: {
-      subtitle: "Programmes spéciaux",
-      title: "Des parcours d'excellence",
-      description: "En plus du programme national, nous proposons des parcours spécialisés pour développer les talents de chaque élève."
+    pedagogy: {
+      badge: "Notre approche",
+      title: "Une pédagogie centrée sur l'élève",
+      description: "Au Collège Privé la Vision Future, nous croyons qu'un enseignement de qualité repose sur un encadrement rigoureux, des enseignants qualifiés et un suivi personnalisé de chaque élève.",
+      points: [
+        "Enseignants tous qualifiés et disposant des autorisations requises",
+        "Suivi individualisé et accompagnement personnalisé",
+        "Accueil des élèves affectés et non-affectés",
+        "Préparation rigoureuse aux examens nationaux (CEPE, BEPC, BAC)"
+      ],
+      stats: [
+        { value: "2019", label: "Année de fondation" },
+        { value: "100%", label: "Réussite CEPE 2024-2025" },
+        { value: "A, C, D", label: "Séries au BAC" },
+        { value: "100%", label: "Enseignants qualifiés" }
+      ]
     },
     cta: {
       title: "Prêt à inscrire votre enfant ?",
