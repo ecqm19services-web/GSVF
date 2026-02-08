@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Hero from '@/components/ui/Hero';
 import SectionTitle from '@/components/ui/SectionTitle';
-import FacebookPageEmbed from '@/components/ui/FacebookPageEmbed';
 import { homeContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
@@ -13,7 +12,6 @@ import {
   Globe,
   ArrowRight,
   Quote,
-  Calendar,
   ChevronRight,
   Award,
   BookOpen,
@@ -319,84 +317,6 @@ const HomeContent: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* News Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionTitle
-            subtitle={sections.news.subtitle}
-            title={sections.news.title}
-            description={sections.news.description}
-            subtitlePath="sections.news.subtitle"
-            titlePath="sections.news.title"
-            descriptionPath="sections.news.description"
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {homeData.news.map((item, index) => (
-              <article 
-                key={index}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow border border-gray-100 group"
-              >
-                <div className="aspect-video bg-gradient-to-br from-blue-100 to-blue-200 relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Calendar className="w-12 h-12 text-blue-400" />
-                  </div>
-                </div>
-                <div className="p-6">
-                  <EditableText
-                    as="div"
-                    path={`news.${index}.date`}
-                    value={item.date}
-                    className="text-sm text-blue-800 font-medium mb-2"
-                  />
-                  <EditableText
-                    as="h3"
-                    path={`news.${index}.title`}
-                    value={item.title}
-                    className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-800 transition-colors"
-                  />
-                  <EditableText
-                    as="p"
-                    multiline
-                    path={`news.${index}.excerpt`}
-                    value={item.excerpt}
-                    className="text-gray-600 mb-4"
-                  />
-                  <button className="inline-flex items-center text-blue-800 font-medium hover:text-blue-700">
-                    <EditableText as="span" path="sections.news.readMore" value={sections.news.readMore} />
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Facebook Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <span className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-4">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-              Suivez-nous
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Nos actualités
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Restez informé des événements et actualités de notre établissement
-            </p>
-          </div>
-          <FacebookPageEmbed
-            pageUrl="https://www.facebook.com/lavisionfuture"
-            tabs="timeline"
-            width={500}
-            height={600}
-          />
         </div>
       </section>
 

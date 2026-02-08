@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Hero from '@/components/ui/Hero';
-import SectionTitle from '@/components/ui/SectionTitle';
 import FacebookPageEmbed from '@/components/ui/FacebookPageEmbed';
 import { siteConfig } from '@/data/content';
 import { Calendar, ArrowRight, Newspaper, Facebook } from 'lucide-react';
@@ -71,15 +70,9 @@ const ActualitesContent: React.FC = () => {
       {/* Articles Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionTitle
-            subtitle="Dernières nouvelles"
-            title="Nos actualités"
-            description="Les événements marquants et les nouvelles de notre établissement."
-          />
-
           {selectedArticle ? (
             // Article detail view
-            <div className="max-w-4xl mx-auto mt-12">
+            <div className="max-w-4xl mx-auto">
               <button
                 onClick={() => setSelectedArticle(null)}
                 className="flex items-center gap-2 text-blue-800 hover:text-blue-600 font-medium mb-8 transition-colors"
@@ -115,7 +108,7 @@ const ActualitesContent: React.FC = () => {
             </div>
           ) : (
             // Articles grid
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {articles.map((article) => (
                 <article
                   key={article.id}
@@ -174,27 +167,25 @@ const ActualitesContent: React.FC = () => {
             </p>
           </div>
 
-          <div className="max-w-2xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-              <FacebookPageEmbed
-                pageUrl={siteConfig.socialLinks.facebook}
-                width={500}
-                height={700}
-                tabs="timeline"
-              />
-            </div>
-            <div className="text-center mt-6">
-              <a
-                href={siteConfig.socialLinks.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-medium transition-colors"
-              >
-                <Facebook className="w-5 h-5" />
-                Voir toutes nos publications sur Facebook
-                <ArrowRight className="w-4 h-4" />
-              </a>
-            </div>
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <FacebookPageEmbed
+              pageUrl={siteConfig.socialLinks.facebook}
+              width={500}
+              height={800}
+              tabs="timeline"
+            />
+          </div>
+          <div className="text-center mt-6">
+            <a
+              href={siteConfig.socialLinks.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-medium transition-colors"
+            >
+              <Facebook className="w-5 h-5" />
+              Voir toutes nos publications sur Facebook
+              <ArrowRight className="w-4 h-4" />
+            </a>
           </div>
         </div>
       </section>
