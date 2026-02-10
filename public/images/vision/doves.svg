@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" fill="none">
+  <!-- Left Dove - facing right, in flight, carrying olive branch -->
+  <g transform="translate(80, 80)" opacity="1">
+    <!-- Body -->
+    <ellipse cx="100" cy="120" rx="60" ry="35" fill="#1e3a5f" transform="rotate(-15 100 120)"/>
+    <!-- Head -->
+    <circle cx="155" cy="90" r="22" fill="#1e3a5f"/>
+    <!-- Eye -->
+    <circle cx="163" cy="86" r="3.5" fill="white"/>
+    <circle cx="164" cy="85.5" r="1.8" fill="#0a1628"/>
+    <!-- Beak -->
+    <path d="M175 90 L195 88 L176 94 Z" fill="#c4873a"/>
+    <!-- Olive branch in beak -->
+    <path d="M193 88 Q220 82 250 90 Q270 95 285 88" stroke="#4a7c3f" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="225" cy="83" rx="8" ry="4.5" fill="#5a9a4a" transform="rotate(-15 225 83)"/>
+    <ellipse cx="245" cy="86" rx="7" ry="4" fill="#5a9a4a" transform="rotate(10 245 86)"/>
+    <ellipse cx="260" cy="84" rx="7" ry="4" fill="#4a8a3a" transform="rotate(-5 260 84)"/>
+    <ellipse cx="275" cy="87" rx="6" ry="3.5" fill="#5a9a4a" transform="rotate(15 275 87)"/>
+    <!-- Olive fruit -->
+    <ellipse cx="238" cy="90" rx="3.5" ry="4.5" fill="#3a6630"/>
+    <ellipse cx="268" cy="90" rx="3" ry="4" fill="#3a6630"/>
+    <!-- Left Wing (upper, spread in flight) -->
+    <path d="M70 110 Q30 50 10 20 Q40 30 60 50 Q50 40 25 5 Q55 30 75 60 Q65 45 50 15 Q70 45 85 80 Z" fill="#2a4f7a"/>
+    <!-- Left Wing feather details -->
+    <path d="M55 65 Q40 40 30 25" stroke="#1e3a5f" stroke-width="1" fill="none" opacity="0.5"/>
+    <path d="M65 75 Q50 50 40 30" stroke="#1e3a5f" stroke-width="1" fill="none" opacity="0.5"/>
+    <!-- Right Wing (lower, spread) -->
+    <path d="M90 135 Q50 170 20 210 Q55 185 75 165 Q50 200 25 235 Q60 200 85 170 Q70 200 55 230 Q80 195 95 155 Z" fill="#2a4f7a"/>
+    <!-- Tail feathers -->
+    <path d="M45 130 Q10 145 -15 170 Q15 150 30 135 Q5 155 -20 185 Q15 160 40 140 Z" fill="#2a4f7a"/>
+    <!-- Chest highlight -->
+    <ellipse cx="120" cy="110" rx="25" ry="20" fill="#3a6090" opacity="0.4" transform="rotate(-15 120 110)"/>
+  </g>
+
+  <!-- Right Dove - facing left, mirrored, in flight, carrying olive branch -->
+  <g transform="translate(1120, 80) scale(-1, 1)" opacity="1">
+    <!-- Body -->
+    <ellipse cx="100" cy="120" rx="60" ry="35" fill="#1e3a5f" transform="rotate(-15 100 120)"/>
+    <!-- Head -->
+    <circle cx="155" cy="90" r="22" fill="#1e3a5f"/>
+    <!-- Eye -->
+    <circle cx="163" cy="86" r="3.5" fill="white"/>
+    <circle cx="164" cy="85.5" r="1.8" fill="#0a1628"/>
+    <!-- Beak -->
+    <path d="M175 90 L195 88 L176 94 Z" fill="#c4873a"/>
+    <!-- Olive branch in beak -->
+    <path d="M193 88 Q220 82 250 90 Q270 95 285 88" stroke="#4a7c3f" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="225" cy="83" rx="8" ry="4.5" fill="#5a9a4a" transform="rotate(-15 225 83)"/>
+    <ellipse cx="245" cy="86" rx="7" ry="4" fill="#5a9a4a" transform="rotate(10 245 86)"/>
+    <ellipse cx="260" cy="84" rx="7" ry="4" fill="#4a8a3a" transform="rotate(-5 260 84)"/>
+    <ellipse cx="275" cy="87" rx="6" ry="3.5" fill="#5a9a4a" transform="rotate(15 275 87)"/>
+    <!-- Olive fruit -->
+    <ellipse cx="238" cy="90" rx="3.5" ry="4.5" fill="#3a6630"/>
+    <ellipse cx="268" cy="90" rx="3" ry="4" fill="#3a6630"/>
+    <!-- Left Wing (upper, spread in flight) -->
+    <path d="M70 110 Q30 50 10 20 Q40 30 60 50 Q50 40 25 5 Q55 30 75 60 Q65 45 50 15 Q70 45 85 80 Z" fill="#2a4f7a"/>
+    <!-- Wing feather details -->
+    <path d="M55 65 Q40 40 30 25" stroke="#1e3a5f" stroke-width="1" fill="none" opacity="0.5"/>
+    <path d="M65 75 Q50 50 40 30" stroke="#1e3a5f" stroke-width="1" fill="none" opacity="0.5"/>
+    <!-- Right Wing (lower, spread) -->
+    <path d="M90 135 Q50 170 20 210 Q55 185 75 165 Q50 200 25 235 Q60 200 85 170 Q70 200 55 230 Q80 195 95 155 Z" fill="#2a4f7a"/>
+    <!-- Tail feathers -->
+    <path d="M45 130 Q10 145 -15 170 Q15 150 30 135 Q5 155 -20 185 Q15 160 40 140 Z" fill="#2a4f7a"/>
+    <!-- Chest highlight -->
+    <ellipse cx="120" cy="110" rx="25" ry="20" fill="#3a6090" opacity="0.4" transform="rotate(-15 120 110)"/>
+  </g>
+</svg>

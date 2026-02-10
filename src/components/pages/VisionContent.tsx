@@ -43,8 +43,19 @@ const VisionContent: React.FC = () => {
       />
 
       {/* Vision & Mission */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 bg-white relative overflow-hidden">
+        {/* Dove overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: 'url(/images/vision/doves.svg)',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center center',
+            backgroundSize: 'contain',
+            opacity: 0.2,
+          }}
+        />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Vision */}
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl p-10">
