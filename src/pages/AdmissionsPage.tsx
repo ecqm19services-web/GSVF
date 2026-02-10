@@ -171,11 +171,11 @@ const AdmissionsPage: React.FC = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-10">
             <a
-              href="tel:+22527213045 69"
+              href="tel:+2250554203544"
               className="flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm text-white px-6 py-4 rounded-xl border border-white/20 hover:bg-white/20 transition-colors"
             >
               <Phone className="w-5 h-5" />
-              +225 27 21 30 45 69
+              +225 05 54 20 35 44
             </a>
             <a
               href="mailto:admissions@lavisionfuture.ci"

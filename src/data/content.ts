@@ -5,7 +5,7 @@ export const siteConfig = {
   name: "Collège Privé la Vision Future",
   shortName: "CPVF",
   location: "Grand-Bassam, Côte d'Ivoire",
-  phone: "+225 27 21 30 45 67",
+  phone: "+225 27 21 29 39 83",
   email: "contact@lavisionfuture.ci",
   address: "Boulevard de la République, Grand-Bassam, Côte d'Ivoire",
   socialLinks: {
@@ -876,8 +876,8 @@ export const contactContent = {
     phone: {
       title: "Téléphone",
       numbers: [
-        "+225 27 21 30 45 67",
-        "+225 07 08 09 10 11"
+        "+225 27 21 29 39 83",
+        "+225 05 54 20 35 44"
       ]
     },
     email: {
@@ -899,22 +899,22 @@ export const contactContent = {
     {
       name: "Direction Générale",
       email: "direction@lavisionfuture.ci",
-      phone: "+225 27 21 30 45 68"
+      phone: "+225 27 21 29 39 83"
     },
     {
       name: "Service Admissions",
       email: "admissions@lavisionfuture.ci",
-      phone: "+225 27 21 30 45 69"
+      phone: "+225 05 54 20 35 44"
     },
     {
       name: "Service Scolarité",
       email: "scolarite@lavisionfuture.ci",
-      phone: "+225 27 21 30 45 70"
+      phone: "+225 05 54 20 35 44"
     },
     {
       name: "Comptabilité",
       email: "comptabilite@lavisionfuture.ci",
-      phone: "+225 27 21 30 45 71"
+      phone: "+225 05 54 20 35 44"
     }
   ]
 };
