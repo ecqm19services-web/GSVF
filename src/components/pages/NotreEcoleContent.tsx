@@ -65,12 +65,22 @@ const NotreEcoleContent: React.FC = () => {
 
   return (
     <>
-      <Hero
-        title={data.hero.title}
-        subtitle={data.hero.subtitle}
-        description={data.hero.description}
-        size="medium"
-      />
+      <div className="relative">
+        <Hero
+          title={data.hero.title}
+          subtitle={data.hero.subtitle}
+          description={data.hero.description}
+          size="medium"
+        />
+        {/* Dove overlay on hero */}
+        <img
+          src="/images/vision/doves.png"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
+          style={{ opacity: 0.25 }}
+        />
+      </div>
 
       {/* Mot du Fondateur */}
       <section className="py-20 bg-white">
