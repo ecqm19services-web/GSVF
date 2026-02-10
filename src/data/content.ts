@@ -77,7 +77,6 @@ export const homeContent = {
     }
   },
   stats: [
-    { value: "2019", label: "Année de fondation" },
     { value: "100%", label: "Réussite CEPE 2024-2025" },
     { value: "7 ans", label: "D'excellence éducative" },
     { value: "100%", label: "Enseignants qualifiés & autorisés" }
@@ -191,11 +190,15 @@ export const visiteContent = {
     {
       id: "sciences",
       title: "Laboratoires Scientifiques",
-      description: "Nos laboratoires de physique, chimie et SVT permettent une approche pratique des sciences.",
+      description: "Une salle de laboratoire dédiée à la physique et à la chimie, ainsi qu'une salle de SVT, permettent une approche pratique des sciences.",
       images: [
-        { src: "/images/visite/S1.webp", caption: "Laboratoire de physique" },
-        { src: "/images/visite/S2.webp", caption: "Laboratoire de chimie" },
-        { src: "/images/visite/S3.webp", caption: "Laboratoire SVT" }
+        { src: "/images/visite/S1.webp", caption: "Laboratoire de physique-chimie" },
+        { src: "/images/visite/S3.webp", caption: "Salle de SVT" }
+      ],
+      galleryImages: [
+        { src: "/images/visite/S1.webp", caption: "Laboratoire de physique-chimie" },
+        { src: "/images/visite/S2.webp", caption: "Laboratoire de physique-chimie — vue 2" },
+        { src: "/images/visite/S3.webp", caption: "Salle de SVT" }
       ]
     },
     {

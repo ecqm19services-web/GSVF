@@ -22,6 +22,11 @@ const VisiteContent: React.FC = () => {
   const [currentSection, setCurrentSection] = useState(0);
   const [currentImage, setCurrentImage] = useState(0);
 
+  const getGalleryImages = (sectionIndex: number) => {
+    const section = data.sections[sectionIndex] as any;
+    return section?.galleryImages || section?.images || [];
+  };
+
   const openLightbox = (sectionIndex: number, imageIndex: number) => {
     setCurrentSection(sectionIndex);
     setCurrentImage(imageIndex);
@@ -33,9 +38,9 @@ const VisiteContent: React.FC = () => {
   };
 
   const nextImage = () => {
-    const section = data.sections[currentSection];
-    if (!section) return;
-    if (currentImage < section.images.length - 1) {
+    const gallery = getGalleryImages(currentSection);
+    if (!gallery.length) return;
+    if (currentImage < gallery.length - 1) {
       setCurrentImage(prev => prev + 1);
     } else if (currentSection < data.sections.length - 1) {
       setCurrentSection(prev => prev + 1);
@@ -47,8 +52,9 @@ const VisiteContent: React.FC = () => {
     if (currentImage > 0) {
       setCurrentImage(prev => prev - 1);
     } else if (currentSection > 0) {
+      const prevGallery = getGalleryImages(currentSection - 1);
       setCurrentSection(prev => prev - 1);
-      setCurrentImage(data.sections[currentSection - 1].images.length - 1);
+      setCurrentImage(prevGallery.length - 1);
     }
   };
 
@@ -119,7 +125,7 @@ const VisiteContent: React.FC = () => {
                   </button>
                   <span className="text-gray-500">
                     <Camera className="w-5 h-5 inline mr-1" />
-                    {section.images.length} <EditableText as="span" path="ui.photosLabel" value={ui.photosLabel} />
+                    {((section as any).galleryImages || section.images).length} <EditableText as="span" path="ui.photosLabel" value={ui.photosLabel} />
                   </span>
                 </div>
               </div>
@@ -207,13 +213,9 @@ const VisiteContent: React.FC = () => {
             <div className="aspect-video bg-gradient-to-br from-blue-800 to-blue-900 rounded-xl flex items-center justify-center">
               <div className="text-center">
                 <Camera className="w-20 h-20 text-blue-400 mx-auto mb-4" />
-                <EditableText
-                  as="p"
-                  multiline
-                  path={`sections.${currentSection}.images.${currentImage}.caption`}
-                  value={data.sections[currentSection]?.images?.[currentImage]?.caption || ''}
-                  className="text-blue-200 text-lg"
-                />
+                <p className="text-blue-200 text-lg">
+                  {getGalleryImages(currentSection)?.[currentImage]?.caption || ''}
+                </p>
               </div>
             </div>
             <div className="mt-4 text-center">
@@ -226,7 +228,7 @@ const VisiteContent: React.FC = () => {
               </p>
               <p className="text-white/60 text-sm">
                 <EditableText as="span" path="ui.lightbox.imageLabel" value={ui.lightbox.imageLabel} /> {currentImage + 1}{' '}
-                <EditableText as="span" path="ui.lightbox.ofLabel" value={ui.lightbox.ofLabel} /> {data.sections[currentSection]?.images?.length || 0}
+                <EditableText as="span" path="ui.lightbox.ofLabel" value={ui.lightbox.ofLabel} /> {getGalleryImages(currentSection)?.length || 0}
               </p>
             </div>
           </div>
