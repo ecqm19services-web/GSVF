@@ -52,7 +52,7 @@ const VisionContent: React.FC = () => {
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center center',
             backgroundSize: 'contain',
-            opacity: 0.2,
+            opacity: 0.5,
           }}
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
