@@ -10,8 +10,7 @@ import {
   Instagram,
   Linkedin,
   Youtube,
-  ArrowRight,
-  GraduationCap
+  ArrowRight
 } from 'lucide-react';
 
 const Footer: React.FC = () => {
@@ -22,43 +21,13 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="bg-gray-900 text-gray-300">
-      {/* Newsletter Section */}
-      <div className="bg-primary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="text-center md:text-left">
-              <h3 className="text-2xl font-bold text-white mb-2">
-                Restez informé
-              </h3>
-              <p className="text-primary-foreground/80">
-                Recevez nos actualités et événements par email
-              </p>
-            </div>
-            <form className="flex w-full md:w-auto gap-3">
-              <input
-                type="email"
-                placeholder="Votre adresse email"
-                className="flex-1 md:w-80 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
-              />
-              <button
-                type="submit"
-                className="bg-white text-orange-900 px-6 py-3 rounded-lg font-semibold hover:bg-orange-50 transition-colors flex items-center gap-2"
-              >
-                S'inscrire
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* About */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <img src="/logo-vf.svg" alt="Collège Privé la Vision Future" className="w-12 h-12 rounded-xl object-contain" />
+              <img src="/logo-vf.svg" alt="Collège Privé la Vision Future" className="w-16 h-16 rounded-xl object-contain" />
               <div>
                 <h4 className="text-white font-bold">Collège Privé la Vision Future</h4>
                 <p className="text-sm text-gray-400">L'excellence, Notre devise</p>

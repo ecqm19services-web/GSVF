@@ -5,8 +5,7 @@ import AdmissionsForm from '@/components/forms/AdmissionsForm';
 import { admissionsContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
-import { ArrowRight, FileText, ClipboardList } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { FileText, ClipboardList } from 'lucide-react';
 
 type AdmissionTab = 'fiche' | 'etapes';
 
@@ -339,16 +338,8 @@ const AdmissionsContent: React.FC = () => {
         </>
       )}
 
-      {/* Help CTA */}
-      <section className="py-20 bg-orange-950">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <EditableText as="h2" path="ui.helpCta.title" value={ui.helpCta.title} className="text-3xl font-bold text-white mb-6" />
-          <EditableText as="p" multiline path="ui.helpCta.description" value={ui.helpCta.description} className="text-xl text-orange-100 mb-10" />
-          <Link to="/contact" className="inline-flex items-center gap-2 bg-white text-orange-900 px-8 py-4 rounded-xl font-semibold hover:bg-orange-50 transition-colors">
-            <EditableText as="span" path="ui.helpCta.button" value={ui.helpCta.button} /> <ArrowRight className="w-5 h-5" />
-          </Link>
-        </div>
-      </section>
+
+
     </>
   );
 };

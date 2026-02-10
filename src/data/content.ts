@@ -9,7 +9,7 @@ export const siteConfig = {
   email: "contact@lavisionfuture.ci",
   address: "Boulevard de la République, Grand-Bassam, Côte d'Ivoire",
   socialLinks: {
-    facebook: "https://facebook.com/cpvf",
+    facebook: "https://www.facebook.com/lavisionfuture",
     instagram: "https://instagram.com/cpvf",
     linkedin: "https://linkedin.com/company/cpvf",
     youtube: "https://youtube.com/@cpvf"
@@ -517,74 +517,56 @@ export const excellenceContent = {
   },
   distinctions: [
     {
-      title: "Olympiades de Mathématiques",
-      year: "2025",
-      achievement: "Médaille d'or nationale - Kouassi Ange"
+      title: "[Nom de la compétition]",
+      year: "[Année]",
+      achievement: "[Résultat obtenu] — [Nom de l'élève]"
     },
     {
-      title: "Concours Général",
-      year: "2025",
-      achievement: "3ème prix en Philosophie - Bamba Fatou"
+      title: "[Nom de la compétition]",
+      year: "[Année]",
+      achievement: "[Résultat obtenu] — [Nom de l'élève]"
     },
     {
-      title: "Spelling Bee National",
-      year: "2024",
-      achievement: "Champion national - Diallo Ibrahim"
+      title: "[Nom de la compétition]",
+      year: "[Année]",
+      achievement: "[Résultat obtenu] — [Nom de l'élève]"
     },
     {
-      title: "Robotique Junior",
-      year: "2024",
-      achievement: "Finalistes au concours panafricain"
+      title: "[Nom de la compétition]",
+      year: "[Année]",
+      achievement: "[Résultat obtenu] — [Nom de l'élève]"
     }
   ],
   alumni: [
     {
-      name: "Dr. Aminata Koné",
-      promotion: "2015",
-      achievement: "Médecin à l'hôpital Cocody, spécialiste en cardiologie",
+      name: "[Nom de l'ancien élève]",
+      promotion: "[Année]",
+      achievement: "[Parcours ou réussite de l'ancien élève]",
       image: "/images/excellence/A1.webp"
     },
     {
-      name: "Yao Kouamé",
-      promotion: "2012",
-      achievement: "Ingénieur chez Microsoft, Seattle",
+      name: "[Nom de l'ancien élève]",
+      promotion: "[Année]",
+      achievement: "[Parcours ou réussite de l'ancien élève]",
       image: "/images/excellence/A2.webp"
     },
     {
-      name: "Marie-Claire Bamba",
-      promotion: "2018",
-      achievement: "Avocate au Barreau de Paris",
+      name: "[Nom de l'ancien élève]",
+      promotion: "[Année]",
+      achievement: "[Parcours ou réussite de l'ancien élève]",
       image: "/images/excellence/A3.webp"
-    },
-    {
-      name: "Jean-Luc Aka",
-      promotion: "2016",
-      achievement: "Entrepreneur, fondateur de TechIvoire",
-      image: "/images/excellence/A4.webp"
-    },
-    {
-      name: "Fatou Diallo",
-      promotion: "2019",
-      achievement: "Doctorante en physique, MIT",
-      image: "/images/excellence/A5.webp"
-    },
-    {
-      name: "Olivier Koffi",
-      promotion: "2014",
-      achievement: "Diplomate, Ambassade de Côte d'Ivoire à Paris",
-      image: "/images/excellence/A6.webp"
     }
   ],
   testimonials: [
     {
-      quote: "La Vision Future m'a donné les bases solides qui m'ont permis de réussir à Sciences Po puis à Harvard.",
-      author: "Aminata Koné",
-      role: "Promotion 2015"
+      quote: "[Témoignage de l'ancien élève à remplacer par un vrai témoignage]",
+      author: "[Nom de l'ancien élève]",
+      role: "[Promotion Année]"
     },
     {
-      quote: "L'exigence et la bienveillance des professeurs ont forgé mon caractère et ma détermination.",
-      author: "Yao Kouamé",
-      role: "Promotion 2012"
+      quote: "[Témoignage de l'ancien élève à remplacer par un vrai témoignage]",
+      author: "[Nom de l'ancien élève]",
+      role: "[Promotion Année]"
     }
   ],
   ui: {
