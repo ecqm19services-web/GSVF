@@ -179,12 +179,19 @@ export const visiteContent = {
     {
       id: "classes",
       title: "Salles de Classe",
-      description: "Des espaces d'apprentissage dédiés à chaque niveau, incluant une salle de robotique et informatique pour l'initiation aux nouvelles technologies.",
+      description: "Des espaces d'apprentissage modernes et lumineux, dédiés à chaque niveau, favorisant la concentration et la réussite des élèves.",
       images: [
         { src: "/images/visite/C1.webp", caption: "Salle de classe primaire" },
         { src: "/images/visite/C2.webp", caption: "Salle de classe secondaire" },
-        { src: "/images/visite/C3.webp", caption: "Salle de robotique & informatique" },
         { src: "/images/visite/C4.webp", caption: "Bibliothèque" }
+      ]
+    },
+    {
+      id: "robotique",
+      title: "Robotique & Informatique",
+      description: "Une salle dédiée à la robotique et à l'informatique, où les élèves s'initient aux nouvelles technologies, à la programmation et à la pensée computationnelle.",
+      images: [
+        { src: "/images/visite/C3.webp", caption: "Salle de robotique & informatique" }
       ]
     },
     {
