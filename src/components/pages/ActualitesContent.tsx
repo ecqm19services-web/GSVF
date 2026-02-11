@@ -107,17 +107,61 @@ const ActualitesContent: React.FC = () => {
               </div>
             </div>
           ) : (
-            // Side-by-side layout: Facebook (3/4) + Articles (1/4)
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-              {/* Facebook Feed — 3/4 */}
-              <div className="lg:col-span-3">
+            // Side-by-side: Articles (left, large) + Facebook feed (right sidebar)
+            <div className="flex flex-col lg:flex-row gap-8">
+              {/* Articles — main area */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-6">
+                  <Newspaper className="w-5 h-5 text-orange-600" />
+                  <h2 className="text-xl font-bold text-gray-900">Articles</h2>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-6">
+                  {articles.map((article) => (
+                    <article
+                      key={article.id}
+                      className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer border border-gray-100"
+                      onClick={() => setSelectedArticle(article)}
+                    >
+                      {article.image && (
+                        <div className="aspect-[16/10] overflow-hidden">
+                          <img
+                            src={article.image}
+                            alt={article.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
+                      )}
+                      <div className="p-5">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="px-2.5 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                            {article.category}
+                          </span>
+                          <span className="text-gray-400 text-xs flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {article.date}
+                          </span>
+                        </div>
+                        <h3 className="text-base font-bold text-gray-900 mb-1.5 group-hover:text-blue-800 transition-colors line-clamp-2">
+                          {article.title}
+                        </h3>
+                        <p className="text-gray-500 text-sm leading-relaxed line-clamp-3">
+                          {article.excerpt}
+                        </p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+
+              {/* Facebook Feed — right sidebar (fits naturally at 500px max) */}
+              <div className="w-full lg:w-[520px] lg:flex-shrink-0">
                 <div className="flex items-center gap-3 mb-6">
                   <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
-                    <Newspaper className="w-4 h-4" />
+                    <Facebook className="w-4 h-4" />
                     Fil d'actualité
                   </span>
                 </div>
-                <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6">
+                <div className="bg-white rounded-2xl shadow-lg p-3">
                   <FacebookPageEmbed
                     pageUrl={siteConfig.socialLinks.facebook}
                     height={900}
@@ -135,50 +179,6 @@ const ActualitesContent: React.FC = () => {
                     Voir toutes nos publications sur Facebook
                     <ArrowRight className="w-4 h-4" />
                   </a>
-                </div>
-              </div>
-
-              {/* Articles Sidebar — 1/4 */}
-              <div className="lg:col-span-1">
-                <div className="flex items-center gap-2 mb-6">
-                  <Newspaper className="w-5 h-5 text-orange-600" />
-                  <h2 className="text-lg font-bold text-gray-900">Articles</h2>
-                </div>
-                <div className="space-y-4">
-                  {articles.map((article) => (
-                    <article
-                      key={article.id}
-                      className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group cursor-pointer border border-gray-100"
-                      onClick={() => setSelectedArticle(article)}
-                    >
-                      {article.image && (
-                        <div className="aspect-[16/9] overflow-hidden">
-                          <img
-                            src={article.image}
-                            alt={article.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        </div>
-                      )}
-                      <div className="p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-[10px] font-medium">
-                            {article.category}
-                          </span>
-                          <span className="text-gray-400 text-[10px] flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {article.date}
-                          </span>
-                        </div>
-                        <h3 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-blue-800 transition-colors line-clamp-2">
-                          {article.title}
-                        </h3>
-                        <p className="text-gray-500 text-xs leading-relaxed line-clamp-2">
-                          {article.excerpt}
-                        </p>
-                      </div>
-                    </article>
-                  ))}
                 </div>
               </div>
             </div>

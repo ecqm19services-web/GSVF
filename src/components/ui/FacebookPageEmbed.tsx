@@ -11,7 +11,7 @@ interface FacebookPageEmbedProps {
 
 const FacebookPageEmbed: React.FC<FacebookPageEmbedProps> = ({
   pageUrl,
-  height = 800,
+  height = 900,
   tabs = 'timeline',
   showFacepile = false,
   smallHeader = false,
@@ -23,7 +23,8 @@ const FacebookPageEmbed: React.FC<FacebookPageEmbedProps> = ({
     if (!container) return;
 
     const encodedUrl = encodeURIComponent(pageUrl);
-    const iframeSrc = `https://www.facebook.com/plugins/page.php?href=${encodedUrl}&tabs=${tabs}&width=&height=${height}&small_header=${smallHeader}&adapt_container_width=true&hide_cover=false&show_facepile=${showFacepile}`;
+    // Facebook plugin max width is 500px — we use 500 and center it
+    const iframeSrc = `https://www.facebook.com/plugins/page.php?href=${encodedUrl}&tabs=${tabs}&width=500&height=${height}&small_header=${smallHeader}&adapt_container_width=true&hide_cover=false&show_facepile=${showFacepile}`;
 
     const iframe = document.createElement('iframe');
     iframe.src = iframeSrc;
@@ -38,14 +39,13 @@ const FacebookPageEmbed: React.FC<FacebookPageEmbedProps> = ({
     container.appendChild(iframe);
 
     return () => {
-      // Manual cleanup — avoids React removeChild errors
       while (container.firstChild) {
         container.removeChild(container.firstChild);
       }
     };
   }, [pageUrl, height, tabs, showFacepile, smallHeader]);
 
-  return <div ref={containerRef} className="w-full" />;
+  return <div ref={containerRef} className="w-full max-w-[520px]" />;
 };
 
 export default FacebookPageEmbed;
