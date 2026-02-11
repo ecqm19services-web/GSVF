@@ -305,7 +305,7 @@ const AdminVisualEditor: React.FC = () => {
                   }
                 >
                   <div
-                    className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200"
+                    className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200 isolate"
                     onClickCapture={(e) => {
                       const target = e.target as HTMLElement;
                       const anchor = target.closest('a');
