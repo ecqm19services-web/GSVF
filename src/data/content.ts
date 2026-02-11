@@ -696,20 +696,20 @@ export const admissionsContent = {
       title: "Frais annexes",
       columns: ["6e à la 4e", "3e", "2nde / 1re", "Tle"],
       rows: [
-        { label: "Tenue de sport", values: ["6 000", "6 000", "9 000", "9 000"] },
-        { label: "Tenue scolaire", values: ["12 000", "14 000", "14 000", "14 000"] },
-        { label: "Polo", values: ["7 000", "7 000", "7 000", "7 000"] },
-        { label: "Parquet marker (12)", values: ["6 000", "6 000", "6 000", "6 000"] },
-        { label: "Rame", values: ["6 000", "6 000", "6 000", "6 000"] },
-        { label: "Feuilles de copie", values: ["6 000", "6 000", "6 000", "6 000"] },
-        { label: "Frais d'examen / visite médicale", values: ["5 000", "9 000", "5 000", "12 000"] },
-        { label: "Photo", values: ["2 000", "2 000", "2 000", "2 000"] },
-        { label: "Assurance scolaire", values: ["1 000", "1 000", "1 000", "1 000"] },
-        { label: "Livre scolaire 6ème", values: ["2 000", "2 000", "2 000", "2 000"] },
-        { label: "Robotique", values: ["75 000", "75 000", "75 000", "75 000"] }
+        { label: "Tenue de sport", values: ["6 000 FCFA", "6 000 FCFA", "9 000 FCFA", "9 000 FCFA"] },
+        { label: "Tenue scolaire", values: ["12 000 FCFA", "14 000 FCFA", "14 000 FCFA", "14 000 FCFA"] },
+        { label: "Polo", values: ["7 000 FCFA", "7 000 FCFA", "7 000 FCFA", "7 000 FCFA"] },
+        { label: "Parquet marker (12)", values: ["6 000 FCFA", "6 000 FCFA", "6 000 FCFA", "6 000 FCFA"] },
+        { label: "Rame", values: ["6 000 FCFA", "6 000 FCFA", "6 000 FCFA", "6 000 FCFA"] },
+        { label: "Feuilles de copie", values: ["6 000 FCFA", "6 000 FCFA", "6 000 FCFA", "6 000 FCFA"] },
+        { label: "Frais d'examen / visite médicale", values: ["5 000 FCFA", "9 000 FCFA", "5 000 FCFA", "12 000 FCFA"] },
+        { label: "Photo", values: ["2 000 FCFA", "2 000 FCFA", "2 000 FCFA", "2 000 FCFA"] },
+        { label: "Assurance scolaire", values: ["1 000 FCFA", "1 000 FCFA", "1 000 FCFA", "1 000 FCFA"] },
+        { label: "Livre scolaire 6ème", values: ["2 000 FCFA", "2 000 FCFA", "2 000 FCFA", "2 000 FCFA"] },
+        { label: "Robotique", values: ["75 000 FCFA", "75 000 FCFA", "75 000 FCFA", "75 000 FCFA"] }
       ],
       totalLabel: "TOTAL",
-      totals: ["128 000", "132 000", "131 000", "138 000"]
+      totals: ["128 000 FCFA", "132 000 FCFA", "131 000 FCFA", "138 000 FCFA"]
     },
     transport: {
       title: "Transport",
@@ -717,19 +717,19 @@ export const admissionsContent = {
         {
           label: "Les Cités / Rond point ANANI / Akissi Delta / Modeste",
           amount: "60 000",
-          currency: "F",
+          currency: "FCFA",
           period: "Trimestre"
         },
         {
           label: "Grand Bassam Mossou / Gonzague-ville / Jean folly / Adjouffou",
           amount: "75 000",
-          currency: "F",
+          currency: "FCFA",
           period: "Trimestre"
         },
         {
           label: "Port Bouet / Palmier / Autoroute / Cité la Paix / et autres destinations",
           amount: "90 000",
-          currency: "F",
+          currency: "FCFA",
           period: "Trimestre"
         }
       ],
@@ -754,20 +754,20 @@ export const admissionsContent = {
         "2nde à la Tle (Non affectés)"
       ],
       rows: [
-        { label: "Écolage", values: ["200 000", "350 000", "250 000", "400 000"] },
-        { label: "Inscription", values: ["100 000", "200 000", "150 000", "200 000"] },
-        { label: "Septembre", values: ["40 000", "30 000", "25 000", "40 000"] },
-        { label: "Octobre", values: ["20 000", "30 000", "25 000", "40 000"] },
-        { label: "Novembre", values: ["20 000", "30 000", "25 000", "40 000"] },
-        { label: "Décembre", values: ["20 000", "30 000", "25 000", "40 000"] },
-        { label: "Janvier", values: ["", "30 000", "25 000", "40 000"] }
+        { label: "Écolage", values: ["200 000 FCFA", "350 000 FCFA", "250 000 FCFA", "400 000 FCFA"] },
+        { label: "Inscription", values: ["100 000 FCFA", "200 000 FCFA", "150 000 FCFA", "200 000 FCFA"] },
+        { label: "Septembre", values: ["40 000 FCFA", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] },
+        { label: "Octobre", values: ["20 000 FCFA", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] },
+        { label: "Novembre", values: ["20 000 FCFA", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] },
+        { label: "Décembre", values: ["20 000 FCFA", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] },
+        { label: "Janvier", values: ["", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] }
       ],
       note: "NB : Prévoir 100 FCFA de timbre fiscal pour tout versement à effectuer (obligatoire)."
     },
     extracurricular: {
       title: "Activité extrascolaire",
-      membership: "Adhésion : 10 000 F",
-      quarterly: "15 000 F / trimestre",
+      membership: "Adhésion : 10 000 FCFA",
+      quarterly: "15 000 FCFA / trimestre",
       activities: ["TAEKWONDO", "ESCRIME", "KUNG FU"],
       music: "Cours de musique (gratuit pour le collège)",
       facility: "Salle équipée"

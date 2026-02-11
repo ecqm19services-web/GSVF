@@ -97,30 +97,33 @@ const AdmissionsContent: React.FC = () => {
             <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
               <EditableText as="h3" path="infoSheet.tuition.title" value={infoSheet.tuition.title} className="text-lg font-bold text-gray-900 mb-4" />
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm border-collapse border border-gray-300">
                   <thead>
-                    <tr>
-                      <th className="text-left py-2 pr-4 text-gray-600 font-semibold"> </th>
+                    <tr className="bg-blue-800 text-white">
+                      <th className="text-left py-3 px-4 font-bold border border-blue-700"> </th>
                       {infoSheet.tuition.columns.map((col: string, i: number) => (
-                        <th key={i} className="text-left py-2 pr-4 text-gray-600 font-semibold whitespace-nowrap">
+                        <th key={i} className="text-left py-3 px-4 font-bold border border-blue-700 whitespace-nowrap">
                           <EditableText as="span" path={`infoSheet.tuition.columns.${i}`} value={col} />
                         </th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {infoSheet.tuition.rows.map((row: any, rowIndex: number) => (
-                      <tr key={rowIndex} className="border-t border-gray-200">
-                        <td className="py-2 pr-4 font-medium text-gray-900 whitespace-nowrap">
+                    {infoSheet.tuition.rows.map((row: any, rowIndex: number) => {
+                      const isKeyRow = ['Écolage', 'Inscription'].includes(row.label);
+                      return (
+                      <tr key={rowIndex} className={isKeyRow ? 'bg-blue-50' : rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                        <td className={`py-2.5 px-4 border border-gray-300 whitespace-nowrap ${isKeyRow ? 'font-bold text-blue-900' : 'font-semibold text-gray-900'}`}>
                           <EditableText as="span" path={`infoSheet.tuition.rows.${rowIndex}.label`} value={row.label} />
                         </td>
                         {row.values.map((v: string, colIndex: number) => (
-                          <td key={colIndex} className="py-2 pr-4 text-gray-700 whitespace-nowrap">
+                          <td key={colIndex} className={`py-2.5 px-4 border border-gray-300 whitespace-nowrap ${isKeyRow ? 'font-semibold text-blue-900' : 'text-gray-700'}`}>
                             <EditableText as="span" path={`infoSheet.tuition.rows.${rowIndex}.values.${colIndex}`} value={v} />
                           </td>
                         ))}
                       </tr>
-                    ))}
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -128,14 +131,14 @@ const AdmissionsContent: React.FC = () => {
 
               {/* Frais annexes inline */}
               <div className="mt-6 pt-6 border-t border-gray-100">
-                <EditableText as="h4" path="infoSheet.annexFees.title" value={infoSheet.annexFees.title} className="font-bold text-gray-900 mb-3" />
+                <EditableText as="h4" path="infoSheet.annexFees.title" value={infoSheet.annexFees.title} className="text-lg font-bold text-gray-900 mb-3" />
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm border-collapse border border-gray-300">
                     <thead>
-                      <tr>
-                        <th className="text-left py-2 pr-4 text-gray-600 font-semibold"> </th>
+                      <tr className="bg-blue-800 text-white">
+                        <th className="text-left py-3 px-4 font-bold border border-blue-700"> </th>
                         {infoSheet.annexFees.columns.map((col: string, i: number) => (
-                          <th key={i} className="text-left py-2 pr-4 text-gray-600 font-semibold whitespace-nowrap">
+                          <th key={i} className="text-left py-3 px-4 font-bold border border-blue-700 whitespace-nowrap">
                             <EditableText as="span" path={`infoSheet.annexFees.columns.${i}`} value={col} />
                           </th>
                         ))}
@@ -143,23 +146,23 @@ const AdmissionsContent: React.FC = () => {
                     </thead>
                     <tbody>
                       {infoSheet.annexFees.rows.map((row: any, rowIndex: number) => (
-                        <tr key={rowIndex} className="border-t border-gray-200">
-                          <td className="py-2 pr-4 font-medium text-gray-900 whitespace-nowrap">
+                        <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                          <td className="py-2.5 px-4 font-semibold text-gray-900 border border-gray-300 whitespace-nowrap">
                             <EditableText as="span" path={`infoSheet.annexFees.rows.${rowIndex}.label`} value={row.label} />
                           </td>
                           {row.values.map((v: string, colIndex: number) => (
-                            <td key={colIndex} className="py-2 pr-4 text-gray-700 whitespace-nowrap">
+                            <td key={colIndex} className="py-2.5 px-4 text-gray-700 border border-gray-300 whitespace-nowrap">
                               <EditableText as="span" path={`infoSheet.annexFees.rows.${rowIndex}.values.${colIndex}`} value={v} />
                             </td>
                           ))}
                         </tr>
                       ))}
-                      <tr className="border-t border-gray-300">
-                        <td className="py-2 pr-4 font-bold text-gray-900 whitespace-nowrap">
+                      <tr className="bg-blue-800 text-white">
+                        <td className="py-2.5 px-4 font-bold border border-blue-700 whitespace-nowrap">
                           <EditableText as="span" path="infoSheet.annexFees.totalLabel" value={infoSheet.annexFees.totalLabel} />
                         </td>
                         {infoSheet.annexFees.totals.map((t: string, i: number) => (
-                          <td key={i} className="py-2 pr-4 font-bold text-gray-900 whitespace-nowrap">
+                          <td key={i} className="py-2.5 px-4 font-bold border border-blue-700 whitespace-nowrap">
                             <EditableText as="span" path={`infoSheet.annexFees.totals.${i}`} value={t} />
                           </td>
                         ))}
