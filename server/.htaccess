@@ -1,0 +1,12 @@
+RewriteEngine On
+
+# Laisser passer l'API
+RewriteRule ^api/ - [L]
+
+# Ne pas réécrire les fichiers/dossiers existants
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# SPA fallback
+RewriteRule ^ index.html [L]
