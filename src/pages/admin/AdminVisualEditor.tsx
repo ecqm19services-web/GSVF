@@ -13,13 +13,6 @@ import AdmissionsContent from '@/components/pages/AdmissionsContent';
 import ActualitesContent from '@/components/pages/ActualitesContent';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { toast } from '@/components/ui/use-toast';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { fetchPageContent, publishPageContent } from '@/lib/pageContentApi';
@@ -266,18 +259,17 @@ const AdminVisualEditor: React.FC = () => {
             <div className="flex items-start gap-4">
               <div className="min-w-[220px]">
                 <Label className="mb-2 block">Page</Label>
-                <Select value={page} onValueChange={(v) => setPage(v as EditablePage)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choisir" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {pages.map((p) => (
-                      <SelectItem key={p} value={p}>
-                        {p}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <select
+                  value={page}
+                  onChange={(e) => setPage(e.target.value as EditablePage)}
+                  className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 cursor-pointer"
+                >
+                  {pages.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="flex flex-col items-end gap-2 pt-7">
