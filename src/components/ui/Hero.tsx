@@ -196,7 +196,7 @@ const Hero: React.FC<HeroProps> = ({
       <div className="absolute bottom-0 left-0 right-0">
         <svg viewBox="0 0 1440 180" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-24 sm:h-32 md:h-36 lg:h-40">
           <path
-            d="M0 150 C 360 90 720 60 1080 90 C 1260 120 1350 135 1440 150 V 180 H 0 Z"
+            d="M0 130 C 360 90 720 70 1080 90 C 1260 110 1350 120 1440 130 V 180 H 0 Z"
             fill="white"
           />
         </svg>
