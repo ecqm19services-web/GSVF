@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface FacebookPageEmbedProps {
   pageUrl: string;
@@ -16,20 +16,36 @@ const FacebookPageEmbed: React.FC<FacebookPageEmbedProps> = ({
   showFacepile = false,
   smallHeader = false,
 }) => {
-  const encodedUrl = encodeURIComponent(pageUrl);
-  const iframeSrc = `https://www.facebook.com/plugins/page.php?href=${encodedUrl}&tabs=${tabs}&width=&height=${height}&small_header=${smallHeader}&adapt_container_width=true&hide_cover=false&show_facepile=${showFacepile}`;
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  return (
-    <div className="w-full">
-      <iframe
-        src={iframeSrc}
-        style={{ border: 'none', overflow: 'hidden', width: '100%', height: `${height}px` }}
-        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-        allowFullScreen
-        title="Facebook - Collège Privé la Vision Future"
-      />
-    </div>
-  );
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const encodedUrl = encodeURIComponent(pageUrl);
+    const iframeSrc = `https://www.facebook.com/plugins/page.php?href=${encodedUrl}&tabs=${tabs}&width=&height=${height}&small_header=${smallHeader}&adapt_container_width=true&hide_cover=false&show_facepile=${showFacepile}`;
+
+    const iframe = document.createElement('iframe');
+    iframe.src = iframeSrc;
+    iframe.style.border = 'none';
+    iframe.style.overflow = 'hidden';
+    iframe.style.width = '100%';
+    iframe.style.height = `${height}px`;
+    iframe.allow = 'autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share';
+    iframe.allowFullscreen = true;
+    iframe.title = 'Facebook - Collège Privé la Vision Future';
+
+    container.appendChild(iframe);
+
+    return () => {
+      // Manual cleanup — avoids React removeChild errors
+      while (container.firstChild) {
+        container.removeChild(container.firstChild);
+      }
+    };
+  }, [pageUrl, height, tabs, showFacepile, smallHeader]);
+
+  return <div ref={containerRef} className="w-full" />;
 };
 
 export default FacebookPageEmbed;

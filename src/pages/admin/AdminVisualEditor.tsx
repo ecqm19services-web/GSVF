@@ -36,6 +36,7 @@ import {
 import { EditSessionProvider } from '@/contexts/EditSessionContext';
 import { PageJsonOverrideProvider } from '@/contexts/PageJsonOverrideContext';
 import { FileText, LogOut, Monitor, Settings } from 'lucide-react';
+import ErrorBoundary from '@/components/ui/ErrorBoundary';
 
 type EditablePage =
   | 'accueil'
@@ -295,21 +296,30 @@ const AdminVisualEditor: React.FC = () => {
           ) : (
             <PageJsonOverrideProvider overrides={{ [page]: draft }}>
               <EditSessionProvider page={page} draft={draft} setDraft={setDraft}>
-                <div
-                  className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200"
-                  onClickCapture={(e) => {
-                    const target = e.target as HTMLElement;
-                    const anchor = target.closest('a');
-                    if (anchor) {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }
-                  }}
+                <ErrorBoundary
+                  key={page}
+                  fallback={
+                    <div className="bg-white rounded-2xl shadow-sm p-10 text-center text-gray-500">
+                      Rechargement de la page...
+                    </div>
+                  }
                 >
-                  <Layout>
-                    {renderSelectedPage()}
-                  </Layout>
-                </div>
+                  <div
+                    className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200"
+                    onClickCapture={(e) => {
+                      const target = e.target as HTMLElement;
+                      const anchor = target.closest('a');
+                      if (anchor) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }
+                    }}
+                  >
+                    <Layout>
+                      {renderSelectedPage()}
+                    </Layout>
+                  </div>
+                </ErrorBoundary>
               </EditSessionProvider>
             </PageJsonOverrideProvider>
           )}
