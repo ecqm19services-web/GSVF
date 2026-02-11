@@ -120,7 +120,6 @@ const ActualitesContent: React.FC = () => {
                 <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6">
                   <FacebookPageEmbed
                     pageUrl={siteConfig.socialLinks.facebook}
-                    width={500}
                     height={900}
                     tabs="timeline"
                   />

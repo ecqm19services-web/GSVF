@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface FacebookPageEmbedProps {
   pageUrl: string;
@@ -11,15 +11,37 @@ interface FacebookPageEmbedProps {
 
 const FacebookPageEmbed: React.FC<FacebookPageEmbedProps> = ({
   pageUrl,
-  width = 500,
   height = 600,
   tabs = 'timeline',
   showFacepile = false,
   smallHeader = true,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(500);
 
   useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const measure = () => {
+      const w = el.getBoundingClientRect().width;
+      // Facebook SDK max is 500, min is 180
+      setContainerWidth(Math.min(500, Math.max(180, Math.floor(w))));
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const parse = () => {
+      if ((window as any).FB && containerRef.current) {
+        (window as any).FB.XFBML.parse(containerRef.current);
+      }
+    };
+
     // Load Facebook SDK if not already loaded
     if (!(window as any).FB) {
       const script = document.createElement('script');
@@ -28,24 +50,19 @@ const FacebookPageEmbed: React.FC<FacebookPageEmbedProps> = ({
       script.defer = true;
       script.crossOrigin = 'anonymous';
       document.body.appendChild(script);
-
-      script.onload = () => {
-        if ((window as any).FB) {
-          (window as any).FB.XFBML.parse(containerRef.current);
-        }
-      };
+      script.onload = parse;
     } else {
-      (window as any).FB.XFBML.parse(containerRef.current);
+      parse();
     }
-  }, [pageUrl]);
+  }, [pageUrl, containerWidth]);
 
   return (
-    <div ref={containerRef} className="flex justify-center">
+    <div ref={containerRef} className="w-full">
       <div
         className="fb-page"
         data-href={pageUrl}
         data-tabs={tabs}
-        data-width={width}
+        data-width={containerWidth}
         data-height={height}
         data-small-header={smallHeader}
         data-adapt-container-width="true"
