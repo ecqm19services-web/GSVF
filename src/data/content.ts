@@ -705,7 +705,7 @@ export const admissionsContent = {
         { label: "Tenue de sport", values: ["6 000 FCFA", "6 000 FCFA", "9 000 FCFA", "9 000 FCFA"] },
         { label: "Tenue scolaire", values: ["12 000 FCFA", "14 000 FCFA", "14 000 FCFA", "14 000 FCFA"] },
         { label: "Polo", values: ["7 000 FCFA", "7 000 FCFA", "7 000 FCFA", "7 000 FCFA"] },
-        { label: "Parquet marker (12)", values: ["6 000 FCFA", "6 000 FCFA", "6 000 FCFA", "6 000 FCFA"] },
+        { label: "Paquet de marqueurs (12)", values: ["6 000 FCFA", "6 000 FCFA", "6 000 FCFA", "6 000 FCFA"] },
         { label: "Rame", values: ["6 000 FCFA", "6 000 FCFA", "6 000 FCFA", "6 000 FCFA"] },
         { label: "Feuilles de copie", values: ["6 000 FCFA", "6 000 FCFA", "6 000 FCFA", "6 000 FCFA"] },
         { label: "Frais d'examen / visite médicale", values: ["5 000 FCFA", "9 000 FCFA", "5 000 FCFA", "12 000 FCFA"] },
@@ -766,7 +766,7 @@ export const admissionsContent = {
         { label: "Octobre", values: ["20 000 FCFA", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] },
         { label: "Novembre", values: ["20 000 FCFA", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] },
         { label: "Décembre", values: ["20 000 FCFA", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] },
-        { label: "Janvier", values: ["20 000 FCFA", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] }
+        { label: "Janvier", values: ["", "30 000 FCFA", "", "40 000 FCFA"] }
       ],
       note: "NB : Prévoir 100 FCFA de timbre fiscal pour tout versement à effectuer (obligatoire)."
     },

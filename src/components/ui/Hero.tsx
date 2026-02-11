@@ -192,10 +192,13 @@ const Hero: React.FC<HeroProps> = ({
         </div>
       </div>
 
-      {/* Bottom Wave */}
+      {/* Bottom Wave (gentle, regular arc) */}
       <div className="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-          <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="white"/>
+        <svg viewBox="0 0 1440 180" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-24 sm:h-32 md:h-36 lg:h-40">
+          <path
+            d="M0 150 C 360 90 720 60 1080 90 C 1260 120 1350 135 1440 150 V 180 H 0 Z"
+            fill="white"
+          />
         </svg>
       </div>
     </section>

@@ -93,6 +93,22 @@ const AdmissionsContent: React.FC = () => {
               descriptionPath="infoSheet.disclaimer"
             />
 
+            {/* Notes importantes (plein largeur) */}
+            {infoSheet.transport?.notes?.length ? (
+              <div className="mt-6 mb-8">
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 shadow-sm">
+                  <h4 className="text-amber-900 font-semibold mb-2">Informations importantes</h4>
+                  <ul className="space-y-1.5 list-disc list-inside text-amber-900 text-sm sm:text-base">
+                    {infoSheet.transport.notes.map((n: string, i: number) => (
+                      <li key={i}>
+                        <EditableText as="span" multiline path={`infoSheet.transport.notes.${i}`} value={n} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ) : null}
+
             {/* 1. Écolage — Full width on top */}
             <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
               <EditableText as="h3" path="infoSheet.tuition.title" value={infoSheet.tuition.title} className="text-lg font-bold text-gray-900 mb-4" />
@@ -274,11 +290,6 @@ const AdmissionsContent: React.FC = () => {
                       <EditableText as="span" path="infoSheet.transport.canteen.currency" value={infoSheet.transport.canteen.currency} />{' / '}
                       <EditableText as="span" path="infoSheet.transport.canteen.period" value={infoSheet.transport.canteen.period} />
                     </div>
-                  </div>
-                  <div className="mt-3 space-y-1">
-                    {infoSheet.transport.notes.map((n: string, i: number) => (
-                      <EditableText key={i} as="p" multiline path={`infoSheet.transport.notes.${i}`} value={n} className="text-xs text-red-500 font-medium" />
-                    ))}
                   </div>
                 </div>
               </div>
