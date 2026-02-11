@@ -78,12 +78,12 @@ const NotreEcoleContent: React.FC = () => {
           alt=""
           aria-hidden="true"
           className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
-          style={{ opacity: 0.25 }}
+          style={{ opacity: 0.12 }}
         />
       </div>
 
       {/* Mot du Fondateur */}
-      <section className="py-20 bg-white">
+      <section className="pt-10 pb-20 bg-white -mt-10 sm:-mt-15 lg:-mt-22">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Video à gauche */}
@@ -214,38 +214,70 @@ const NotreEcoleContent: React.FC = () => {
             titlePath="ui.values.title"
             descriptionPath="ui.values.description"
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {data.values.map((value, index) => {
-              const Icon = iconMap[value.icon] || Star;
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {Array.from({ length: Math.ceil(data.values.length / 2) }, (_, groupIndex) => {
+              const firstIndex = groupIndex * 2;
+              const first = data.values[firstIndex];
+              const second = data.values[firstIndex + 1];
               const colors = [
                 'from-blue-600 to-blue-800',
-                'from-blue-500 to-blue-600',
                 'from-amber-500 to-amber-600',
-                'from-rose-500 to-rose-600',
-                'from-purple-500 to-purple-600',
-                'from-cyan-500 to-cyan-600'
+                'from-rose-500 to-rose-600'
               ];
+              const IconPrimary = iconMap[first?.icon] || Star;
+              const IconSecondary = second ? iconMap[second.icon] || Star : Star;
+
               return (
-                <div 
-                  key={index}
+                <div
+                  key={groupIndex}
                   className="bg-gray-50 rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 group"
                 >
-                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${colors[index % colors.length]} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                    <Icon className="w-7 h-7 text-white" />
+                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${colors[groupIndex % colors.length]} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                    <IconPrimary className="w-7 h-7 text-white" />
                   </div>
-                  <EditableText
-                    as="h3"
-                    path={`values.${index}.title`}
-                    value={value.title}
-                    className="text-xl font-bold text-gray-900 mb-3"
-                  />
-                  <EditableText
-                    as="p"
-                    multiline
-                    path={`values.${index}.description`}
-                    value={value.description}
-                    className="text-gray-600 leading-relaxed"
-                  />
+
+                  {/* Première valeur */}
+                  {first && (
+                    <div className="mb-6">
+                      <EditableText
+                        as="h3"
+                        path={`values.${firstIndex}.title`}
+                        value={first.title}
+                        className="text-xl font-bold text-gray-900 mb-2"
+                      />
+                      <EditableText
+                        as="p"
+                        multiline
+                        path={`values.${firstIndex}.description`}
+                        value={first.description}
+                        className="text-gray-600 leading-relaxed"
+                      />
+                    </div>
+                  )}
+
+                  {/* Deuxième valeur (optionnelle) */}
+                  {second && (
+                    <div className="pt-4 border-t border-gray-100">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center">
+                          <IconSecondary className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <EditableText
+                          as="h4"
+                          path={`values.${firstIndex + 1}.title`}
+                          value={second.title}
+                          className="text-lg font-semibold text-gray-900"
+                        />
+                      </div>
+                      <EditableText
+                        as="p"
+                        multiline
+                        path={`values.${firstIndex + 1}.description`}
+                        value={second.description}
+                        className="text-gray-600 leading-relaxed"
+                      />
+                    </div>
+                  )}
                 </div>
               );
             })}

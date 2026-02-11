@@ -192,15 +192,20 @@ const Hero: React.FC<HeroProps> = ({
         </div>
       </div>
 
-      {/* Bottom Wave (gentle, regular arc) */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 180" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-24 sm:h-32 md:h-36 lg:h-40">
-          <path
-            d="M0 130 C 360 90 720 70 1080 90 C 1260 110 1350 120 1440 130 V 180 H 0 Z"
-            fill="white"
-          />
-        </svg>
-      </div>
+      {/* Bottom Wave - true full width */}
+<div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-screen overflow-hidden">
+  <svg
+    viewBox="0 0 1600 220"
+    preserveAspectRatio="none"
+    className="w-screen h-32 md:h-40 lg:h-48"
+  >
+    <path
+      d="M0 130 C 420 80 800 60 1180 80 C 1400 95 1500 115 1600 130 V 220 H 0 Z"
+      fill="white"
+    />
+  </svg>
+</div>
+
     </section>
   );
 };

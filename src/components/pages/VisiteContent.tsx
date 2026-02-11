@@ -69,7 +69,7 @@ const VisiteContent: React.FC = () => {
       />
 
       {/* Navigation Pills */}
-      <section className="py-8 bg-white sticky top-20 z-30 border-b border-gray-100 shadow-sm">
+      <section className="py-4 sm:py-5 bg-white sticky top-10 z-10 border-b border-gray-100 shadow-sm -mt-10 sm:-mt-12 lg:-mt-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
             {data.sections.map((section, index) => (

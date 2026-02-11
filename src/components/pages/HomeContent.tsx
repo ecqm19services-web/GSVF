@@ -51,7 +51,7 @@ const HomeContent: React.FC = () => {
       />
 
       {/* Stats Section */}
-      <section className="py-16 bg-white relative -mt-8 z-10">
+      <section className="pt-0 pb-5 bg-white relative -mt-10 sm:-mt-12 lg:-mt-14 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {homeData.stats.map((stat, index) => (
