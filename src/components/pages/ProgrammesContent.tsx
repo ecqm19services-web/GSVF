@@ -56,7 +56,7 @@ const ProgrammesContent: React.FC = () => {
             multiline
             path="intro"
             value={programmesData.intro}
-            className="text-xl text-gray-700 leading-relaxed text-center"
+            className="text-base sm:text-xl text-gray-700 leading-relaxed text-justify sm:text-center border-l-4 border-orange-400 pl-4 sm:border-l-0 sm:pl-0"
           />
         </div>
       </section>
