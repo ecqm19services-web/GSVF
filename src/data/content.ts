@@ -411,7 +411,6 @@ export const programmesContent = {
       ages: "3-5 ans",
       description: "Un environnement stimulant inspiré de la pédagogie Montessori pour les premières découvertes.",
       features: [
-        "Petits effectifs (15 élèves max)",
         "Éveil aux langues (français et anglais)",
         "Activités sensorielles et motrices",
         "Initiation à la lecture et aux mathématiques",
