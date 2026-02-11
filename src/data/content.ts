@@ -509,15 +509,15 @@ export const excellenceContent = {
       },
       {
         name: "BEPC",
-        rate: "100%",
-        mentions: "60% avec mention",
-        rank: "Top 5 national"
+        rate: "?",
+        mentions: "Résultats à venir",
+        rank: "En attente"
       },
       {
-        name: "CEPE",
-        rate: "100%",
-        mentions: "Moyenne générale : 8.5/10",
-        rank: "Excellence confirmée"
+        name: "BAC",
+        rate: "?",
+        mentions: "Résultats à venir",
+        rank: "En attente"
       }
     ]
   },
@@ -700,7 +700,7 @@ export const admissionsContent = {
     ],
     annexFees: {
       title: "Frais annexes",
-      columns: ["6e à la 4e", "3e", "2nde / 1re", "Tle"],
+      columns: ["6ème à la 4ème", "3ème", "2nde / 1ère", "Tle"],
       rows: [
         { label: "Tenue de sport", values: ["6 000 FCFA", "6 000 FCFA", "9 000 FCFA", "9 000 FCFA"] },
         { label: "Tenue scolaire", values: ["12 000 FCFA", "14 000 FCFA", "14 000 FCFA", "14 000 FCFA"] },
@@ -711,7 +711,7 @@ export const admissionsContent = {
         { label: "Frais d'examen / visite médicale", values: ["5 000 FCFA", "9 000 FCFA", "5 000 FCFA", "12 000 FCFA"] },
         { label: "Photo", values: ["2 000 FCFA", "2 000 FCFA", "2 000 FCFA", "2 000 FCFA"] },
         { label: "Assurance scolaire", values: ["1 000 FCFA", "1 000 FCFA", "1 000 FCFA", "1 000 FCFA"] },
-        { label: "Livre scolaire 6ème", values: ["2 000 FCFA", "2 000 FCFA", "2 000 FCFA", "2 000 FCFA"] },
+        { label: "Livre scolaire", values: ["2 000 FCFA", "2 000 FCFA", "2 000 FCFA", "2 000 FCFA"] },
         { label: "Robotique", values: ["75 000 FCFA", "75 000 FCFA", "75 000 FCFA", "75 000 FCFA"] }
       ],
       totalLabel: "TOTAL",
@@ -766,7 +766,7 @@ export const admissionsContent = {
         { label: "Octobre", values: ["20 000 FCFA", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] },
         { label: "Novembre", values: ["20 000 FCFA", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] },
         { label: "Décembre", values: ["20 000 FCFA", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] },
-        { label: "Janvier", values: ["", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] }
+        { label: "Janvier", values: ["20 000 FCFA", "30 000 FCFA", "25 000 FCFA", "40 000 FCFA"] }
       ],
       note: "NB : Prévoir 100 FCFA de timbre fiscal pour tout versement à effectuer (obligatoire)."
     },
