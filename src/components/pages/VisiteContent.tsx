@@ -3,6 +3,7 @@ import Hero from '@/components/ui/Hero';
 import { visiteContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
+import EditableImage from '@/components/admin/EditableImage';
 import { 
   X, 
   ChevronLeft, 
@@ -133,24 +134,26 @@ const VisiteContent: React.FC = () => {
               {/* Image Grid */}
               <div className={`grid grid-cols-2 gap-4 ${sectionIndex % 2 === 1 ? 'lg:order-1' : ''}`}>
                 {section.images.slice(0, 4).map((image, imageIndex) => (
-                  <button
+                  <div
                     key={imageIndex}
-                    onClick={() => openLightbox(sectionIndex, imageIndex)}
-                    className={`relative rounded-xl overflow-hidden group ${
+                    className={`relative rounded-xl overflow-hidden ${
                       imageIndex === 0 ? 'col-span-2 aspect-video' : 'aspect-square'
                     }`}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center">
-                      <Camera className="w-12 h-12 text-blue-600" />
-                    </div>
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="bg-white/90 backdrop-blur-sm rounded-full p-3">
-                          <Camera className="w-6 h-6 text-gray-900" />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
+                    <EditableImage
+                      path={`sections.${sectionIndex}.images.${imageIndex}.src`}
+                      src={image.src}
+                      alt={image.caption}
+                      folder={`visite`}
+                      className="w-full h-full"
+                      imgClassName="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={() => openLightbox(sectionIndex, imageIndex)}
+                      className="absolute inset-0 z-10"
+                      style={{ pointerEvents: 'auto' }}
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent z-20 pointer-events-none">
                       <EditableText
                         as="p"
                         path={`sections.${sectionIndex}.images.${imageIndex}.caption`}
@@ -158,7 +161,7 @@ const VisiteContent: React.FC = () => {
                         className="text-white text-sm font-medium"
                       />
                     </div>
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
@@ -210,13 +213,21 @@ const VisiteContent: React.FC = () => {
           </button>
 
           <div className="max-w-5xl mx-auto px-4">
-            <div className="aspect-video bg-gradient-to-br from-blue-800 to-blue-900 rounded-xl flex items-center justify-center">
-              <div className="text-center">
-                <Camera className="w-20 h-20 text-blue-400 mx-auto mb-4" />
-                <p className="text-blue-200 text-lg">
-                  {getGalleryImages(currentSection)?.[currentImage]?.caption || ''}
-                </p>
-              </div>
+            <div className="aspect-video rounded-xl overflow-hidden bg-black flex items-center justify-center">
+              {getGalleryImages(currentSection)?.[currentImage]?.src ? (
+                <img
+                  src={getGalleryImages(currentSection)[currentImage].src}
+                  alt={getGalleryImages(currentSection)[currentImage].caption || ''}
+                  className="max-w-full max-h-full object-contain"
+                />
+              ) : (
+                <div className="text-center">
+                  <Camera className="w-20 h-20 text-blue-400 mx-auto mb-4" />
+                  <p className="text-blue-200 text-lg">
+                    {getGalleryImages(currentSection)?.[currentImage]?.caption || ''}
+                  </p>
+                </div>
+              )}
             </div>
             <div className="mt-4 text-center">
               <p className="text-white font-medium">
