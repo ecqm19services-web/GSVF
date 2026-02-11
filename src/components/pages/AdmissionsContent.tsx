@@ -100,7 +100,7 @@ const AdmissionsContent: React.FC = () => {
                 <table className="w-full text-sm border-collapse border border-gray-300">
                   <thead>
                     <tr className="bg-blue-800 text-white">
-                      <th className="text-left py-3 px-4 font-bold border border-blue-700"> </th>
+                      <th className="text-left py-3 px-4 font-bold border border-gray-300 bg-white"> </th>
                       {infoSheet.tuition.columns.map((col: string, i: number) => (
                         <th key={i} className="text-left py-3 px-4 font-bold border border-blue-700 whitespace-nowrap">
                           <EditableText as="span" path={`infoSheet.tuition.columns.${i}`} value={col} />
@@ -136,7 +136,7 @@ const AdmissionsContent: React.FC = () => {
                   <table className="w-full text-sm border-collapse border border-gray-300">
                     <thead>
                       <tr className="bg-blue-800 text-white">
-                        <th className="text-left py-3 px-4 font-bold border border-blue-700"> </th>
+                        <th className="text-left py-3 px-4 font-bold border border-gray-300 bg-white"> </th>
                         {infoSheet.annexFees.columns.map((col: string, i: number) => (
                           <th key={i} className="text-left py-3 px-4 font-bold border border-blue-700 whitespace-nowrap">
                             <EditableText as="span" path={`infoSheet.annexFees.columns.${i}`} value={col} />
