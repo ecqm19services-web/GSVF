@@ -70,12 +70,12 @@ const VisiteContent: React.FC = () => {
       {/* Navigation Pills */}
       <section className="py-8 bg-white sticky top-20 z-30 border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
             {data.sections.map((section, index) => (
               <a
                 key={section.id}
                 href={`#${section.id}`}
-                className="flex-shrink-0 px-5 py-2.5 rounded-full bg-gray-100 text-gray-700 font-medium hover:bg-blue-100 hover:text-blue-700 transition-colors whitespace-nowrap"
+                className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-gray-100 text-gray-700 text-sm sm:text-base font-medium hover:bg-blue-100 hover:text-blue-700 transition-colors"
               >
                 <EditableText as="span" path={`sections.${index}.title`} value={section.title} />
               </a>
