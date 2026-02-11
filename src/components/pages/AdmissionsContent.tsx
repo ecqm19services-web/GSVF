@@ -205,28 +205,46 @@ const AdmissionsContent: React.FC = () => {
                 <div className="bg-purple-50 px-6 py-4">
                   <EditableText as="h3" path="infoSheet.uniforms.title" value={infoSheet.uniforms.title} className="text-lg font-bold text-purple-900" />
                 </div>
-                <div className="p-6 space-y-4">
-                  <div className="bg-pink-50/50 rounded-xl p-4 border border-pink-100">
-                    <EditableText as="h4" path="infoSheet.uniforms.girlsTitle" value={infoSheet.uniforms.girlsTitle} className="font-semibold text-pink-700 mb-2" />
-                    <ul className="space-y-1.5">
-                      {infoSheet.uniforms.girls.map((it: string, i: number) => (
-                        <li key={i} className="text-gray-700 text-sm flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-pink-500 mt-1.5 flex-shrink-0" />
-                          <EditableText as="span" multiline path={`infoSheet.uniforms.girls.${i}`} value={it} />
-                        </li>
-                      ))}
-                    </ul>
+                <div className="p-6 relative">
+                  {/* Image flottante à droite */}
+                  <div className="hidden sm:block absolute top-4 right-4 w-40 lg:w-48 z-10">
+                    <img
+                      src="/images/admissions/tenues.png"
+                      alt="Tenues scolaires"
+                      className="w-full h-auto rounded-xl shadow-lg"
+                    />
                   </div>
-                  <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100">
-                    <EditableText as="h4" path="infoSheet.uniforms.boysTitle" value={infoSheet.uniforms.boysTitle} className="font-semibold text-blue-700 mb-2" />
-                    <ul className="space-y-1.5">
-                      {infoSheet.uniforms.boys.map((it: string, i: number) => (
-                        <li key={i} className="text-gray-700 text-sm flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
-                          <EditableText as="span" multiline path={`infoSheet.uniforms.boys.${i}`} value={it} />
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="space-y-4 sm:pr-44 lg:pr-52">
+                    <div className="bg-pink-50/50 rounded-xl p-4 border border-pink-100">
+                      <EditableText as="h4" path="infoSheet.uniforms.girlsTitle" value={infoSheet.uniforms.girlsTitle} className="font-semibold text-pink-700 mb-2" />
+                      <ul className="space-y-1.5">
+                        {infoSheet.uniforms.girls.map((it: string, i: number) => (
+                          <li key={i} className="text-gray-700 text-sm flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-pink-500 mt-1.5 flex-shrink-0" />
+                            <EditableText as="span" multiline path={`infoSheet.uniforms.girls.${i}`} value={it} />
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100">
+                      <EditableText as="h4" path="infoSheet.uniforms.boysTitle" value={infoSheet.uniforms.boysTitle} className="font-semibold text-blue-700 mb-2" />
+                      <ul className="space-y-1.5">
+                        {infoSheet.uniforms.boys.map((it: string, i: number) => (
+                          <li key={i} className="text-gray-700 text-sm flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                            <EditableText as="span" multiline path={`infoSheet.uniforms.boys.${i}`} value={it} />
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  {/* Image en dessous sur mobile */}
+                  <div className="sm:hidden mt-4 flex justify-center">
+                    <img
+                      src="/images/admissions/tenues.png"
+                      alt="Tenues scolaires"
+                      className="w-48 h-auto rounded-xl shadow-lg"
+                    />
                   </div>
                 </div>
               </div>
