@@ -67,8 +67,8 @@ const ActualitesContent: React.FC = () => {
         size="medium"
       />
 
-      {/* Articles Section */}
-      <section className="py-16 bg-white">
+      {/* Main Content: Facebook Feed (3/4) + Articles Sidebar (1/4) */}
+      <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {selectedArticle ? (
             // Article detail view
@@ -107,86 +107,83 @@ const ActualitesContent: React.FC = () => {
               </div>
             </div>
           ) : (
-            // Articles grid
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {articles.map((article) => (
-                <article
-                  key={article.id}
-                  className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer border border-gray-100"
-                  onClick={() => setSelectedArticle(article)}
-                >
-                  {article.image && (
-                    <div className="aspect-[16/10] overflow-hidden">
-                      <img
-                        src={article.image}
-                        alt={article.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                  )}
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="px-2.5 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                        {article.category}
-                      </span>
-                      <span className="text-gray-400 text-xs flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {article.date}
-                      </span>
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-800 transition-colors line-clamp-2">
-                      {article.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
-                      {article.excerpt}
-                    </p>
-                    <span className="inline-flex items-center gap-1 text-blue-800 text-sm font-medium group-hover:gap-2 transition-all">
-                      Lire la suite <ArrowRight className="w-4 h-4" />
-                    </span>
-                  </div>
-                </article>
-              ))}
+            // Side-by-side layout: Facebook (3/4) + Articles (1/4)
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Facebook Feed — 3/4 */}
+              <div className="lg:col-span-3">
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                    <Newspaper className="w-4 h-4" />
+                    Fil d'actualité
+                  </span>
+                </div>
+                <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6">
+                  <FacebookPageEmbed
+                    pageUrl={siteConfig.socialLinks.facebook}
+                    width={500}
+                    height={900}
+                    tabs="timeline"
+                  />
+                </div>
+                <div className="text-center mt-4">
+                  <a
+                    href={siteConfig.socialLinks.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-medium transition-colors text-sm"
+                  >
+                    <Facebook className="w-4 h-4" />
+                    Voir toutes nos publications sur Facebook
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+
+              {/* Articles Sidebar — 1/4 */}
+              <div className="lg:col-span-1">
+                <div className="flex items-center gap-2 mb-6">
+                  <Newspaper className="w-5 h-5 text-orange-600" />
+                  <h2 className="text-lg font-bold text-gray-900">Articles</h2>
+                </div>
+                <div className="space-y-4">
+                  {articles.map((article) => (
+                    <article
+                      key={article.id}
+                      className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group cursor-pointer border border-gray-100"
+                      onClick={() => setSelectedArticle(article)}
+                    >
+                      {article.image && (
+                        <div className="aspect-[16/9] overflow-hidden">
+                          <img
+                            src={article.image}
+                            alt={article.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
+                      )}
+                      <div className="p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-[10px] font-medium">
+                            {article.category}
+                          </span>
+                          <span className="text-gray-400 text-[10px] flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {article.date}
+                          </span>
+                        </div>
+                        <h3 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-blue-800 transition-colors line-clamp-2">
+                          {article.title}
+                        </h3>
+                        <p className="text-gray-500 text-xs leading-relaxed line-clamp-2">
+                          {article.excerpt}
+                        </p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
-        </div>
-      </section>
-
-      {/* Facebook Feed Section - styled to blend in */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold mb-4">
-              <Newspaper className="w-4 h-4" />
-              Fil d'actualité
-            </span>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Suivez-nous au quotidien
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Retrouvez nos publications, photos et événements en temps réel.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-            <FacebookPageEmbed
-              pageUrl={siteConfig.socialLinks.facebook}
-              width={500}
-              height={800}
-              tabs="timeline"
-            />
-          </div>
-          <div className="text-center mt-6">
-            <a
-              href={siteConfig.socialLinks.facebook}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-medium transition-colors"
-            >
-              <Facebook className="w-5 h-5" />
-              Voir toutes nos publications sur Facebook
-              <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
         </div>
       </section>
     </>

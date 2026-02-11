@@ -175,47 +175,54 @@ const AdmissionsContent: React.FC = () => {
 
             {/* 2. Dossier à fournir + Tenue scolaire — Side by side */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="bg-white rounded-2xl p-6 shadow-sm">
-                <EditableText as="h3" path="infoSheet.registrationFile.title" value={infoSheet.registrationFile.title} className="text-lg font-bold text-gray-900 mb-4" />
-                <div className="space-y-4">
+              <div className="bg-white rounded-2xl shadow-sm border-t-4 border-amber-500 overflow-hidden">
+                <div className="bg-amber-50 px-6 py-4">
+                  <EditableText as="h3" path="infoSheet.registrationFile.title" value={infoSheet.registrationFile.title} className="text-lg font-bold text-amber-900" />
+                </div>
+                <div className="p-6 space-y-4">
                   {infoSheet.registrationFile.sections.map((sec: any, sIndex: number) => (
-                    <div key={sIndex} className="bg-gray-50 rounded-xl p-4">
-                      <EditableText as="h4" multiline path={`infoSheet.registrationFile.sections.${sIndex}.title`} value={sec.title} className="font-semibold text-gray-900 mb-2" />
-                      <ul className="space-y-1">
+                    <div key={sIndex} className="bg-amber-50/50 rounded-xl p-4 border border-amber-100">
+                      <EditableText as="h4" multiline path={`infoSheet.registrationFile.sections.${sIndex}.title`} value={sec.title} className="font-semibold text-amber-900 mb-2" />
+                      <ul className="space-y-1.5">
                         {sec.items.map((it: string, i: number) => (
-                          <li key={i} className="text-gray-700 text-sm">
+                          <li key={i} className="text-gray-700 text-sm flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0" />
                             <EditableText as="span" multiline path={`infoSheet.registrationFile.sections.${sIndex}.items.${i}`} value={it} />
                           </li>
                         ))}
                       </ul>
                     </div>
                   ))}
-                </div>
-                <div className="mt-4 space-y-2">
-                  {infoSheet.registrationFile.notes.map((n: string, i: number) => (
-                    <EditableText key={i} as="p" multiline path={`infoSheet.registrationFile.notes.${i}`} value={n} className="text-sm text-gray-600" />
-                  ))}
+                  <div className="mt-4 space-y-2">
+                    {infoSheet.registrationFile.notes.map((n: string, i: number) => (
+                      <EditableText key={i} as="p" multiline path={`infoSheet.registrationFile.notes.${i}`} value={n} className="text-sm text-red-600 font-medium" />
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-6 shadow-sm">
-                <EditableText as="h3" path="infoSheet.uniforms.title" value={infoSheet.uniforms.title} className="text-lg font-bold text-gray-900 mb-4" />
-                <div className="space-y-4">
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <EditableText as="h4" path="infoSheet.uniforms.girlsTitle" value={infoSheet.uniforms.girlsTitle} className="font-semibold text-gray-900 mb-2" />
-                    <ul className="space-y-1">
+              <div className="bg-white rounded-2xl shadow-sm border-t-4 border-purple-500 overflow-hidden">
+                <div className="bg-purple-50 px-6 py-4">
+                  <EditableText as="h3" path="infoSheet.uniforms.title" value={infoSheet.uniforms.title} className="text-lg font-bold text-purple-900" />
+                </div>
+                <div className="p-6 space-y-4">
+                  <div className="bg-pink-50/50 rounded-xl p-4 border border-pink-100">
+                    <EditableText as="h4" path="infoSheet.uniforms.girlsTitle" value={infoSheet.uniforms.girlsTitle} className="font-semibold text-pink-700 mb-2" />
+                    <ul className="space-y-1.5">
                       {infoSheet.uniforms.girls.map((it: string, i: number) => (
-                        <li key={i} className="text-gray-700 text-sm">
+                        <li key={i} className="text-gray-700 text-sm flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-pink-500 mt-1.5 flex-shrink-0" />
                           <EditableText as="span" multiline path={`infoSheet.uniforms.girls.${i}`} value={it} />
                         </li>
                       ))}
                     </ul>
                   </div>
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <EditableText as="h4" path="infoSheet.uniforms.boysTitle" value={infoSheet.uniforms.boysTitle} className="font-semibold text-gray-900 mb-2" />
-                    <ul className="space-y-1">
+                  <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100">
+                    <EditableText as="h4" path="infoSheet.uniforms.boysTitle" value={infoSheet.uniforms.boysTitle} className="font-semibold text-blue-700 mb-2" />
+                    <ul className="space-y-1.5">
                       {infoSheet.uniforms.boys.map((it: string, i: number) => (
-                        <li key={i} className="text-gray-700 text-sm">
+                        <li key={i} className="text-gray-700 text-sm flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
                           <EditableText as="span" multiline path={`infoSheet.uniforms.boys.${i}`} value={it} />
                         </li>
                       ))}
@@ -227,61 +234,72 @@ const AdmissionsContent: React.FC = () => {
 
             {/* 3. Transport, Activités extrascolaires, Services */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-2xl p-6 shadow-sm">
-                <EditableText as="h3" path="infoSheet.transport.title" value={infoSheet.transport.title} className="text-lg font-bold text-gray-900 mb-4" />
-                <div className="space-y-3">
+              <div className="bg-white rounded-2xl shadow-sm border-t-4 border-teal-500 overflow-hidden">
+                <div className="bg-teal-50 px-6 py-4">
+                  <EditableText as="h3" path="infoSheet.transport.title" value={infoSheet.transport.title} className="text-lg font-bold text-teal-900" />
+                </div>
+                <div className="p-6 space-y-3">
                   {infoSheet.transport.routes.map((route: any, i: number) => (
-                    <div key={i} className="bg-gray-50 rounded-xl p-3">
-                      <EditableText as="div" multiline path={`infoSheet.transport.routes.${i}.label`} value={route.label} className="text-gray-900 font-medium text-sm" />
-                      <div className="text-gray-600 text-sm mt-1">
+                    <div key={i} className="bg-teal-50/50 rounded-xl p-3 border border-teal-100">
+                      <EditableText as="div" multiline path={`infoSheet.transport.routes.${i}.label`} value={route.label} className="text-teal-900 font-medium text-sm" />
+                      <div className="text-teal-700 text-sm mt-1 font-semibold">
                         <EditableText as="span" path={`infoSheet.transport.routes.${i}.amount`} value={route.amount} />{' '}
                         <EditableText as="span" path={`infoSheet.transport.routes.${i}.currency`} value={route.currency} />{' / '}
                         <EditableText as="span" path={`infoSheet.transport.routes.${i}.period`} value={route.period} />
                       </div>
                     </div>
                   ))}
-                  <div className="bg-gray-50 rounded-xl p-3">
-                    <EditableText as="div" path="infoSheet.transport.canteen.label" value={infoSheet.transport.canteen.label} className="text-gray-900 font-medium text-sm" />
-                    <div className="text-gray-600 text-sm mt-1">
+                  <div className="bg-orange-50/50 rounded-xl p-3 border border-orange-100">
+                    <EditableText as="div" path="infoSheet.transport.canteen.label" value={infoSheet.transport.canteen.label} className="text-orange-900 font-medium text-sm" />
+                    <div className="text-orange-700 text-sm mt-1 font-semibold">
                       <EditableText as="span" path="infoSheet.transport.canteen.amount" value={infoSheet.transport.canteen.amount} />{' '}
                       <EditableText as="span" path="infoSheet.transport.canteen.currency" value={infoSheet.transport.canteen.currency} />{' / '}
                       <EditableText as="span" path="infoSheet.transport.canteen.period" value={infoSheet.transport.canteen.period} />
                     </div>
                   </div>
-                </div>
-                <div className="mt-3 space-y-1">
-                  {infoSheet.transport.notes.map((n: string, i: number) => (
-                    <EditableText key={i} as="p" multiline path={`infoSheet.transport.notes.${i}`} value={n} className="text-xs text-gray-500" />
-                  ))}
+                  <div className="mt-3 space-y-1">
+                    {infoSheet.transport.notes.map((n: string, i: number) => (
+                      <EditableText key={i} as="p" multiline path={`infoSheet.transport.notes.${i}`} value={n} className="text-xs text-red-500 font-medium" />
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-6 shadow-sm">
-                <EditableText as="h3" path="infoSheet.extracurricular.title" value={infoSheet.extracurricular.title} className="text-lg font-bold text-gray-900 mb-4" />
-                <div className="space-y-2 text-sm text-gray-700">
-                  <EditableText as="p" path="infoSheet.extracurricular.membership" value={infoSheet.extracurricular.membership} />
-                  <EditableText as="p" path="infoSheet.extracurricular.quarterly" value={infoSheet.extracurricular.quarterly} />
-                  <div className="flex flex-wrap gap-1.5 mt-2">
+              <div className="bg-white rounded-2xl shadow-sm border-t-4 border-rose-500 overflow-hidden">
+                <div className="bg-rose-50 px-6 py-4">
+                  <EditableText as="h3" path="infoSheet.extracurricular.title" value={infoSheet.extracurricular.title} className="text-lg font-bold text-rose-900" />
+                </div>
+                <div className="p-6 space-y-3 text-sm text-gray-700">
+                  <div className="bg-rose-50/50 rounded-lg p-3 border border-rose-100">
+                    <EditableText as="p" path="infoSheet.extracurricular.membership" value={infoSheet.extracurricular.membership} className="font-semibold text-rose-800" />
+                    <EditableText as="p" path="infoSheet.extracurricular.quarterly" value={infoSheet.extracurricular.quarterly} className="text-rose-700 mt-1" />
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
                     {infoSheet.extracurricular.activities.map((a: string, i: number) => (
-                      <span key={i} className="px-2.5 py-1 rounded-full bg-gray-50 border border-gray-200 text-xs">
+                      <span key={i} className="px-3 py-1.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200 text-xs font-semibold">
                         <EditableText as="span" path={`infoSheet.extracurricular.activities.${i}`} value={a} />
                       </span>
                     ))}
                   </div>
-                  <EditableText as="p" multiline path="infoSheet.extracurricular.music" value={infoSheet.extracurricular.music} className="mt-2" />
-                  <EditableText as="p" path="infoSheet.extracurricular.facility" value={infoSheet.extracurricular.facility} />
+                  <EditableText as="p" multiline path="infoSheet.extracurricular.music" value={infoSheet.extracurricular.music} className="text-gray-700" />
+                  <EditableText as="p" path="infoSheet.extracurricular.facility" value={infoSheet.extracurricular.facility} className="text-gray-700" />
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-6 shadow-sm">
-                <EditableText as="h3" path="infoSheet.servicesTitle" value={infoSheet.servicesTitle} className="text-lg font-bold text-gray-900 mb-4" />
-                <ul className="space-y-2">
-                  {infoSheet.services.map((s: string, i: number) => (
-                    <li key={i} className="text-gray-700 text-sm">
-                      <EditableText as="span" multiline path={`infoSheet.services.${i}`} value={s} />
-                    </li>
-                  ))}
-                </ul>
+              <div className="bg-white rounded-2xl shadow-sm border-t-4 border-emerald-500 overflow-hidden">
+                <div className="bg-emerald-50 px-6 py-4">
+                  <EditableText as="h3" path="infoSheet.servicesTitle" value={infoSheet.servicesTitle} className="text-lg font-bold text-emerald-900" />
+                </div>
+                <div className="p-6">
+                  <ul className="space-y-2.5">
+                    {infoSheet.services.map((s: string, i: number) => (
+                      <li key={i} className="text-gray-700 text-sm flex items-start gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0" />
+                        <EditableText as="span" multiline path={`infoSheet.services.${i}`} value={s} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
