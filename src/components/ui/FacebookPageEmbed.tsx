@@ -45,7 +45,7 @@ const FacebookPageEmbed: React.FC<FacebookPageEmbedProps> = ({
     };
   }, [pageUrl, height, tabs, showFacepile, smallHeader]);
 
-  return <div ref={containerRef} className="w-full max-w-[520px]" />;
+  return <div ref={containerRef} className="w-full" />;
 };
 
 export default FacebookPageEmbed;

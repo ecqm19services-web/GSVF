@@ -45,7 +45,7 @@ const EditableImage: React.FC<Props> = ({ path, src, alt = '', className, imgCla
         headers['Authorization'] = `Basic ${creds}`;
       }
 
-      const res = await fetch(`/api/upload-image?folder=${encodeURIComponent(folder)}`, {
+      const res = await fetch(`/api/upload-image/?folder=${encodeURIComponent(folder)}`, {
         method: 'POST',
         headers,
         body: formData,
@@ -96,10 +96,10 @@ const EditableImage: React.FC<Props> = ({ path, src, alt = '', className, imgCla
 
           {/* Overlay */}
           <div className={cn(
-            'absolute inset-0 flex items-center justify-center transition-all',
+            'absolute inset-0 flex items-center justify-center transition-all z-20',
             isUploading
               ? 'bg-black/50'
-              : 'bg-black/0 group-hover:bg-black/40'
+              : 'bg-black/20 group-hover:bg-black/40'
           )}>
             {isUploading ? (
               <div className="flex flex-col items-center gap-2 text-white">
@@ -107,12 +107,12 @@ const EditableImage: React.FC<Props> = ({ path, src, alt = '', className, imgCla
                 <span className="text-sm font-medium">Upload...</span>
               </div>
             ) : (
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center gap-2">
-                <div className="bg-white/90 backdrop-blur-sm rounded-full p-3">
-                  <Camera className="w-6 h-6 text-gray-900" />
+              <div className="flex flex-col items-center gap-2">
+                <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg transform group-hover:scale-110 transition-transform">
+                  <Camera className="w-6 h-6 text-blue-800" />
                 </div>
-                <span className="text-white text-xs font-medium bg-black/60 px-2 py-1 rounded">
-                  Changer l'image
+                <span className="text-white text-xs font-bold bg-blue-800/80 px-2 py-1 rounded shadow-sm">
+                  CHANGER L'IMAGE
                 </span>
               </div>
             )}

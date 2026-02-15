@@ -28,15 +28,15 @@ async function apiFetch<T>(
 }
 
 export async function fetchAdminContacts(token: string) {
-  return apiFetch<{ documents: unknown[] }>(`/api/admin-contacts`, token);
+  return apiFetch<{ documents: unknown[] }>(`/api/admin-contacts/`, token);
 }
 
 export async function fetchAdminAdmissions(token: string) {
-  return apiFetch<{ documents: unknown[] }>(`/api/admin-admissions`, token);
+  return apiFetch<{ documents: unknown[] }>(`/api/admin-admissions/`, token);
 }
 
 export async function adminUpdateStatus(token: string, payload: AdminUpdateStatusPayload) {
-  return apiFetch<{ updated: unknown }>(`/api/admin-update-status`, token, {
+  return apiFetch<{ updated: unknown }>(`/api/admin-update-status/`, token, {
     method: 'POST',
     body: JSON.stringify(payload),
   });

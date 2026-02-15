@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Hero from '@/components/ui/Hero';
 import { visiteContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
+import { useEditSession } from '@/contexts/EditSessionContext';
 import EditableText from '@/components/admin/EditableText';
 import EditableImage from '@/components/admin/EditableImage';
 import { 
@@ -10,7 +11,9 @@ import {
   ChevronRight, 
   MapPin,
   Camera,
-  Play
+  Play,
+  Plus,
+  Trash2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -57,6 +60,22 @@ const VisiteContent: React.FC = () => {
       setCurrentSection(prev => prev - 1);
       setCurrentImage(prevGallery.length - 1);
     }
+  };
+
+  const { isEditing, updateAtPath } = useEditSession<VisiteData>() || {};
+
+  const addImageToSection = (sectionIndex: number) => {
+    if (!updateAtPath || !data) return;
+    const section = data.sections[sectionIndex];
+    const newImages = [...section.images, { src: '/placeholder.svg', caption: 'Nouvelle image' }];
+    updateAtPath(`sections.${sectionIndex}.images`, newImages);
+  };
+
+  const removeImageFromSection = (sectionIndex: number, imageIndex: number) => {
+    if (!updateAtPath || !data) return;
+    const section = data.sections[sectionIndex];
+    const newImages = section.images.filter((_, i) => i !== imageIndex);
+    updateAtPath(`sections.${sectionIndex}.images`, newImages);
   };
 
   return (
@@ -124,6 +143,16 @@ const VisiteContent: React.FC = () => {
                     <Play className="w-5 h-5" />
                     <EditableText as="span" path="ui.galleryButton" value={ui.galleryButton} />
                   </button>
+                  {isEditing && (
+                    <button
+                      onClick={() => addImageToSection(sectionIndex)}
+                      className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                      title="Ajouter une image à cette section"
+                    >
+                      <Plus className="w-5 h-5" />
+                      <span>Ajouter</span>
+                    </button>
+                  )}
                   <span className="text-gray-500">
                     <Camera className="w-5 h-5 inline mr-1" />
                     {((section as any).galleryImages || section.images).length} <EditableText as="span" path="ui.photosLabel" value={ui.photosLabel} />
@@ -133,10 +162,10 @@ const VisiteContent: React.FC = () => {
 
               {/* Image Grid */}
               <div className={`grid grid-cols-2 gap-4 ${sectionIndex % 2 === 1 ? 'lg:order-1' : ''}`}>
-                {section.images.slice(0, 4).map((image, imageIndex) => (
+                {section.images.map((image, imageIndex) => (
                   <div
                     key={imageIndex}
-                    className={`relative rounded-xl overflow-hidden ${
+                    className={`relative rounded-xl overflow-hidden group ${
                       imageIndex === 0 ? 'col-span-2 aspect-video' : 'aspect-square'
                     }`}
                   >
@@ -148,10 +177,25 @@ const VisiteContent: React.FC = () => {
                       className="w-full h-full"
                       imgClassName="w-full h-full object-cover"
                     />
+                    
+                    {isEditing && (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          removeImageFromSection(sectionIndex, imageIndex);
+                        }}
+                        className="absolute top-2 right-2 z-30 p-2 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 shadow-lg"
+                        title="Supprimer cette image"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+
                     <button
                       onClick={() => openLightbox(sectionIndex, imageIndex)}
                       className="absolute inset-0 z-10"
-                      style={{ pointerEvents: 'auto' }}
+                      style={{ pointerEvents: isEditing ? 'none' : 'auto' }}
                     />
                     <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent z-20 pointer-events-none">
                       <EditableText

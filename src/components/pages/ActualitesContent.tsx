@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Hero from '@/components/ui/Hero';
 import FacebookPageEmbed from '@/components/ui/FacebookPageEmbed';
 import { siteConfig } from '@/data/content';
-import { Calendar, ArrowRight, Newspaper, Facebook } from 'lucide-react';
+import { Calendar, ArrowRight, Newspaper, Facebook, Instagram } from 'lucide-react';
 
 interface Article {
   id: string;
@@ -43,7 +43,7 @@ const ActualitesContent: React.FC = () => {
   useEffect(() => {
     const loadArticles = async () => {
       try {
-        const res = await fetch('/api/page-content?page=actualites');
+        const res = await fetch('/api/page-content/?page=actualites');
         const data = await res.json();
         if (data.document?.content) {
           const parsed = JSON.parse(data.document.content);
@@ -107,10 +107,10 @@ const ActualitesContent: React.FC = () => {
               </div>
             </div>
           ) : (
-            // Side-by-side: Articles (left, large) + Facebook feed (right sidebar)
-            <div className="flex flex-col lg:flex-row gap-8">
-              {/* Articles — main area */}
-              <div className="flex-1 min-w-0">
+            // Side-by-side: Articles + Instagram (2/5) + Facebook feed (3/5)
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+              {/* Articles + Instagram — left area */}
+              <div className="lg:col-span-2 min-w-0">
                 <div className="flex items-center gap-2 mb-6">
                   <Newspaper className="w-5 h-5 text-orange-600" />
                   <h2 className="text-xl font-bold text-gray-900">Articles</h2>
@@ -151,10 +151,60 @@ const ActualitesContent: React.FC = () => {
                     </article>
                   ))}
                 </div>
+
+                <div className="mt-10">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Instagram className="w-5 h-5 text-pink-600" />
+                    <h3 className="text-lg font-bold text-gray-900">Instagram</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Retrouvez aussi nos temps forts et coulisses sur Instagram.
+                  </p>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {articles.slice(0, 3).map((article) => (
+                      <a
+                        key={`insta-${article.id}`}
+                        href={siteConfig.socialLinks.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group relative rounded-xl overflow-hidden border border-gray-200 bg-white"
+                      >
+                        <div className="aspect-square bg-gray-100">
+                          {article.image ? (
+                            <img
+                              src={article.image}
+                              alt={article.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs p-3 text-center">
+                              Publication Instagram
+                            </div>
+                          )}
+                        </div>
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                          <p className="text-white text-[11px] font-medium line-clamp-2">{article.title}</p>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+
+                  <a
+                    href={siteConfig.socialLinks.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-pink-700 hover:text-pink-900 font-medium transition-colors text-sm mt-4"
+                  >
+                    <Instagram className="w-4 h-4" />
+                    Voir notre Instagram
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
               </div>
 
-              {/* Facebook Feed — right sidebar (fits naturally at 500px max) */}
-              <div className="w-full lg:w-[520px] lg:flex-shrink-0">
+              {/* Facebook Feed — right area (3/5 on desktop) */}
+              <div className="lg:col-span-3">
                 <div className="flex items-center gap-3 mb-6">
                   <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
                     <Facebook className="w-4 h-4" />

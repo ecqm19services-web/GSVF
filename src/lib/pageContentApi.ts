@@ -11,7 +11,7 @@ export type PageContentDocument = {
 };
 
 export async function fetchPageContent(page: string): Promise<PageContentDocument | null> {
-  const res = await fetch(`/api/page-content?page=${encodeURIComponent(page)}`);
+  const res = await fetch(`/api/page-content/?page=${encodeURIComponent(page)}`);
   if (!res.ok) {
     return null;
   }
@@ -26,7 +26,7 @@ export async function publishPageContent(
   kind: PageContentKind,
   payload: string
 ): Promise<PageContentDocument> {
-  const res = await fetch(`/api/page-content?page=${encodeURIComponent(page)}`, {
+  const res = await fetch(`/api/page-content/?page=${encodeURIComponent(page)}`, {
     method: 'PUT',
     headers: {
       'Authorization': `Basic ${token}`,

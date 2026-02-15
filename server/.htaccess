@@ -1,9 +1,13 @@
 RewriteEngine On
 
-# Laisser passer l'API
+# Force trailing slash on /api directories for cleaner routing
+RewriteCond %{REQUEST_URI} ^/api/[a-z0-9_-]+$ [NC]
+RewriteRule ^(.*)$ /$1/ [R=301,L]
+
+# Let API requests pass directly to their folders
 RewriteRule ^api/ - [L]
 
-# Ne pas réécrire les fichiers/dossiers existants
+# Do not rewrite existing files/folders
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
