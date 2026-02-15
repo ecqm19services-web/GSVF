@@ -39,10 +39,10 @@ const Header: React.FC = () => {
             <div className="flex items-center gap-4">
               <span className="text-primary-foreground/80">{siteConfig.location}</span>
               <Link
-                to="/contact"
+                to="/carrieres"
                 className="px-3 py-1.5 rounded-md bg-white text-orange-700 font-semibold hover:bg-orange-50 transition-colors"
               >
-                Contact
+                Carrières
               </Link>
             </div>
           </div>
@@ -65,18 +65,18 @@ const Header: React.FC = () => {
                 <img src="/logo-vf.svg" alt="Collège Privé la Vision Future" className="w-16 h-16 md:w-20 md:h-20 rounded-full object-contain bg-white shadow-lg ring-2 ring-white group-hover:shadow-orange-200 transition-shadow" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-sm lg:text-base xl:text-lg font-bold text-gray-900 leading-tight whitespace-nowrap">Collège Privé la Vision Future</h1>
-                <p className="text-xs text-orange-500 font-medium">L'excellence, notre devise</p>
+                <h1 className="text-base lg:text-lg font-bold text-gray-900 leading-tight">Collège Privé la Vision Future</h1>
+                <p className="text-xs text-orange-500 font-medium">L'excellence, Notre devise</p>
               </div>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-2 xl:gap-3 mx-4 xl:mx-6">
-              {navigation.filter(item => item.path !== '/admissions' && item.path !== '/contact').map((item) => (
+            <nav className="hidden lg:flex items-center gap-1">
+              {navigation.filter(item => item.path !== '/admissions' && item.path !== '/carrieres').map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`px-4 xl:px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     location.pathname === item.path
                       ? 'bg-orange-100 text-orange-900'
                       : 'text-gray-700 hover:bg-orange-50 hover:text-orange-800'
@@ -120,7 +120,7 @@ const Header: React.FC = () => {
         >
           <div className="bg-white border-t border-gray-100 px-4 py-4">
             <nav className="flex flex-col gap-1">
-              {navigation.filter(item => item.path !== '/admissions').map((item) => (
+              {navigation.filter(item => item.path !== '/admissions' && item.path !== '/carrieres').map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
