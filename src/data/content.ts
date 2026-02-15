@@ -971,6 +971,7 @@ export const navigation = [
   { name: "Programmes", path: "/programmes" },
   { name: "Excellence", path: "/excellence" },
   { name: "Actualités", path: "/actualites" },
+  { name: "Carrières", path: "/carrieres" },
   { name: "Admissions", path: "/admissions" },
   { name: "Contact", path: "/contact" }
 ];

@@ -9,6 +9,8 @@ import VisiteContent from '@/components/pages/VisiteContent';
 import AdmissionsContent from '@/components/pages/AdmissionsContent';
 import ContactContent from '@/components/pages/ContactContent';
 import ActualitesContent from '@/components/pages/ActualitesContent';
+import CareersContent from '@/components/pages/CareersContent';
+import CareerApplicationContent from '@/components/pages/CareerApplicationContent';
 import MentionsLegalesContent from '@/components/pages/MentionsLegalesContent';
 import ConfidentialiteContent from '@/components/pages/ConfidentialiteContent';
 import NotFound from '@/pages/NotFound';
@@ -34,6 +36,10 @@ const AppLayout: React.FC = () => {
         return <AdmissionsContent />;
       case '/actualites':
         return <ActualitesContent />;
+      case '/carrieres':
+        return <CareersContent />;
+      case '/carrieres/candidature':
+        return <CareerApplicationContent />;
       case '/contact':
         return <ContactContent />;
 

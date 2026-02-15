@@ -6,6 +6,7 @@ import {
   GraduationCap, 
   FileText,
   Monitor,
+  BriefcaseBusiness,
   LogOut, 
   Search,
   Filter,
@@ -220,6 +221,14 @@ const AdminDashboard: React.FC = () => {
           >
             <Monitor className="w-5 h-5" />
             Éditeur visuel
+          </Link>
+
+          <Link
+            to="/ecqm19-admin/jobs"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-orange-200 hover:text-white hover:bg-white/10"
+          >
+            <BriefcaseBusiness className="w-5 h-5" />
+            Offres d'emploi
           </Link>
 
           <button

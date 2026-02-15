@@ -107,32 +107,32 @@ const ActualitesContent: React.FC = () => {
               </div>
             </div>
           ) : (
-            // Side-by-side: Articles + Instagram (2/5) + Facebook feed (3/5)
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-              {/* Articles + Instagram — left area */}
-              <div className="lg:col-span-2 min-w-0">
+            // Desktop: Articles 1/5 + Facebook 2/5 + Instagram 2/5
+            <div className="grid grid-cols-1 xl:grid-cols-5 gap-8 items-start">
+              {/* Articles — compact list */}
+              <div className="xl:col-span-1 min-w-0">
                 <div className="flex items-center gap-2 mb-6">
                   <Newspaper className="w-5 h-5 text-orange-600" />
                   <h2 className="text-xl font-bold text-gray-900">Articles</h2>
                 </div>
-                <div className="grid sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-4">
                   {articles.map((article) => (
                     <article
                       key={article.id}
-                      className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer border border-gray-100"
+                      className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group cursor-pointer border border-gray-100"
                       onClick={() => setSelectedArticle(article)}
                     >
                       {article.image && (
-                        <div className="aspect-[16/10] overflow-hidden">
+                        <div className="aspect-[16/9] overflow-hidden">
                           <img
                             src={article.image}
                             alt={article.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         </div>
                       )}
-                      <div className="p-5">
-                        <div className="flex items-center gap-2 mb-2">
+                      <div className="p-4">
+                        <div className="flex items-center gap-2 mb-1.5">
                           <span className="px-2.5 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
                             {article.category}
                           </span>
@@ -141,94 +141,100 @@ const ActualitesContent: React.FC = () => {
                             {article.date}
                           </span>
                         </div>
-                        <h3 className="text-base font-bold text-gray-900 mb-1.5 group-hover:text-blue-800 transition-colors line-clamp-2">
+                        <h3 className="text-[15px] font-bold text-gray-900 mb-1.5 group-hover:text-blue-800 transition-colors line-clamp-2">
                           {article.title}
                         </h3>
-                        <p className="text-gray-500 text-sm leading-relaxed line-clamp-3">
+                        <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">
                           {article.excerpt}
                         </p>
                       </div>
                     </article>
                   ))}
                 </div>
-
-                <div className="mt-10">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Instagram className="w-5 h-5 text-pink-600" />
-                    <h3 className="text-lg font-bold text-gray-900">Instagram</h3>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Retrouvez aussi nos temps forts et coulisses sur Instagram.
-                  </p>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {articles.slice(0, 3).map((article) => (
-                      <a
-                        key={`insta-${article.id}`}
-                        href={siteConfig.socialLinks.instagram}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group relative rounded-xl overflow-hidden border border-gray-200 bg-white"
-                      >
-                        <div className="aspect-square bg-gray-100">
-                          {article.image ? (
-                            <img
-                              src={article.image}
-                              alt={article.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs p-3 text-center">
-                              Publication Instagram
-                            </div>
-                          )}
-                        </div>
-                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                          <p className="text-white text-[11px] font-medium line-clamp-2">{article.title}</p>
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-
-                  <a
-                    href={siteConfig.socialLinks.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-pink-700 hover:text-pink-900 font-medium transition-colors text-sm mt-4"
-                  >
-                    <Instagram className="w-4 h-4" />
-                    Voir notre Instagram
-                    <ArrowRight className="w-4 h-4" />
-                  </a>
-                </div>
               </div>
 
-              {/* Facebook Feed — right area (3/5 on desktop) */}
-              <div className="lg:col-span-3">
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
-                    <Facebook className="w-4 h-4" />
-                    Fil d'actualité
-                  </span>
-                </div>
-                <div className="bg-white rounded-2xl shadow-lg p-3">
-                  <FacebookPageEmbed
-                    pageUrl={siteConfig.socialLinks.facebook}
-                    height={900}
-                    tabs="timeline"
-                  />
-                </div>
-                <div className="text-center mt-4">
-                  <a
-                    href={siteConfig.socialLinks.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-medium transition-colors text-sm"
-                  >
-                    <Facebook className="w-4 h-4" />
-                    Voir toutes nos publications sur Facebook
-                    <ArrowRight className="w-4 h-4" />
-                  </a>
+              {/* Social feeds: 2/5 + 2/5 */}
+              <div className="xl:col-span-4">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
+                  <div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                        <Facebook className="w-4 h-4" />
+                        Fil Facebook
+                      </span>
+                    </div>
+                    <div className="bg-white rounded-2xl shadow-lg p-3">
+                      <FacebookPageEmbed
+                        pageUrl={siteConfig.socialLinks.facebook}
+                        height={900}
+                        tabs="timeline"
+                        align="right"
+                      />
+                    </div>
+                    <div className="text-right mt-4">
+                      <a
+                        href={siteConfig.socialLinks.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-medium transition-colors text-sm"
+                      >
+                        <Facebook className="w-4 h-4" />
+                        Voir toutes nos publications sur Facebook
+                        <ArrowRight className="w-4 h-4" />
+                      </a>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-pink-100 text-pink-800 rounded-full text-sm font-semibold">
+                        <Instagram className="w-4 h-4" />
+                        Fil Instagram
+                      </span>
+                    </div>
+                    <div className="bg-white rounded-2xl shadow-lg p-3">
+                      <div className="w-full max-w-[500px] ml-auto border border-gray-200 rounded-xl overflow-hidden">
+                        <div className="px-4 py-3 border-b border-gray-200 bg-white flex items-center justify-between">
+                          <div>
+                            <p className="font-semibold text-gray-900 text-sm">Groupe Scolaire La Vision Future</p>
+                            <p className="text-xs text-gray-500">Instagram</p>
+                          </div>
+                          <span className="text-xs font-semibold text-pink-700">
+                            Bientôt disponible
+                          </span>
+                        </div>
+
+                        <div className="max-h-[740px] overflow-y-auto bg-gray-50 p-3 space-y-3">
+                          {articles.map((article) => (
+                            <div
+                              key={`social-insta-${article.id}`}
+                              className="block bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-sm transition-shadow"
+                            >
+                              {article.image && (
+                                <div className="aspect-[4/3] bg-gray-100">
+                                  <img
+                                    src={article.image}
+                                    alt={article.title}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                              )}
+                              <div className="p-3">
+                                <p className="text-xs font-semibold text-gray-900 line-clamp-2 mb-1">{article.title}</p>
+                                <p className="text-[11px] text-gray-500 line-clamp-2">{article.excerpt}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right mt-4">
+                      <span className="inline-flex items-center gap-2 text-pink-700 font-medium text-sm">
+                        <Instagram className="w-4 h-4" />
+                        Compte Instagram bientôt disponible
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

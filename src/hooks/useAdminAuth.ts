@@ -30,7 +30,7 @@ export const useAdminAuth = () => {
       const b64 = btoa(`${user}:${pass}`);
       // Test credentials by making a PUT-like OPTIONS or a harmless request
       // We'll do a small PUT test that the PHP will validate
-      const res = await fetch('/api/page-content?page=__auth_test__', {
+      const res = await fetch('/api/page-content/?page=__auth_test__', {
         method: 'PUT',
         headers: {
           'Authorization': `Basic ${b64}`,

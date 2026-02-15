@@ -7,6 +7,7 @@ interface FacebookPageEmbedProps {
   tabs?: string;
   showFacepile?: boolean;
   smallHeader?: boolean;
+  align?: 'left' | 'center' | 'right';
 }
 
 const FacebookPageEmbed: React.FC<FacebookPageEmbedProps> = ({
@@ -15,6 +16,7 @@ const FacebookPageEmbed: React.FC<FacebookPageEmbedProps> = ({
   tabs = 'timeline',
   showFacepile = false,
   smallHeader = false,
+  align = 'left',
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -30,7 +32,8 @@ const FacebookPageEmbed: React.FC<FacebookPageEmbedProps> = ({
     iframe.src = iframeSrc;
     iframe.style.border = 'none';
     iframe.style.overflow = 'hidden';
-    iframe.style.width = '100%';
+    iframe.style.width = '500px';
+    iframe.style.maxWidth = '100%';
     iframe.style.height = `${height}px`;
     iframe.allow = 'autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share';
     iframe.allowFullscreen = true;
@@ -45,7 +48,10 @@ const FacebookPageEmbed: React.FC<FacebookPageEmbedProps> = ({
     };
   }, [pageUrl, height, tabs, showFacepile, smallHeader]);
 
-  return <div ref={containerRef} className="w-full" />;
+  const alignClass =
+    align === 'right' ? 'justify-end' : align === 'center' ? 'justify-center' : 'justify-start';
+
+  return <div ref={containerRef} className={`w-full flex ${alignClass}`} />;
 };
 
 export default FacebookPageEmbed;

@@ -28,7 +28,7 @@ import {
 } from '@/data/content';
 import { EditSessionProvider } from '@/contexts/EditSessionContext';
 import { PageJsonOverrideProvider } from '@/contexts/PageJsonOverrideContext';
-import { FileText, LogOut, Monitor, Settings } from 'lucide-react';
+import { Monitor, Settings, FileText, LogOut, BriefcaseBusiness } from 'lucide-react';
 import ErrorBoundary from '@/components/ui/ErrorBoundary';
 
 type EditablePage =
@@ -43,30 +43,30 @@ type EditablePage =
   | 'admissions'
   | 'actualites';
 
-type JsonObject = Record<string, unknown>;
+type JsonLike = Record<string, unknown> | unknown[];
 
-function getFallback(page: EditablePage): JsonObject {
+function getFallback(page: EditablePage): JsonLike {
   switch (page) {
     case 'accueil':
-      return homeContent as unknown as JsonObject;
+      return homeContent as unknown as JsonLike;
     case 'visite':
-      return visiteContent as unknown as JsonObject;
+      return visiteContent as unknown as JsonLike;
     case 'notre-ecole':
-      return {} as JsonObject;
+      return {} as JsonLike;
     case 'excellence':
-      return excellenceContent as unknown as JsonObject;
+      return excellenceContent as unknown as JsonLike;
     case 'contact':
-      return contactContent as unknown as JsonObject;
+      return contactContent as unknown as JsonLike;
     case 'mentions-legales':
-      return mentionsLegalesContent as unknown as JsonObject;
+      return mentionsLegalesContent as unknown as JsonLike;
     case 'confidentialite':
-      return confidentialiteContent as unknown as JsonObject;
+      return confidentialiteContent as unknown as JsonLike;
     case 'programmes':
-      return programmesContent as unknown as JsonObject;
+      return programmesContent as unknown as JsonLike;
     case 'admissions':
-      return admissionsContent as unknown as JsonObject;
+      return admissionsContent as unknown as JsonLike;
     case 'actualites':
-      return {} as JsonObject;
+      return {} as JsonLike;
   }
 }
 
@@ -91,7 +91,7 @@ const AdminVisualEditor: React.FC = () => {
   );
 
   const [page, setPage] = useState<EditablePage>('accueil');
-  const [draft, setDraft] = useState<JsonObject | null>(null);
+  const [draft, setDraft] = useState<JsonLike | null>(null);
   const [initialSnapshot, setInitialSnapshot] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isPublishing, setIsPublishing] = useState<boolean>(false);
@@ -136,7 +136,7 @@ const AdminVisualEditor: React.FC = () => {
       try {
         const doc = await fetchPageContent(page);
         if (doc && doc.kind === 'json' && typeof doc.payload === 'string') {
-          const parsed = JSON.parse(doc.payload) as JsonObject;
+          const parsed = JSON.parse(doc.payload) as JsonLike;
           if (isMounted) {
             setDraft(parsed);
             setInitialSnapshot(JSON.stringify(parsed));
@@ -233,6 +233,14 @@ const AdminVisualEditor: React.FC = () => {
             <Monitor className="w-5 h-5" />
             Éditeur visuel
           </div>
+
+          <Link
+            to="/ecqm19-admin/jobs"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-orange-200 hover:text-white"
+          >
+            <BriefcaseBusiness className="w-5 h-5" />
+            Offres d'emploi
+          </Link>
         </nav>
 
         <div className="absolute bottom-6 left-6 right-6">

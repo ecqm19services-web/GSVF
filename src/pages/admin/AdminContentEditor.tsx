@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/components/ui/use-toast';
-import { FileText, LogOut, Monitor, Settings } from 'lucide-react';
+import { FileText, LogOut, Monitor, Settings, BriefcaseBusiness } from 'lucide-react';
 
 type Source = 'published' | 'local' | 'empty';
 
@@ -198,6 +198,14 @@ const AdminContentEditor: React.FC = () => {
           >
             <Monitor className="w-5 h-5" />
             Éditeur visuel
+          </Link>
+
+          <Link
+            to="/ecqm19-admin/jobs"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-orange-200 hover:text-white"
+          >
+            <BriefcaseBusiness className="w-5 h-5" />
+            Offres d'emploi
           </Link>
         </nav>
 
