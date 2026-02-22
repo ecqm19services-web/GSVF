@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Hero from '@/components/ui/Hero';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { visionContent, histoireContent } from '@/data/content';
@@ -19,6 +19,7 @@ import {
   User,
   Quote,
   Play,
+  Maximize2,
   ChevronDown,
   type LucideIcon
 } from 'lucide-react';
@@ -63,6 +64,24 @@ const NotreEcoleContent: React.FC = () => {
   const histoire = (data as any).histoire || notreEcoleContent.histoire;
   const motDirecteur = (data as any).motDirecteur || notreEcoleContent.motDirecteur;
   const [expandedYear, setExpandedYear] = useState<number | null>(null);
+  const founderMediaRef = useRef<HTMLDivElement | null>(null);
+
+  const handleFounderFullscreen = async () => {
+    const element = founderMediaRef.current;
+    if (!element) return;
+
+    if (element.requestFullscreen) {
+      await element.requestFullscreen();
+      return;
+    }
+
+    const webkitElement = element as HTMLDivElement & {
+      webkitRequestFullscreen?: () => Promise<void> | void;
+    };
+    if (webkitElement.webkitRequestFullscreen) {
+      await webkitElement.webkitRequestFullscreen();
+    }
+  };
 
   return (
     <>
@@ -88,13 +107,22 @@ const NotreEcoleContent: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Video à gauche */}
-            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-xl group cursor-pointer">
+            <div ref={founderMediaRef} className="relative aspect-video rounded-2xl overflow-hidden shadow-xl group cursor-pointer bg-black">
               <img
                 src={founderPhoto}
                 alt="Photo du fondateur"
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover object-[center_22%]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-transparent to-transparent" />
+              <button
+                type="button"
+                onClick={handleFounderFullscreen}
+                className="absolute top-4 right-4 z-20 inline-flex items-center gap-2 rounded-full bg-black/45 hover:bg-black/60 text-white px-3 py-1.5 text-xs font-semibold backdrop-blur-sm transition-colors"
+                aria-label="Afficher la vidéo en plein écran"
+              >
+                <Maximize2 className="w-4 h-4" />
+                Plein écran
+              </button>
               {/* Bouton play en bas */}
               <div className="absolute bottom-0 left-0 right-0 p-6 flex items-center gap-4">
                 <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:bg-white/40 transition-colors flex-shrink-0">
