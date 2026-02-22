@@ -39,8 +39,8 @@ const HomeContent: React.FC = () => {
         title={homeData.hero.title}
         subtitle={homeData.hero.subtitle}
         description={homeData.hero.description}
-        ctaPrimary={{ text: homeData.hero.ctaPrimary, link: '/programmes' }}
-        ctaSecondary={{ text: homeData.hero.ctaSecondary, link: '/visite' }}
+        ctaPrimary={{ text: homeData.hero.ctaPrimary, link: '/notre-ecole#mot-fondateur' }}
+        ctaSecondary={{ text: homeData.hero.ctaSecondary, link: '/programmes' }}
         backgroundImages={[
           '/images/accueil/accueil_ecole.jpeg',
           '/images/accueil/accueil_ecole_eleves.jpeg',

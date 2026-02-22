@@ -107,7 +107,7 @@ const HomePage: React.FC = () => {
               </h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
                 Fondé en 2019 à Grand-Bassam, le Collège Privé la Vision Future est né de la vision 
-                de M. Dégboué Euloge Yao, convaincu qu'une éducation de qualité peut transformer des vies.
+                de M. DÉGBOUÉ YAO EULOGE, convaincu qu'une éducation de qualité peut transformer des vies.
               </p>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
                 Aujourd'hui, nous sommes fiers d'accompagner nos élèves vers l'excellence, avec des 

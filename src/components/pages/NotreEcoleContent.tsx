@@ -41,7 +41,7 @@ const notreEcoleContent = {
   motDirecteur: {
     title: "Mot du Fondateur",
     message: "Depuis la création du Collège Privé la Vision Future en 2019, notre ambition a toujours été de former des citoyens responsables, compétents et ouverts sur le monde. Chaque jour, nous nous engageons à offrir à nos élèves un cadre d'apprentissage stimulant où l'excellence académique s'allie à l'épanouissement personnel. Je suis fier du chemin parcouru et confiant dans l'avenir que nous construisons ensemble.",
-    name: "M. Dégboué Euloge Yao",
+    name: "M. DÉGBOUÉ YAO EULOGE",
     role: "Fondateur & Directeur Général"
   },
   ...visionContent,
@@ -83,7 +83,7 @@ const NotreEcoleContent: React.FC = () => {
       </div>
 
       {/* Mot du Fondateur */}
-      <section className="pt-10 pb-20 bg-white -mt-10 sm:-mt-15 lg:-mt-22">
+      <section id="mot-fondateur" className="relative z-20 pt-4 pb-20 bg-white -mt-20 sm:-mt-24 lg:-mt-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Video à gauche */}

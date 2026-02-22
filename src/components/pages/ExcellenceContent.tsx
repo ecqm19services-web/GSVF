@@ -4,13 +4,13 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import { excellenceContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
+import EditableImage from '@/components/admin/EditableImage';
 import { 
   Trophy,
   Award,
   Medal,
   Star,
   Quote,
-  User
 } from 'lucide-react';
 
 type ExcellenceData = typeof excellenceContent;
@@ -43,7 +43,7 @@ const ExcellenceContent: React.FC = () => {
       />
 
       {/* Results Section */}
-      <section className="py-20 bg-white">
+      <section className="pt-14 pb-20 bg-white -mt-8 sm:-mt-10 lg:-mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
             subtitle={ui.results.subtitle}
@@ -123,8 +123,15 @@ const ExcellenceContent: React.FC = () => {
                 key={index}
                 className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm hover:shadow-lg transition-shadow"
               >
-                <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Star className="w-6 h-6 text-amber-600" />
+                <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border-2 border-amber-200">
+                  <EditableImage
+                    path={`distinctions.${index}.image`}
+                    src={(distinction as any).image || '/logo-vf.svg'}
+                    alt={distinction.title}
+                    folder="excellence"
+                    className="w-full h-full"
+                    imgClassName="w-full h-full object-cover"
+                  />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -138,6 +145,10 @@ const ExcellenceContent: React.FC = () => {
                     value={distinction.achievement}
                     className="text-gray-600"
                   />
+                  <div className="mt-2 inline-flex items-center gap-1 text-xs text-amber-700">
+                    <Star className="w-3.5 h-3.5" />
+                    Photo modifiable en mode édition
+                  </div>
                 </div>
               </div>
             ))}
@@ -166,8 +177,15 @@ const ExcellenceContent: React.FC = () => {
                   className="bg-gray-50 rounded-2xl p-6 hover:bg-white hover:shadow-lg transition-all group flex flex-col"
                 >
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center flex-shrink-0">
-                      <User className="w-8 h-8 text-white" />
+                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-200 flex-shrink-0">
+                      <EditableImage
+                        path={`alumni.${index}.image`}
+                        src={(alum as any).image || '/logo-vf.svg'}
+                        alt={alum.name}
+                        folder="excellence"
+                        className="w-full h-full"
+                        imgClassName="w-full h-full object-cover"
+                      />
                     </div>
                     <div>
                       <EditableText as="h3" path={`alumni.${index}.name`} value={alum.name} className="font-bold text-gray-900" />

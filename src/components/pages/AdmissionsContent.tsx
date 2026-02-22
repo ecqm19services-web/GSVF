@@ -5,12 +5,15 @@ import AdmissionsForm from '@/components/forms/AdmissionsForm';
 import { admissionsContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
+import { useEditSession } from '@/contexts/EditSessionContext';
 import { FileText, ClipboardList } from 'lucide-react';
 
 type AdmissionTab = 'fiche' | 'etapes';
 
 const AdmissionsContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AdmissionTab>('fiche');
+  const editSession = useEditSession<Record<string, unknown> | unknown[]>();
+  const isEditing = !!editSession?.isEditing;
   const { value: admissionsData } = usePageJsonContent('admissions', admissionsContent);
   const fallbackInfoSheet = (admissionsContent as any).infoSheet;
   const infoSheetFromData = (admissionsData as any).infoSheet || {};
@@ -33,6 +36,27 @@ const AdmissionsContent: React.FC = () => {
     applicationSection: { ...fallbackUi.applicationSection, ...(uiFromData as any).applicationSection },
     helpCta: { ...fallbackUi.helpCta, ...(uiFromData as any).helpCta },
   };
+
+  const showTuition = isEditing || infoSheet?.tuition?.visibleInProduction !== false;
+  const showAnnexFees = isEditing || infoSheet?.annexFees?.visibleInProduction !== false;
+
+  const renderVisibilityToggle = (path: string, isVisible: boolean) => {
+    if (!isEditing || !editSession) return null;
+    return (
+      <button
+        type="button"
+        onClick={() => editSession.updateAtPath(path, !isVisible)}
+        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border transition-colors ${
+          isVisible
+            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+            : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+        }`}
+      >
+        {isVisible ? 'Visible en production' : 'Masqué en production'}
+      </button>
+    );
+  };
+
   return (
     <>
       <Hero title={admissionsData.hero.title} subtitle={admissionsData.hero.subtitle} description={admissionsData.hero.description} size="medium" />
@@ -109,85 +133,112 @@ const AdmissionsContent: React.FC = () => {
               </div>
             ) : null}
 
-            {/* 1. Écolage — Full width on top */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
-              <EditableText as="h3" path="infoSheet.tuition.title" value={infoSheet.tuition.title} className="text-lg font-bold text-gray-900 mb-4" />
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm border-collapse border border-gray-300">
-                  <thead>
-                    <tr className="bg-blue-800 text-white">
-                      <th className="text-left py-3 px-4 font-bold border border-gray-300 bg-white"> </th>
-                      {infoSheet.tuition.columns.map((col: string, i: number) => (
-                        <th key={i} className="text-left py-3 px-4 font-bold border border-blue-700 whitespace-nowrap">
-                          <EditableText as="span" path={`infoSheet.tuition.columns.${i}`} value={col} />
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {infoSheet.tuition.rows.map((row: any, rowIndex: number) => {
-                      const isKeyRow = ['Écolage', 'Inscription'].includes(row.label);
-                      return (
-                      <tr key={rowIndex} className={isKeyRow ? 'bg-blue-50' : rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                        <td className={`py-2.5 px-4 border border-gray-300 whitespace-nowrap ${isKeyRow ? 'font-bold text-blue-900' : 'font-semibold text-gray-900'}`}>
-                          <EditableText as="span" path={`infoSheet.tuition.rows.${rowIndex}.label`} value={row.label} />
-                        </td>
-                        {row.values.map((v: string, colIndex: number) => (
-                          <td key={colIndex} className={`py-2.5 px-4 border border-gray-300 whitespace-nowrap ${isKeyRow ? 'font-semibold text-blue-900' : 'text-gray-700'}`}>
-                            <EditableText as="span" path={`infoSheet.tuition.rows.${rowIndex}.values.${colIndex}`} value={v} />
-                          </td>
-                        ))}
-                      </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-              <EditableText as="p" multiline path="infoSheet.tuition.note" value={infoSheet.tuition.note} className="text-sm text-gray-600 mt-4" />
+            {/* 1. Écolage + Frais annexes — Full width on top */}
+            {(showTuition || showAnnexFees) && (
+              <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
+                {showTuition && (
+                  <>
+                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                      <EditableText as="h3" path="infoSheet.tuition.title" value={infoSheet.tuition.title} className="text-lg font-bold text-gray-900" />
+                      <div className="flex items-center gap-2">
+                        {isEditing && (
+                          <span className="inline-flex items-center rounded-full bg-amber-50 text-amber-800 border border-amber-200 px-2.5 py-1 text-[11px] font-semibold">
+                            Section sensible
+                          </span>
+                        )}
+                        {renderVisibilityToggle('infoSheet.tuition.visibleInProduction', infoSheet.tuition.visibleInProduction !== false)}
+                      </div>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm border-collapse border border-gray-300">
+                        <thead>
+                          <tr className="bg-blue-800 text-white">
+                            <th className="text-left py-3 px-4 font-bold border border-gray-300 bg-white"> </th>
+                            {infoSheet.tuition.columns.map((col: string, i: number) => (
+                              <th key={i} className="text-left py-3 px-4 font-bold border border-blue-700 whitespace-nowrap">
+                                <EditableText as="span" path={`infoSheet.tuition.columns.${i}`} value={col} />
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {infoSheet.tuition.rows.map((row: any, rowIndex: number) => {
+                            const isKeyRow = ['Écolage', 'Inscription'].includes(row.label);
+                            return (
+                            <tr key={rowIndex} className={isKeyRow ? 'bg-blue-50' : rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                              <td className={`py-2.5 px-4 border border-gray-300 whitespace-nowrap ${isKeyRow ? 'font-bold text-blue-900' : 'font-semibold text-gray-900'}`}>
+                                <EditableText as="span" path={`infoSheet.tuition.rows.${rowIndex}.label`} value={row.label} />
+                              </td>
+                              {row.values.map((v: string, colIndex: number) => (
+                                <td key={colIndex} className={`py-2.5 px-4 border border-gray-300 whitespace-nowrap ${isKeyRow ? 'font-semibold text-blue-900' : 'text-gray-700'}`}>
+                                  <EditableText as="span" path={`infoSheet.tuition.rows.${rowIndex}.values.${colIndex}`} value={v} />
+                                </td>
+                              ))}
+                            </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                    <EditableText as="p" multiline path="infoSheet.tuition.note" value={infoSheet.tuition.note} className="text-sm text-gray-600 mt-4" />
+                  </>
+                )}
 
-              {/* Frais annexes inline */}
-              <div className="mt-6 pt-6 border-t border-gray-100">
-                <EditableText as="h4" path="infoSheet.annexFees.title" value={infoSheet.annexFees.title} className="text-lg font-bold text-gray-900 mb-3" />
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm border-collapse border border-gray-300">
-                    <thead>
-                      <tr className="bg-blue-800 text-white">
-                        <th className="text-left py-3 px-4 font-bold border border-gray-300 bg-white"> </th>
-                        {infoSheet.annexFees.columns.map((col: string, i: number) => (
-                          <th key={i} className="text-left py-3 px-4 font-bold border border-blue-700 whitespace-nowrap">
-                            <EditableText as="span" path={`infoSheet.annexFees.columns.${i}`} value={col} />
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {infoSheet.annexFees.rows.map((row: any, rowIndex: number) => (
-                        <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                          <td className="py-2.5 px-4 font-semibold text-gray-900 border border-gray-300 whitespace-nowrap">
-                            <EditableText as="span" path={`infoSheet.annexFees.rows.${rowIndex}.label`} value={row.label} />
-                          </td>
-                          {row.values.map((v: string, colIndex: number) => (
-                            <td key={colIndex} className="py-2.5 px-4 text-gray-700 border border-gray-300 whitespace-nowrap">
-                              <EditableText as="span" path={`infoSheet.annexFees.rows.${rowIndex}.values.${colIndex}`} value={v} />
-                            </td>
+                {showAnnexFees && (
+                  <div className={`${showTuition ? 'mt-6 pt-6 border-t border-gray-100' : ''}`}>
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                      <EditableText as="h4" path="infoSheet.annexFees.title" value={infoSheet.annexFees.title} className="text-lg font-bold text-gray-900" />
+                      <div className="flex items-center gap-2">
+                        {isEditing && (
+                          <span className="inline-flex items-center rounded-full bg-amber-50 text-amber-800 border border-amber-200 px-2.5 py-1 text-[11px] font-semibold">
+                            Section sensible
+                          </span>
+                        )}
+                        {renderVisibilityToggle('infoSheet.annexFees.visibleInProduction', infoSheet.annexFees.visibleInProduction !== false)}
+                      </div>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm border-collapse border border-gray-300">
+                        <thead>
+                          <tr className="bg-blue-800 text-white">
+                            <th className="text-left py-3 px-4 font-bold border border-gray-300 bg-white"> </th>
+                            {infoSheet.annexFees.columns.map((col: string, i: number) => (
+                              <th key={i} className="text-left py-3 px-4 font-bold border border-blue-700 whitespace-nowrap">
+                                <EditableText as="span" path={`infoSheet.annexFees.columns.${i}`} value={col} />
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {infoSheet.annexFees.rows.map((row: any, rowIndex: number) => (
+                            <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                              <td className="py-2.5 px-4 font-semibold text-gray-900 border border-gray-300 whitespace-nowrap">
+                                <EditableText as="span" path={`infoSheet.annexFees.rows.${rowIndex}.label`} value={row.label} />
+                              </td>
+                              {row.values.map((v: string, colIndex: number) => (
+                                <td key={colIndex} className="py-2.5 px-4 text-gray-700 border border-gray-300 whitespace-nowrap">
+                                  <EditableText as="span" path={`infoSheet.annexFees.rows.${rowIndex}.values.${colIndex}`} value={v} />
+                                </td>
+                              ))}
+                            </tr>
                           ))}
-                        </tr>
-                      ))}
-                      <tr className="bg-blue-800 text-white">
-                        <td className="py-2.5 px-4 font-bold border border-blue-700 whitespace-nowrap">
-                          <EditableText as="span" path="infoSheet.annexFees.totalLabel" value={infoSheet.annexFees.totalLabel} />
-                        </td>
-                        {infoSheet.annexFees.totals.map((t: string, i: number) => (
-                          <td key={i} className="py-2.5 px-4 font-bold border border-blue-700 whitespace-nowrap">
-                            <EditableText as="span" path={`infoSheet.annexFees.totals.${i}`} value={t} />
-                          </td>
-                        ))}
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                          <tr className="bg-blue-800 text-white">
+                            <td className="py-2.5 px-4 font-bold border border-blue-700 whitespace-nowrap">
+                              <EditableText as="span" path="infoSheet.annexFees.totalLabel" value={infoSheet.annexFees.totalLabel} />
+                            </td>
+                            {infoSheet.annexFees.totals.map((t: string, i: number) => (
+                              <td key={i} className="py-2.5 px-4 font-bold border border-blue-700 whitespace-nowrap">
+                                <EditableText as="span" path={`infoSheet.annexFees.totals.${i}`} value={t} />
+                              </td>
+                            ))}
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
+            )}
 
             {/* 2. Dossier à fournir + Tenue scolaire — Side by side */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

@@ -20,7 +20,7 @@ const ContactContent: React.FC = () => {
   return (
     <>
       <Hero title={data.hero.title} subtitle={data.hero.subtitle} description={data.hero.description} size="medium" />
-      <section className="py-20 bg-white">
+      <section className="pt-12 pb-20 bg-white -mt-10 sm:-mt-12 lg:-mt-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-1">

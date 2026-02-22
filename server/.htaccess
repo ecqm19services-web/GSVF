@@ -7,6 +7,9 @@ RewriteRule ^(.*)$ /$1/ [R=301,L]
 # Let API requests pass directly to their folders
 RewriteRule ^api/ - [L]
 
+# Block direct access to server backup archives
+RewriteRule ^backups/ - [F,L]
+
 # Do not rewrite existing files/folders
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d

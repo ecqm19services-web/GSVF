@@ -13,7 +13,13 @@ if ($page === '' || !preg_match('/^[a-z0-9_-]{1,60}$/i', $page)) {
   exit;
 }
 
-$config = require __DIR__ . '/../../_secure/appwrite-config.php';
+function buildQueryString($queries) {
+  $parts = [];
+  foreach ($queries as $q) {
+    $parts[] = 'queries[]=' . urlencode(json_encode($q));
+  }
+  return implode('&', $parts);
+}
 
 function appwriteRequest($method, $url, $config, $body = null) {
   $ch = curl_init($url);
@@ -37,47 +43,16 @@ function appwriteRequest($method, $url, $config, $body = null) {
     return [$code ?: 500, ['error' => $err ?: 'cURL request failed']];
   }
   $json = json_decode($resp, true);
-  if (!is_array($json)) { $json = ['raw' => $resp]; }
+  if (!is_array($json)) {
+    $json = ['raw' => $resp];
+  }
   return [$code, $json];
 }
 
-$endpoint = rtrim($config['endpoint'], '/');
-$db  = $config['databaseId'];
-$col = $config['collectionId'];
-
-function buildQueryString($queries) {
-  $parts = [];
-  foreach ($queries as $q) {
-    $parts[] = 'queries[]=' . urlencode(json_encode($q));
-  }
-  return implode('&', $parts);
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-  $qs = buildQueryString([
-    ['method' => 'equal', 'attribute' => 'page', 'values' => [$page]],
-    ['method' => 'limit', 'values' => [1]],
-  ]);
-  $url = "{$endpoint}/databases/{$db}/collections/{$col}/documents?{$qs}";
-  [$code, $data] = appwriteRequest('GET', $url, $config);
-  if ($code >= 400) {
-    http_response_code($code);
-    echo json_encode(['error' => $data['message'] ?? $data['error'] ?? 'Appwrite error', 'details' => $data]);
-    exit;
-  }
-  $doc = null;
-  if (!empty($data['documents'][0])) {
-    $doc = $data['documents'][0];
-    $doc['kind']    = $doc['kind'] ?? 'json';
-    $doc['payload'] = $doc['payload'] ?? ($doc['content'] ?? null);
-  }
-  echo json_encode(['document' => $doc]);
-  exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+function authenticateAdmin() {
   $authUser = $_SERVER['PHP_AUTH_USER'] ?? '';
   $authPass = $_SERVER['PHP_AUTH_PW'] ?? '';
+
   if ($authUser === '' || $authPass === '') {
     $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
     if (preg_match('/^Basic\s+(.+)$/i', $authHeader, $m)) {
@@ -87,12 +62,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
       }
     }
   }
+
   $authenticated = false;
   $htpasswdFile = __DIR__ . '/../../_secure/.htpasswd';
   if ($authUser !== '' && $authPass !== '' && file_exists($htpasswdFile)) {
     $lines = file($htpasswdFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
-      [$storedUser, $storedHash] = explode(':', $line, 2);
+      $parts = explode(':', $line, 2);
+      if (count($parts) !== 2) {
+        continue;
+      }
+      [$storedUser, $storedHash] = $parts;
       if ($storedUser === $authUser) {
         if (password_verify($authPass, $storedHash) || crypt($authPass, $storedHash) === $storedHash) {
           $authenticated = true;
@@ -101,16 +81,106 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
       }
     }
   }
+
   if (!$authenticated) {
     header('WWW-Authenticate: Basic realm="Admin API"');
     http_response_code(401);
     echo json_encode(['error' => 'Authentication required']);
     exit;
   }
+}
+
+$projectRoot = dirname(__DIR__, 2);
+$contentDir = $projectRoot . '/content/pages';
+$filePath = $contentDir . '/' . strtolower($page) . '.json';
+
+function readFileDocument($filePath, $page) {
+  if (!file_exists($filePath)) {
+    return null;
+  }
+
+  $raw = file_get_contents($filePath);
+  if ($raw === false || trim($raw) === '') {
+    return null;
+  }
+
+  $parsed = json_decode($raw, true);
+  if (is_array($parsed) && isset($parsed['payload']) && is_string($parsed['payload'])) {
+    $kind = (isset($parsed['kind']) && is_string($parsed['kind'])) ? $parsed['kind'] : 'json';
+    $updatedAt = isset($parsed['updatedAt']) && is_string($parsed['updatedAt']) ? $parsed['updatedAt'] : null;
+    return [
+      '$id' => 'file:' . $page,
+      'page' => $page,
+      'kind' => $kind,
+      'payload' => $parsed['payload'],
+      'updatedAt' => $updatedAt,
+      '$updatedAt' => $updatedAt,
+    ];
+  }
+
+  // Legacy plain payload file fallback
+  return [
+    '$id' => 'file:' . $page,
+    'page' => $page,
+    'kind' => 'json',
+    'payload' => $raw,
+    'updatedAt' => date('c', filemtime($filePath) ?: time()),
+    '$updatedAt' => date('c', filemtime($filePath) ?: time()),
+  ];
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+  $doc = readFileDocument($filePath, $page);
+  if ($doc !== null) {
+    echo json_encode(['document' => $doc]);
+    exit;
+  }
+
+  // Legacy fallback: read from Appwrite when no file exists yet.
+  $configPath = __DIR__ . '/../../_secure/appwrite-config.php';
+  if (file_exists($configPath)) {
+    $config = require $configPath;
+    if (
+      is_array($config) &&
+      isset($config['endpoint'], $config['projectId'], $config['apiKey'], $config['databaseId'], $config['collectionId'])
+    ) {
+      $endpoint = rtrim($config['endpoint'], '/');
+      $db  = $config['databaseId'];
+      $col = $config['collectionId'];
+      $qs = buildQueryString([
+        ['method' => 'equal', 'attribute' => 'page', 'values' => [$page]],
+        ['method' => 'limit', 'values' => [1]],
+      ]);
+      $url = "{$endpoint}/databases/{$db}/collections/{$col}/documents?{$qs}";
+      [$code, $data] = appwriteRequest('GET', $url, $config);
+      if ($code < 400 && !empty($data['documents'][0])) {
+        $legacy = $data['documents'][0];
+        $doc = [
+          '$id' => $legacy['$id'] ?? ('appwrite:' . $page),
+          'page' => $page,
+          'kind' => $legacy['kind'] ?? 'json',
+          'payload' => $legacy['payload'] ?? ($legacy['content'] ?? null),
+          'updatedAt' => $legacy['$updatedAt'] ?? null,
+          '$updatedAt' => $legacy['$updatedAt'] ?? null,
+        ];
+        echo json_encode(['document' => $doc]);
+        exit;
+      }
+    }
+  }
+
+  echo json_encode(['document' => $doc]);
+  exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+  authenticateAdmin();
+
   if ($page === '__auth_test__') {
     echo json_encode(['ok' => true]);
     exit;
   }
+
   $raw = file_get_contents('php://input');
   $payload = json_decode($raw, true);
   if (!is_array($payload) || !isset($payload['kind']) || !isset($payload['payload']) || !is_string($payload['payload'])) {
@@ -118,47 +188,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     echo json_encode(['error' => 'Invalid JSON body (expected {kind, payload})']);
     exit;
   }
+  if (!is_dir($contentDir) && !mkdir($contentDir, 0755, true)) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Unable to create content directory']);
+    exit;
+  }
+
   $rawPayload = $payload['payload'];
   $kind = $payload['kind'];
-  $qs = buildQueryString([
-    ['method' => 'equal', 'attribute' => 'page', 'values' => [$page]],
-    ['method' => 'limit', 'values' => [1]],
-  ]);
-  $listUrl = "{$endpoint}/databases/{$db}/collections/{$col}/documents?{$qs}";
-  [$listCode, $listData] = appwriteRequest('GET', $listUrl, $config);
-  if ($listCode >= 400) {
-    http_response_code($listCode);
-    echo json_encode(['error' => $listData['message'] ?? 'Appwrite list error', 'details' => $listData]);
+  $docToWrite = [
+    'page' => $page,
+    'kind' => $kind,
+    'payload' => $rawPayload,
+    'updatedAt' => gmdate('c'),
+  ];
+
+  $encoded = json_encode($docToWrite, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+  if ($encoded === false) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Unable to encode content JSON']);
     exit;
   }
-  $existing = $listData['documents'][0] ?? null;
-  if ($existing === null) {
-    $createUrl = "{$endpoint}/databases/{$db}/collections/{$col}/documents";
-    $body = ['documentId' => 'unique()', 'data' => ['page' => $page, 'content' => $rawPayload]];
-    [$cCode, $cData] = appwriteRequest('POST', $createUrl, $config, $body);
-    if ($cCode >= 400) {
-      http_response_code($cCode);
-      echo json_encode(['error' => $cData['message'] ?? 'Appwrite create error', 'details' => $cData]);
-      exit;
-    }
-    $doc = $cData;
-    $doc['kind'] = $kind;
-    $doc['payload'] = $rawPayload;
-    echo json_encode(['document' => $doc]);
+
+  if (file_put_contents($filePath, $encoded, LOCK_EX) === false) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Unable to write content file']);
     exit;
   }
-  $docId = $existing['$id'];
-  $updateUrl = "{$endpoint}/databases/{$db}/collections/{$col}/documents/{$docId}";
-  $body = ['data' => ['content' => $rawPayload]];
-  [$uCode, $uData] = appwriteRequest('PATCH', $updateUrl, $config, $body);
-  if ($uCode >= 400) {
-    http_response_code($uCode);
-    echo json_encode(['error' => $uData['message'] ?? 'Appwrite update error', 'details' => $uData]);
-    exit;
-  }
-  $doc = $uData;
-  $doc['kind'] = $kind;
-  $doc['payload'] = $rawPayload;
+
+  $doc = [
+    '$id' => 'file:' . $page,
+    'page' => $page,
+    'kind' => $kind,
+    'payload' => $rawPayload,
+    'updatedAt' => $docToWrite['updatedAt'],
+    '$updatedAt' => $docToWrite['updatedAt'],
+  ];
+
   echo json_encode(['document' => $doc]);
   exit;
 }

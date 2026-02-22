@@ -8,6 +8,7 @@ import {
   Monitor,
   BriefcaseBusiness,
   LogOut, 
+  ShieldAlert,
   Search,
   Filter,
   Download,
@@ -22,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { fetchAdminAdmissions, fetchAdminContacts, adminUpdateStatus } from '@/lib/adminApi';
+import { createAdminBackup, downloadAdminBackup } from '@/lib/adminBackupApi';
 import { 
   contactStatusLabels, 
   admissionStatusLabels,
@@ -49,6 +51,13 @@ const AdminDashboard: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<ContactFilterStatus | AdmissionFilterStatus>('all');
   const [selectedItem, setSelectedItem] = useState<ContactSubmission | AdmissionSubmission | null>(null);
   const [showDetail, setShowDetail] = useState(false);
+  const [isBackingUp, setIsBackingUp] = useState(false);
+  const [backupError, setBackupError] = useState('');
+  const [lastBackupInfo, setLastBackupInfo] = useState<{
+    fileName: string;
+    savedPath: string;
+    createdAt: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -185,6 +194,28 @@ const AdminDashboard: React.FC = () => {
     link.click();
   };
 
+  const handleBackup = async () => {
+    if (!token || isBackingUp) {
+      return;
+    }
+
+    setBackupError('');
+    setIsBackingUp(true);
+    try {
+      const created = await createAdminBackup(token);
+      await downloadAdminBackup(token, created.downloadUrl, created.fileName);
+      setLastBackupInfo({
+        fileName: created.fileName,
+        savedPath: created.savedPath,
+        createdAt: created.createdAt,
+      });
+    } catch (error) {
+      setBackupError(error instanceof Error ? error.message : 'Erreur de sauvegarde');
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -260,6 +291,15 @@ const AdminDashboard: React.FC = () => {
               </span>
             )}
           </button>
+
+          <button
+            onClick={handleBackup}
+            disabled={!token || isBackingUp}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-white/10 text-orange-100 disabled:opacity-60"
+          >
+            <ShieldAlert className="w-5 h-5" />
+            {isBackingUp ? 'Sauvegarde...' : 'Sauvegarder le site'}
+          </button>
         </nav>
 
         <div className="absolute bottom-6 left-6 right-6">
@@ -275,6 +315,33 @@ const AdminDashboard: React.FC = () => {
 
       {/* Main Content */}
       <main className="ml-64 p-8">
+        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <p className="text-amber-900 font-semibold">Sauvegarde recommandée avant toute modification</p>
+              <p className="text-amber-800 text-sm mt-1">
+                Crée un ZIP complet du site, le télécharge sur votre ordinateur et l'enregistre aussi sur le serveur.
+              </p>
+              {lastBackupInfo && (
+                <p className="text-xs text-amber-700 mt-2">
+                  Dernière sauvegarde: {lastBackupInfo.fileName} ({new Date(lastBackupInfo.createdAt).toLocaleString('fr-FR')})
+                </p>
+              )}
+              {backupError && (
+                <p className="text-xs text-red-700 mt-2">{backupError}</p>
+              )}
+            </div>
+            <button
+              onClick={handleBackup}
+              disabled={!token || isBackingUp}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-60"
+            >
+              <ShieldAlert className="w-4 h-4" />
+              {isBackingUp ? 'Sauvegarde en cours...' : 'Sauvegarder maintenant'}
+            </button>
+          </div>
+        </div>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl p-6 shadow-sm">

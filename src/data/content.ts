@@ -21,8 +21,8 @@ export const homeContent = {
     title: "Collège Privé la Vision Future",
     subtitle: "L'excellence, Notre devise",
     description: "Depuis 2019, nous formons les leaders de demain en accompagnant chaque élève vers la réussite académique et l'épanouissement personnel à Grand-Bassam.",
-    ctaPrimary: "Découvrir nos programmes",
-    ctaSecondary: "Visite virtuelle"
+    ctaPrimary: "Mot du fondateur",
+    ctaSecondary: "Découvrir nos programmes"
   },
   sections: {
     features: {
@@ -34,7 +34,7 @@ export const homeContent = {
       badge: "Notre histoire",
       title: "Depuis 2019, un engagement fort pour l'éducation",
       paragraphs: [
-        "Fondé en 2019 à Grand-Bassam, le Collège Privé la Vision Future est né de la vision de M. Dégboué Euloge Yao, convaincu qu'une éducation de qualité peut transformer des vies.",
+        "Fondé en 2019 à Grand-Bassam, le Collège Privé la Vision Future est né de la vision de M. DÉGBOUÉ YAO EULOGE, convaincu qu'une éducation de qualité peut transformer des vies.",
         "Aujourd'hui, nous sommes fiers d'accompagner nos élèves vers l'excellence, avec des enseignants tous qualifiés et disposant de toutes les autorisations requises."
       ],
       ctaPrimary: "Notre histoire",
@@ -320,54 +320,54 @@ export const histoireContent = {
     subtitle: "L'excellence éducative à Grand-Bassam depuis 2019",
     description: "Retracez le parcours d'un établissement qui forme les leaders de demain."
   },
-  intro: "Fondé en 2019, le Collège Privé la Vision Future est né de la conviction de M. Dégboué Euloge Yao qu'une éducation de qualité peut transformer des vies. Depuis sa création, l'établissement n'a cessé de grandir et de s'affirmer comme une référence éducative à Grand-Bassam.",
+  intro: "Fondé en 2019, le Collège Privé la Vision Future est né de la conviction de M. DÉGBOUÉ YAO EULOGE qu'une éducation de qualité peut transformer des vies. Depuis sa création, l'établissement n'a cessé de grandir et de s'affirmer comme une référence éducative à Grand-Bassam.",
   timeline: [
     {
-      year: "2019",
+      year: "2019-2020",
       title: "Fondation du Collège",
-      description: "Création du Collège Privé la Vision Future à Grand-Bassam par M. Dégboué Euloge Yao, avec une équipe d'enseignants qualifiés et autorisés.",
+      description: "Création du Collège Privé la Vision Future à Grand-Bassam par M. DÉGBOUÉ YAO EULOGE, avec une équipe d'enseignants qualifiés et autorisés.",
       milestone: true
     },
     {
-      year: "2020",
+      year: "2020-2021",
       title: "Consolidation",
       description: "Renforcement de l'équipe pédagogique et mise en place des programmes du 1er cycle (6e à 3e).",
       milestone: false
     },
     {
-      year: "2021",
+      year: "2021-2022",
       title: "Croissance",
       description: "Augmentation des effectifs et amélioration continue des infrastructures.",
       milestone: false
     },
     {
-      year: "2022",
+      year: "2022-2023",
       title: "Ouverture du 2nd Cycle",
       description: "Lancement des classes de 2nde à Terminale (séries A, D et C).",
       milestone: true
     },
     {
-      year: "2023",
+      year: "2023-2024",
       title: "Développement",
       description: "Accueil des élèves affectés et non-affectés. Renforcement des partenariats éducatifs.",
       milestone: false
     },
     {
       year: "2024-2025",
-      title: "100% de réussite au CEPE",
-      description: "Taux de réussite de 100% au CEPE, confirmant la qualité de l'enseignement dispensé.",
-      milestone: true
+      title: "Renforcement académique et orientation",
+      description: "Consolidation des parcours d'excellence, renforcement de l'accompagnement aux examens et orientation active des élèves.",
+      milestone: false
     },
     {
-      year: "2026",
-      title: "Cap sur l'Avenir",
-      description: "Poursuite de l'excellence avec des enseignants tous qualifiés et disposant de toutes les autorisations.",
-      milestone: false
+      year: "2025-2026",
+      title: "Introduction des cours de robotique",
+      description: "Lancement d'un programme de robotique éducative pour développer la logique, la créativité et les compétences STEM dès la classe de CP.",
+      milestone: true
     }
   ],
   founders: [
     {
-      name: "M. Dégboué Euloge Yao",
+      name: "M. DÉGBOUÉ YAO EULOGE",
       role: "Fondateur & Directeur Général",
       bio: "Visionnaire de l'éducation en Côte d'Ivoire, il a consacré sa vie à offrir une éducation de qualité accessible à tous les enfants de Grand-Bassam et au-delà."
     }
@@ -380,7 +380,7 @@ export const histoireContent = {
     },
     quote: {
       text: "\"Chaque enfant mérite une éducation de qualité qui lui permet de réaliser son plein potentiel.\"",
-      author: "— M. Dégboué Euloge Yao, Fondateur"
+      author: "— M. DÉGBOUÉ YAO EULOGE, Fondateur"
     },
     stats: [
       { value: "2019", label: "Année de fondation" },
@@ -403,7 +403,7 @@ export const programmesContent = {
     subtitle: "Un parcours éducatif complet de la maternelle au lycée",
     description: "Découvrez nos cycles d'enseignement et nos spécialités."
   },
-  intro: "Le Collège Privé la Vision Future propose un parcours éducatif structuré avec un 1er cycle (de la 6e à la 3e) et un 2nd cycle (de la 2nde à la Terminale A, D et C). Les élèves affectés et non-affectés sont les bienvenus.",
+  intro: "Le Collège Privé la Vision Future propose un parcours éducatif structuré avec un 1er cycle (de la 6e à la 3e) et un 2nd cycle (de la 2nde à la Terminale) avec les séries du BAC A1, A2, C et D. Les élèves affectés et non-affectés sont les bienvenus.",
   cycles: [
     {
       id: "maternelle",
@@ -450,10 +450,11 @@ export const programmesContent = {
       id: "lycee",
       title: "2nd Cycle (Lycée)",
       ages: "2nde à Terminale",
-      description: "Le second cycle prépare les élèves au baccalauréat avec les séries A, D et C. Les affectés comme les non-affectés sont accueillis.",
+      description: "Le second cycle prépare les élèves au baccalauréat avec les séries A1, A2, C et D. La classe de Première est disponible avec précision sur les séries A2, C et D. Les affectés comme les non-affectés sont accueillis.",
       features: [
-        "Séries : A, C, D",
+        "Séries BAC : A1, A2, C, D",
         "De la 2nde à la Terminale",
+        "Classe de Première : séries A2, C, D",
         "Préparation intensive au BAC",
         "Accueil des affectés et non-affectés",
         "Orientation et coaching personnalisé"
@@ -479,7 +480,7 @@ export const programmesContent = {
       stats: [
         { value: "2019", label: "Année de fondation" },
         { value: "100%", label: "Réussite CEPE 2024-2025" },
-        { value: "A, C, D", label: "Séries au BAC" },
+        { value: "A1, A2, C, D", label: "Séries au BAC" },
         { value: "100%", label: "Enseignants qualifiés" }
       ]
     },
@@ -499,7 +500,7 @@ export const excellenceContent = {
     description: "Découvrez les performances de nos élèves et les parcours de nos anciens."
   },
   results: {
-    title: "Résultats aux Examens 2025",
+    title: "Résultats aux Examens 2024-2025",
     exams: [
       {
         name: "CEPE 2024-2025",
@@ -508,16 +509,16 @@ export const excellenceContent = {
         rank: "Excellence confirmée"
       },
       {
-        name: "BEPC",
-        rate: "?",
-        mentions: "Résultats à venir",
-        rank: "En attente"
+        name: "BEPC 2024-2025",
+        rate: "89,47%",
+        mentions: "Bonne performance académique",
+        rank: "Résultats publiés"
       },
       {
-        name: "BAC",
-        rate: "?",
-        mentions: "Résultats à venir",
-        rank: "En attente"
+        name: "BAC 2024-2025",
+        rate: "62,31%",
+        mentions: "Progression continue",
+        rank: "Résultats publiés"
       }
     ]
   },
@@ -525,22 +526,26 @@ export const excellenceContent = {
     {
       title: "[Nom de la compétition]",
       year: "[Année]",
-      achievement: "[Résultat obtenu] — [Nom de l'élève]"
+      achievement: "[Résultat obtenu] — [Nom de l'élève]",
+      image: ""
     },
     {
       title: "[Nom de la compétition]",
       year: "[Année]",
-      achievement: "[Résultat obtenu] — [Nom de l'élève]"
+      achievement: "[Résultat obtenu] — [Nom de l'élève]",
+      image: ""
     },
     {
       title: "[Nom de la compétition]",
       year: "[Année]",
-      achievement: "[Résultat obtenu] — [Nom de l'élève]"
+      achievement: "[Résultat obtenu] — [Nom de l'élève]",
+      image: ""
     },
     {
       title: "[Nom de la compétition]",
       year: "[Année]",
-      achievement: "[Résultat obtenu] — [Nom de l'élève]"
+      achievement: "[Résultat obtenu] — [Nom de l'élève]",
+      image: ""
     }
   ],
   alumni: [
@@ -577,7 +582,7 @@ export const excellenceContent = {
   ],
   ui: {
     results: {
-      subtitle: "Résultats 2025",
+      subtitle: "Résultats 2024-2025",
       description: "Des performances exceptionnelles qui témoignent de la qualité de notre enseignement."
     },
     distinctions: {
@@ -700,6 +705,7 @@ export const admissionsContent = {
     ],
     annexFees: {
       title: "Frais annexes",
+      visibleInProduction: true,
       columns: ["6ème à la 4ème", "3ème", "2nde / 1ère", "Tle"],
       rows: [
         { label: "Tenue de sport", values: ["6 000 FCFA", "6 000 FCFA", "9 000 FCFA", "9 000 FCFA"] },
@@ -753,6 +759,7 @@ export const admissionsContent = {
     },
     tuition: {
       title: "Écolage",
+      visibleInProduction: true,
       columns: [
         "6ème à la 3ème (Affectés)",
         "6ème à la 3ème (Non affectés)",

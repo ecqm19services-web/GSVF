@@ -62,10 +62,10 @@ const Header: React.FC = () => {
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 group relative">
               <div className="relative -my-6 z-10">
-                <img src="/logo-vf.svg" alt="Collège Privé la Vision Future" className="w-16 h-16 md:w-20 md:h-20 rounded-full object-contain bg-white shadow-lg ring-2 ring-white group-hover:shadow-orange-200 transition-shadow" />
+                <img src="/logo-vf.svg" alt="Collège Privé la Vision Future" className="w-[4.5rem] h-[4.5rem] md:w-[5.5rem] md:h-[5.5rem] rounded-full object-contain bg-white shadow-lg ring-2 ring-white group-hover:shadow-orange-200 transition-shadow" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-base lg:text-lg font-bold text-gray-900 leading-tight">Collège Privé la Vision Future</h1>
+                <h1 className="text-[13px] lg:text-[15px] font-bold text-gray-900 leading-tight">Collège Privé la Vision Future</h1>
                 <p className="text-xs text-orange-500 font-medium">L'excellence, Notre devise</p>
               </div>
             </Link>
