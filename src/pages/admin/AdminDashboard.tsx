@@ -76,6 +76,7 @@ const AdminDashboard: React.FC = () => {
   const [developerCode, setDeveloperCode] = useState('');
   const [restoreError, setRestoreError] = useState('');
   const [restoreSuccess, setRestoreSuccess] = useState('');
+  const [isRestorePanelOpen, setIsRestorePanelOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -419,98 +420,114 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <div className="mb-8 rounded-2xl border border-blue-200 bg-blue-50 p-5">
-          <div className="flex items-start gap-3">
-            <ShieldCheck className="w-5 h-5 text-blue-700 mt-0.5" />
-            <div className="flex-1">
-              <p className="text-blue-900 font-semibold">Restauration depuis une sauvegarde</p>
-              <p className="text-blue-800 text-sm mt-1">
-                Niveau A restaure uniquement les contenus éditables. Niveau B restaure de façon complète (réservé au développeur).
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium text-blue-900">Sauvegarde à restaurer</label>
-              <select
-                value={restoreFileName}
-                onChange={(e) => setRestoreFileName(e.target.value)}
-                className="mt-1 w-full px-3 py-2 border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Sélectionner une sauvegarde</option>
-                {backupItems.map((item) => (
-                  <option key={item.fileName} value={item.fileName}>
-                    {item.fileName} ({new Date(item.createdAt).toLocaleString('fr-FR')})
-                  </option>
-                ))}
-              </select>
-              {isLoadingBackups && <p className="text-xs text-blue-700 mt-1">Chargement des sauvegardes...</p>}
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-blue-900">Niveau de restauration</label>
-              <select
-                value={restoreMode}
-                onChange={(e) => setRestoreMode(e.target.value as RestoreMode)}
-                className="mt-1 w-full px-3 py-2 border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="A">Niveau A - Contenu éditable</option>
-                <option value="B">Niveau B - Restauration complète</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="mt-4 space-y-3">
-            <div>
-              <label className="text-sm font-medium text-blue-900 block">
-                Confirmation (écrire exactement {restoreMode === 'A' ? 'RESTAURER NIVEAU A' : 'RESTAURER NIVEAU B'})
-              </label>
-              <input
-                type="text"
-                value={restoreConfirmation}
-                onChange={(e) => setRestoreConfirmation(e.target.value)}
-                className="mt-1 w-full px-3 py-2 border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder={restoreMode === 'A' ? 'RESTAURER NIVEAU A' : 'RESTAURER NIVEAU B'}
-              />
-            </div>
-
-            {restoreMode === 'B' && (
-              <div>
-                <label className="text-sm font-medium text-blue-900 block">Code développeur</label>
-                <input
-                  type="password"
-                  value={developerCode}
-                  onChange={(e) => setDeveloperCode(e.target.value)}
-                  className="mt-1 w-full px-3 py-2 border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Entrer le code développeur"
-                />
-                <p className="text-xs text-blue-700 mt-1">Pour le niveau B, contactez le développeur pour obtenir le code du jour.</p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <ShieldCheck className="w-5 h-5 text-blue-700 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-blue-900 font-semibold">Restauration depuis une sauvegarde</p>
+                <p className="text-blue-800 text-sm mt-1">
+                  Niveau A restaure uniquement les contenus éditables. Niveau B restaure de façon complète (réservé au développeur).
+                </p>
               </div>
-            )}
-          </div>
-
-          {restoreError && <p className="mt-3 text-sm text-red-700">{restoreError}</p>}
-          {restoreSuccess && <p className="mt-3 text-sm text-emerald-700">{restoreSuccess}</p>}
-
-          <div className="mt-4 flex flex-wrap gap-3">
-            <button
-              onClick={loadBackups}
-              disabled={!token || isLoadingBackups}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-blue-300 text-blue-800 bg-white hover:bg-blue-100 transition-colors disabled:opacity-60"
-            >
-              <RefreshCw className={`w-4 h-4 ${isLoadingBackups ? 'animate-spin' : ''}`} />
-              Actualiser les sauvegardes
-            </button>
+            </div>
 
             <button
-              onClick={handleRestore}
-              disabled={!token || isRestoring || !restoreFileName}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-700 text-white hover:bg-blue-800 transition-colors disabled:opacity-60"
+              type="button"
+              onClick={() => setIsRestorePanelOpen((prev) => !prev)}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors self-start md:self-auto"
             >
               <RotateCcw className="w-4 h-4" />
-              {isRestoring ? 'Restauration en cours...' : `Restaurer (Niveau ${restoreMode})`}
+              Restaurer maintenant
+              <ChevronDown className={`w-4 h-4 transition-transform ${isRestorePanelOpen ? 'rotate-180' : ''}`} />
             </button>
           </div>
+
+          {isRestorePanelOpen && (
+            <>
+              <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-blue-900">Sauvegarde à restaurer</label>
+                  <select
+                    value={restoreFileName}
+                    onChange={(e) => setRestoreFileName(e.target.value)}
+                    className="mt-1 w-full px-3 py-2 border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">Sélectionner une sauvegarde</option>
+                    {backupItems.map((item) => (
+                      <option key={item.fileName} value={item.fileName}>
+                        {item.fileName} ({new Date(item.createdAt).toLocaleString('fr-FR')})
+                      </option>
+                    ))}
+                  </select>
+                  {isLoadingBackups && <p className="text-xs text-blue-700 mt-1">Chargement des sauvegardes...</p>}
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-blue-900">Niveau de restauration</label>
+                  <select
+                    value={restoreMode}
+                    onChange={(e) => setRestoreMode(e.target.value as RestoreMode)}
+                    className="mt-1 w-full px-3 py-2 border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="A">Niveau A - Contenu éditable</option>
+                    <option value="B">Niveau B - Restauration complète</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                <div>
+                  <label className="text-sm font-medium text-blue-900 block">
+                    Confirmation (écrire exactement {restoreMode === 'A' ? 'RESTAURER NIVEAU A' : 'RESTAURER NIVEAU B'})
+                  </label>
+                  <input
+                    type="text"
+                    value={restoreConfirmation}
+                    onChange={(e) => setRestoreConfirmation(e.target.value)}
+                    className="mt-1 w-full px-3 py-2 border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder={restoreMode === 'A' ? 'RESTAURER NIVEAU A' : 'RESTAURER NIVEAU B'}
+                  />
+                </div>
+
+                {restoreMode === 'B' && (
+                  <div>
+                    <label className="text-sm font-medium text-blue-900 block">Code développeur</label>
+                    <input
+                      type="password"
+                      value={developerCode}
+                      onChange={(e) => setDeveloperCode(e.target.value)}
+                      className="mt-1 w-full px-3 py-2 border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Entrer le code développeur"
+                    />
+                    <p className="text-xs text-blue-700 mt-1">Pour le niveau B, vous devez contacter le développeur.</p>
+                  </div>
+                )}
+              </div>
+
+              {restoreError && <p className="mt-3 text-sm text-red-700">{restoreError}</p>}
+              {restoreSuccess && <p className="mt-3 text-sm text-emerald-700">{restoreSuccess}</p>}
+
+              <div className="mt-4 flex flex-wrap gap-3">
+                <button
+                  onClick={loadBackups}
+                  disabled={!token || isLoadingBackups}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-blue-300 text-blue-800 bg-white hover:bg-blue-100 transition-colors disabled:opacity-60"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoadingBackups ? 'animate-spin' : ''}`} />
+                  Actualiser les sauvegardes
+                </button>
+
+                <button
+                  onClick={handleRestore}
+                  disabled={!token || isRestoring || !restoreFileName}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-700 text-white hover:bg-blue-800 transition-colors disabled:opacity-60"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  {isRestoring ? 'Restauration en cours...' : `Restaurer (Niveau ${restoreMode})`}
+                </button>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Stats Cards */}
