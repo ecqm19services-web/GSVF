@@ -392,54 +392,46 @@ const AdminDashboard: React.FC = () => {
 
       {/* Main Content */}
       <main className="ml-64 p-8">
-        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <p className="text-amber-900 font-semibold">Sauvegarde recommandée avant toute modification</p>
-              <p className="text-amber-800 text-sm mt-1">
-                Crée un ZIP complet du site, le télécharge sur votre ordinateur et l'enregistre aussi sur le serveur.
-              </p>
-              {lastBackupInfo && (
-                <p className="text-xs text-amber-700 mt-2">
-                  Dernière sauvegarde: {lastBackupInfo.fileName} ({new Date(lastBackupInfo.createdAt).toLocaleString('fr-FR')})
-                </p>
-              )}
-              {backupError && (
-                <p className="text-xs text-red-700 mt-2">{backupError}</p>
-              )}
-            </div>
-            <button
-              onClick={handleBackup}
-              disabled={!token || isBackingUp}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-60"
-            >
-              <ShieldAlert className="w-4 h-4" />
-              {isBackingUp ? 'Sauvegarde en cours...' : 'Sauvegarder maintenant'}
-            </button>
-          </div>
-        </div>
-
-        <div className="mb-8 rounded-2xl border border-blue-200 bg-blue-50 p-5">
+        <div className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 p-5">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-start gap-3">
-              <ShieldCheck className="w-5 h-5 text-blue-700 mt-0.5" />
+              <ShieldCheck className="w-5 h-5 text-amber-700 mt-0.5" />
               <div className="flex-1">
-                <p className="text-blue-900 font-semibold">Restauration depuis une sauvegarde</p>
-                <p className="text-blue-800 text-sm mt-1">
-                  Niveau A restaure uniquement les contenus éditables. Niveau B restaure de façon complète (réservé au développeur).
+                <p className="text-amber-900 font-semibold">Sauvegarde et restauration</p>
+                <p className="text-amber-800 text-sm mt-1">
+                  Créez un ZIP complet du site, puis restaurez en niveau A (contenu) ou B (complet) selon le besoin.
                 </p>
+                {lastBackupInfo && (
+                  <p className="text-xs text-amber-700 mt-2">
+                    Dernière sauvegarde: {lastBackupInfo.fileName} ({new Date(lastBackupInfo.createdAt).toLocaleString('fr-FR')})
+                  </p>
+                )}
+                {backupError && (
+                  <p className="text-xs text-red-700 mt-2">{backupError}</p>
+                )}
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setIsRestorePanelOpen((prev) => !prev)}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors self-start md:self-auto"
-            >
-              <RotateCcw className="w-4 h-4" />
-              Restaurer maintenant
-              <ChevronDown className={`w-4 h-4 transition-transform ${isRestorePanelOpen ? 'rotate-180' : ''}`} />
-            </button>
+            <div className="flex items-center gap-3 self-start md:self-auto">
+              <button
+                onClick={handleBackup}
+                disabled={!token || isBackingUp}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-60"
+              >
+                <ShieldAlert className="w-4 h-4" />
+                {isBackingUp ? 'Sauvegarde en cours...' : 'Sauvegarder maintenant'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsRestorePanelOpen((prev) => !prev)}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors"
+              >
+                <RotateCcw className="w-4 h-4" />
+                Restaurer maintenant
+                <ChevronDown className={`w-4 h-4 transition-transform ${isRestorePanelOpen ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
           </div>
 
           {isRestorePanelOpen && (
