@@ -18,12 +18,21 @@ import {
   AlertCircle,
   RefreshCw,
   Calendar,
+  RotateCcw,
+  ShieldCheck,
   ChevronDown,
   X
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { fetchAdminAdmissions, fetchAdminContacts, adminUpdateStatus } from '@/lib/adminApi';
-import { createAdminBackup, downloadAdminBackup } from '@/lib/adminBackupApi';
+import {
+  createAdminBackup,
+  downloadAdminBackup,
+  listAdminBackups,
+  restoreAdminBackup,
+  type BackupItem,
+  type RestoreMode,
+} from '@/lib/adminBackupApi';
 import { 
   contactStatusLabels, 
   admissionStatusLabels,
@@ -58,6 +67,15 @@ const AdminDashboard: React.FC = () => {
     savedPath: string;
     createdAt: string;
   } | null>(null);
+  const [backupItems, setBackupItems] = useState<BackupItem[]>([]);
+  const [isLoadingBackups, setIsLoadingBackups] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
+  const [restoreMode, setRestoreMode] = useState<RestoreMode>('A');
+  const [restoreFileName, setRestoreFileName] = useState('');
+  const [restoreConfirmation, setRestoreConfirmation] = useState('');
+  const [developerCode, setDeveloperCode] = useState('');
+  const [restoreError, setRestoreError] = useState('');
+  const [restoreSuccess, setRestoreSuccess] = useState('');
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -68,8 +86,26 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       loadData();
+      loadBackups();
     }
   }, [isAuthenticated, token]);
+
+  const loadBackups = async () => {
+    if (!token) return;
+
+    setIsLoadingBackups(true);
+    try {
+      const res = await listAdminBackups(token);
+      setBackupItems(res.backups);
+      if (!restoreFileName && res.backups.length > 0) {
+        setRestoreFileName(res.backups[0].fileName);
+      }
+    } catch (error) {
+      console.error('Erreur chargement sauvegardes:', error);
+    } finally {
+      setIsLoadingBackups(false);
+    }
+  };
 
   const loadData = async () => {
     setIsLoading(true);
@@ -209,10 +245,40 @@ const AdminDashboard: React.FC = () => {
         savedPath: created.savedPath,
         createdAt: created.createdAt,
       });
+      await loadBackups();
     } catch (error) {
       setBackupError(error instanceof Error ? error.message : 'Erreur de sauvegarde');
     } finally {
       setIsBackingUp(false);
+    }
+  };
+
+  const handleRestore = async () => {
+    if (!token || isRestoring || !restoreFileName) {
+      return;
+    }
+
+    setRestoreError('');
+    setRestoreSuccess('');
+    setIsRestoring(true);
+    try {
+      const response = await restoreAdminBackup(token, {
+        fileName: restoreFileName,
+        mode: restoreMode,
+        confirmationText: restoreConfirmation,
+        developerCode: developerCode.trim(),
+      });
+
+      setRestoreSuccess(
+        `Restauration niveau ${response.mode} terminée (${response.restoredCount} éléments restaurés depuis ${response.fileName}).`
+      );
+      setRestoreConfirmation('');
+      setDeveloperCode('');
+      await loadBackups();
+    } catch (error) {
+      setRestoreError(error instanceof Error ? error.message : 'Erreur de restauration');
+    } finally {
+      setIsRestoring(false);
     }
   };
 
@@ -348,6 +414,101 @@ const AdminDashboard: React.FC = () => {
             >
               <ShieldAlert className="w-4 h-4" />
               {isBackingUp ? 'Sauvegarde en cours...' : 'Sauvegarder maintenant'}
+            </button>
+          </div>
+        </div>
+
+        <div className="mb-8 rounded-2xl border border-blue-200 bg-blue-50 p-5">
+          <div className="flex items-start gap-3">
+            <ShieldCheck className="w-5 h-5 text-blue-700 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-blue-900 font-semibold">Restauration depuis une sauvegarde</p>
+              <p className="text-blue-800 text-sm mt-1">
+                Niveau A restaure uniquement les contenus éditables. Niveau B restaure de façon complète (réservé au développeur).
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium text-blue-900">Sauvegarde à restaurer</label>
+              <select
+                value={restoreFileName}
+                onChange={(e) => setRestoreFileName(e.target.value)}
+                className="mt-1 w-full px-3 py-2 border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Sélectionner une sauvegarde</option>
+                {backupItems.map((item) => (
+                  <option key={item.fileName} value={item.fileName}>
+                    {item.fileName} ({new Date(item.createdAt).toLocaleString('fr-FR')})
+                  </option>
+                ))}
+              </select>
+              {isLoadingBackups && <p className="text-xs text-blue-700 mt-1">Chargement des sauvegardes...</p>}
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-blue-900">Niveau de restauration</label>
+              <select
+                value={restoreMode}
+                onChange={(e) => setRestoreMode(e.target.value as RestoreMode)}
+                className="mt-1 w-full px-3 py-2 border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="A">Niveau A - Contenu éditable</option>
+                <option value="B">Niveau B - Restauration complète</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-4 space-y-3">
+            <div>
+              <label className="text-sm font-medium text-blue-900 block">
+                Confirmation (écrire exactement {restoreMode === 'A' ? 'RESTAURER NIVEAU A' : 'RESTAURER NIVEAU B'})
+              </label>
+              <input
+                type="text"
+                value={restoreConfirmation}
+                onChange={(e) => setRestoreConfirmation(e.target.value)}
+                className="mt-1 w-full px-3 py-2 border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder={restoreMode === 'A' ? 'RESTAURER NIVEAU A' : 'RESTAURER NIVEAU B'}
+              />
+            </div>
+
+            {restoreMode === 'B' && (
+              <div>
+                <label className="text-sm font-medium text-blue-900 block">Code développeur</label>
+                <input
+                  type="password"
+                  value={developerCode}
+                  onChange={(e) => setDeveloperCode(e.target.value)}
+                  className="mt-1 w-full px-3 py-2 border border-blue-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Entrer le code développeur"
+                />
+                <p className="text-xs text-blue-700 mt-1">Pour le niveau B, contactez le développeur pour obtenir le code du jour.</p>
+              </div>
+            )}
+          </div>
+
+          {restoreError && <p className="mt-3 text-sm text-red-700">{restoreError}</p>}
+          {restoreSuccess && <p className="mt-3 text-sm text-emerald-700">{restoreSuccess}</p>}
+
+          <div className="mt-4 flex flex-wrap gap-3">
+            <button
+              onClick={loadBackups}
+              disabled={!token || isLoadingBackups}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-blue-300 text-blue-800 bg-white hover:bg-blue-100 transition-colors disabled:opacity-60"
+            >
+              <RefreshCw className={`w-4 h-4 ${isLoadingBackups ? 'animate-spin' : ''}`} />
+              Actualiser les sauvegardes
+            </button>
+
+            <button
+              onClick={handleRestore}
+              disabled={!token || isRestoring || !restoreFileName}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-700 text-white hover:bg-blue-800 transition-colors disabled:opacity-60"
+            >
+              <RotateCcw className="w-4 h-4" />
+              {isRestoring ? 'Restauration en cours...' : `Restaurer (Niveau ${restoreMode})`}
             </button>
           </div>
         </div>
