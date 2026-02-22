@@ -4,6 +4,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import { visionContent, histoireContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
+import founderPhoto from '../../../Fondateur_CPVF.png';
 import { 
   Star, 
   Shield, 
@@ -88,9 +89,11 @@ const NotreEcoleContent: React.FC = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Video à gauche */}
             <div className="relative aspect-video rounded-2xl overflow-hidden shadow-xl group cursor-pointer">
-              {/* Photo du fondateur en couverture */}
-              {/* Remplacer par /images/fondateur.webp quand la photo sera disponible */}
-              <div className="absolute inset-0 bg-[url('/images/accueil/accueil_ecole.jpeg')] bg-cover bg-center" />
+              <img
+                src={founderPhoto}
+                alt="Photo du fondateur"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-transparent to-transparent" />
               {/* Bouton play en bas */}
               <div className="absolute bottom-0 left-0 right-0 p-6 flex items-center gap-4">
