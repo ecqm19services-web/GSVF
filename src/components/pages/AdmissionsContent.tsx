@@ -9,9 +9,11 @@ import { useEditSession } from '@/contexts/EditSessionContext';
 import { FileText, ClipboardList } from 'lucide-react';
 
 type AdmissionTab = 'fiche' | 'etapes';
+type SensitiveSectionKey = 'tuition' | 'annexFees';
 
 const AdmissionsContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AdmissionTab>('fiche');
+  const [summaryModalSection, setSummaryModalSection] = useState<SensitiveSectionKey | null>(null);
   const editSession = useEditSession<Record<string, unknown> | unknown[]>();
   const isEditing = !!editSession?.isEditing;
   const { value: admissionsData } = usePageJsonContent('admissions', admissionsContent);
@@ -39,13 +41,44 @@ const AdmissionsContent: React.FC = () => {
 
   const showTuition = isEditing || infoSheet?.tuition?.visibleInProduction !== false;
   const showAnnexFees = isEditing || infoSheet?.annexFees?.visibleInProduction !== false;
+  const showTuitionSummary =
+    (isEditing && infoSheet?.tuition) ||
+    (infoSheet?.tuition?.visibleInProduction === false && infoSheet?.tuition?.summaryVisibleInProduction === true);
+  const showAnnexFeesSummary =
+    (isEditing && infoSheet?.annexFees) ||
+    (infoSheet?.annexFees?.visibleInProduction === false && infoSheet?.annexFees?.summaryVisibleInProduction === true);
 
-  const renderVisibilityToggle = (path: string, isVisible: boolean) => {
+  const handleVisibilityToggle = (path: string, isVisible: boolean, sectionKey: SensitiveSectionKey) => {
+    if (!isEditing || !editSession) return;
+    const nextVisible = !isVisible;
+    editSession.updateAtPath(path, nextVisible);
+    if (!nextVisible) {
+      setSummaryModalSection(sectionKey);
+    }
+  };
+
+  const handleSummaryChoice = (sectionKey: SensitiveSectionKey, action: 'show' | 'edit' | 'hide') => {
+    if (!editSession) return;
+    const summaryPath = sectionKey === 'tuition'
+      ? 'infoSheet.tuition.summaryVisibleInProduction'
+      : 'infoSheet.annexFees.summaryVisibleInProduction';
+
+    if (action === 'hide') {
+      editSession.updateAtPath(summaryPath, false);
+      setSummaryModalSection(null);
+      return;
+    }
+
+    editSession.updateAtPath(summaryPath, true);
+    setSummaryModalSection(null);
+  };
+
+  const renderVisibilityToggle = (path: string, isVisible: boolean, sectionKey: SensitiveSectionKey) => {
     if (!isEditing || !editSession) return null;
     return (
       <button
         type="button"
-        onClick={() => editSession.updateAtPath(path, !isVisible)}
+        onClick={() => handleVisibilityToggle(path, isVisible, sectionKey)}
         className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border transition-colors ${
           isVisible
             ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
@@ -134,9 +167,9 @@ const AdmissionsContent: React.FC = () => {
             ) : null}
 
             {/* 1. Écolage + Frais annexes — Full width on top */}
-            {(showTuition || showAnnexFees) && (
+            {(showTuition || showAnnexFees || showTuitionSummary || showAnnexFeesSummary) && (
               <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
-                {showTuition && (
+                {(showTuition || showTuitionSummary) && (
                   <>
                     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                       <EditableText as="h3" path="infoSheet.tuition.title" value={infoSheet.tuition.title} className="text-lg font-bold text-gray-900" />
@@ -146,46 +179,83 @@ const AdmissionsContent: React.FC = () => {
                             Section sensible
                           </span>
                         )}
-                        {renderVisibilityToggle('infoSheet.tuition.visibleInProduction', infoSheet.tuition.visibleInProduction !== false)}
+                        {renderVisibilityToggle('infoSheet.tuition.visibleInProduction', infoSheet.tuition.visibleInProduction !== false, 'tuition')}
                       </div>
                     </div>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm border-collapse border border-gray-300">
-                        <thead>
-                          <tr className="bg-blue-800 text-white">
-                            <th className="text-left py-3 px-4 font-bold border border-gray-300 bg-white"> </th>
-                            {infoSheet.tuition.columns.map((col: string, i: number) => (
-                              <th key={i} className="text-left py-3 px-4 font-bold border border-blue-700 whitespace-nowrap">
-                                <EditableText as="span" path={`infoSheet.tuition.columns.${i}`} value={col} />
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {infoSheet.tuition.rows.map((row: any, rowIndex: number) => {
-                            const isKeyRow = ['Écolage', 'Inscription'].includes(row.label);
-                            return (
-                            <tr key={rowIndex} className={isKeyRow ? 'bg-blue-50' : rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                              <td className={`py-2.5 px-4 border border-gray-300 whitespace-nowrap ${isKeyRow ? 'font-bold text-blue-900' : 'font-semibold text-gray-900'}`}>
-                                <EditableText as="span" path={`infoSheet.tuition.rows.${rowIndex}.label`} value={row.label} />
-                              </td>
-                              {row.values.map((v: string, colIndex: number) => (
-                                <td key={colIndex} className={`py-2.5 px-4 border border-gray-300 whitespace-nowrap ${isKeyRow ? 'font-semibold text-blue-900' : 'text-gray-700'}`}>
-                                  <EditableText as="span" path={`infoSheet.tuition.rows.${rowIndex}.values.${colIndex}`} value={v} />
-                                </td>
-                              ))}
-                            </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                    <EditableText as="p" multiline path="infoSheet.tuition.note" value={infoSheet.tuition.note} className="text-sm text-gray-600 mt-4" />
+                    {showTuition && (
+                      <>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm border-collapse border border-gray-300">
+                            <thead>
+                              <tr className="bg-blue-800 text-white">
+                                <th className="text-left py-3 px-4 font-bold border border-gray-300 bg-white"> </th>
+                                {infoSheet.tuition.columns.map((col: string, i: number) => (
+                                  <th key={i} className="text-left py-3 px-4 font-bold border border-blue-700 whitespace-nowrap">
+                                    <EditableText as="span" path={`infoSheet.tuition.columns.${i}`} value={col} />
+                                  </th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {infoSheet.tuition.rows.map((row: any, rowIndex: number) => {
+                                const isKeyRow = ['Écolage', 'Inscription'].includes(row.label);
+                                return (
+                                <tr key={rowIndex} className={isKeyRow ? 'bg-blue-50' : rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                                  <td className={`py-2.5 px-4 border border-gray-300 whitespace-nowrap ${isKeyRow ? 'font-bold text-blue-900' : 'font-semibold text-gray-900'}`}>
+                                    <EditableText as="span" path={`infoSheet.tuition.rows.${rowIndex}.label`} value={row.label} />
+                                  </td>
+                                  {row.values.map((v: string, colIndex: number) => (
+                                    <td key={colIndex} className={`py-2.5 px-4 border border-gray-300 whitespace-nowrap ${isKeyRow ? 'font-semibold text-blue-900' : 'text-gray-700'}`}>
+                                      <EditableText as="span" path={`infoSheet.tuition.rows.${rowIndex}.values.${colIndex}`} value={v} />
+                                    </td>
+                                  ))}
+                                </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                        <EditableText as="p" multiline path="infoSheet.tuition.note" value={infoSheet.tuition.note} className="text-sm text-gray-600 mt-4" />
+                      </>
+                    )}
+
+                    {showTuitionSummary && (
+                      <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/60 px-4 py-4">
+                        <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                          <EditableText
+                            as="h5"
+                            path="infoSheet.tuition.summaryTitle"
+                            value={infoSheet.tuition.summaryTitle || 'Synthèse Écolage'}
+                            className="text-sm font-bold text-blue-900"
+                          />
+                          {isEditing && (
+                            <button
+                              type="button"
+                              onClick={() => editSession?.updateAtPath('infoSheet.tuition.summaryVisibleInProduction', !(infoSheet.tuition.summaryVisibleInProduction === true))}
+                              className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border transition-colors ${
+                                infoSheet.tuition.summaryVisibleInProduction === true
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                                  : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                              }`}
+                            >
+                              {infoSheet.tuition.summaryVisibleInProduction === true ? 'Synthèse visible si tableau masqué' : 'Synthèse masquée en production'}
+                            </button>
+                          )}
+                        </div>
+                        <EditableText
+                          as="p"
+                          multiline
+                          path="infoSheet.tuition.summaryDetail"
+                          value={infoSheet.tuition.summaryDetail || 'Ajoutez ici un résumé public (sans détails sensibles).'}
+                          className="text-sm text-blue-900/90 leading-relaxed"
+                        />
+                      </div>
+                    )}
                   </>
                 )}
 
-                {showAnnexFees && (
-                  <div className={`${showTuition ? 'mt-6 pt-6 border-t border-gray-100' : ''}`}>
+                {(showAnnexFees || showAnnexFeesSummary) && (
+                  <div className={`${showTuition || showTuitionSummary ? 'mt-6 pt-6 border-t border-gray-100' : ''}`}>
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
                       <EditableText as="h4" path="infoSheet.annexFees.title" value={infoSheet.annexFees.title} className="text-lg font-bold text-gray-900" />
                       <div className="flex items-center gap-2">
@@ -194,47 +264,82 @@ const AdmissionsContent: React.FC = () => {
                             Section sensible
                           </span>
                         )}
-                        {renderVisibilityToggle('infoSheet.annexFees.visibleInProduction', infoSheet.annexFees.visibleInProduction !== false)}
+                        {renderVisibilityToggle('infoSheet.annexFees.visibleInProduction', infoSheet.annexFees.visibleInProduction !== false, 'annexFees')}
                       </div>
                     </div>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm border-collapse border border-gray-300">
-                        <thead>
-                          <tr className="bg-blue-800 text-white">
-                            <th className="text-left py-3 px-4 font-bold border border-gray-300 bg-white"> </th>
-                            {infoSheet.annexFees.columns.map((col: string, i: number) => (
-                              <th key={i} className="text-left py-3 px-4 font-bold border border-blue-700 whitespace-nowrap">
-                                <EditableText as="span" path={`infoSheet.annexFees.columns.${i}`} value={col} />
-                              </th>
+                    {showAnnexFees && (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm border-collapse border border-gray-300">
+                          <thead>
+                            <tr className="bg-blue-800 text-white">
+                              <th className="text-left py-3 px-4 font-bold border border-gray-300 bg-white"> </th>
+                              {infoSheet.annexFees.columns.map((col: string, i: number) => (
+                                <th key={i} className="text-left py-3 px-4 font-bold border border-blue-700 whitespace-nowrap">
+                                  <EditableText as="span" path={`infoSheet.annexFees.columns.${i}`} value={col} />
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {infoSheet.annexFees.rows.map((row: any, rowIndex: number) => (
+                              <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                                <td className="py-2.5 px-4 font-semibold text-gray-900 border border-gray-300 whitespace-nowrap">
+                                  <EditableText as="span" path={`infoSheet.annexFees.rows.${rowIndex}.label`} value={row.label} />
+                                </td>
+                                {row.values.map((v: string, colIndex: number) => (
+                                  <td key={colIndex} className="py-2.5 px-4 text-gray-700 border border-gray-300 whitespace-nowrap">
+                                    <EditableText as="span" path={`infoSheet.annexFees.rows.${rowIndex}.values.${colIndex}`} value={v} />
+                                  </td>
+                                ))}
+                              </tr>
                             ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {infoSheet.annexFees.rows.map((row: any, rowIndex: number) => (
-                            <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                              <td className="py-2.5 px-4 font-semibold text-gray-900 border border-gray-300 whitespace-nowrap">
-                                <EditableText as="span" path={`infoSheet.annexFees.rows.${rowIndex}.label`} value={row.label} />
+                            <tr className="bg-blue-800 text-white">
+                              <td className="py-2.5 px-4 font-bold border border-blue-700 whitespace-nowrap">
+                                <EditableText as="span" path="infoSheet.annexFees.totalLabel" value={infoSheet.annexFees.totalLabel} />
                               </td>
-                              {row.values.map((v: string, colIndex: number) => (
-                                <td key={colIndex} className="py-2.5 px-4 text-gray-700 border border-gray-300 whitespace-nowrap">
-                                  <EditableText as="span" path={`infoSheet.annexFees.rows.${rowIndex}.values.${colIndex}`} value={v} />
+                              {infoSheet.annexFees.totals.map((t: string, i: number) => (
+                                <td key={i} className="py-2.5 px-4 font-bold border border-blue-700 whitespace-nowrap">
+                                  <EditableText as="span" path={`infoSheet.annexFees.totals.${i}`} value={t} />
                                 </td>
                               ))}
                             </tr>
-                          ))}
-                          <tr className="bg-blue-800 text-white">
-                            <td className="py-2.5 px-4 font-bold border border-blue-700 whitespace-nowrap">
-                              <EditableText as="span" path="infoSheet.annexFees.totalLabel" value={infoSheet.annexFees.totalLabel} />
-                            </td>
-                            {infoSheet.annexFees.totals.map((t: string, i: number) => (
-                              <td key={i} className="py-2.5 px-4 font-bold border border-blue-700 whitespace-nowrap">
-                                <EditableText as="span" path={`infoSheet.annexFees.totals.${i}`} value={t} />
-                              </td>
-                            ))}
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+
+                    {showAnnexFeesSummary && (
+                      <div className="mt-4 rounded-xl border border-indigo-100 bg-indigo-50/60 px-4 py-4">
+                        <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                          <EditableText
+                            as="h5"
+                            path="infoSheet.annexFees.summaryTitle"
+                            value={infoSheet.annexFees.summaryTitle || 'Synthèse Frais annexes'}
+                            className="text-sm font-bold text-indigo-900"
+                          />
+                          {isEditing && (
+                            <button
+                              type="button"
+                              onClick={() => editSession?.updateAtPath('infoSheet.annexFees.summaryVisibleInProduction', !(infoSheet.annexFees.summaryVisibleInProduction === true))}
+                              className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border transition-colors ${
+                                infoSheet.annexFees.summaryVisibleInProduction === true
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                                  : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                              }`}
+                            >
+                              {infoSheet.annexFees.summaryVisibleInProduction === true ? 'Synthèse visible si tableau masqué' : 'Synthèse masquée en production'}
+                            </button>
+                          )}
+                        </div>
+                        <EditableText
+                          as="p"
+                          multiline
+                          path="infoSheet.annexFees.summaryDetail"
+                          value={infoSheet.annexFees.summaryDetail || 'Ajoutez ici un résumé public (sans liste complète des frais).'}
+                          className="text-sm text-indigo-900/90 leading-relaxed"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -437,6 +542,49 @@ const AdmissionsContent: React.FC = () => {
             </div>
           </section>
         </>
+      )}
+
+      {isEditing && summaryModalSection && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <button
+            type="button"
+            className="absolute inset-0 bg-slate-900/55"
+            aria-label="Fermer"
+            onClick={() => setSummaryModalSection(null)}
+          />
+          <div className="relative w-full max-w-xl rounded-2xl bg-white p-6 shadow-2xl border border-slate-200">
+            <p className="text-lg font-bold text-slate-900">
+              {summaryModalSection === 'tuition' ? 'Écolage masqué en production' : 'Frais annexes masqués en production'}
+            </p>
+            <p className="mt-2 text-sm text-slate-600">
+              Souhaitez-vous afficher une synthèse publique à la place du tableau complet ?
+            </p>
+
+            <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <button
+                type="button"
+                onClick={() => handleSummaryChoice(summaryModalSection, 'show')}
+                className="rounded-lg px-4 py-2.5 text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-700"
+              >
+                Afficher la synthèse
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSummaryChoice(summaryModalSection, 'edit')}
+                className="rounded-lg px-4 py-2.5 text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Modifier puis afficher
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSummaryChoice(summaryModalSection, 'hide')}
+                className="rounded-lg px-4 py-2.5 text-sm font-semibold bg-slate-200 text-slate-800 hover:bg-slate-300"
+              >
+                Garder masqué
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
 

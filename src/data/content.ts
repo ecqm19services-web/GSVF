@@ -706,6 +706,9 @@ export const admissionsContent = {
     annexFees: {
       title: "Frais annexes",
       visibleInProduction: true,
+      summaryVisibleInProduction: false,
+      summaryTitle: "Synthèse Frais annexes",
+      summaryDetail: "Renseignez ici une synthèse publique sans le détail complet du tableau.",
       columns: ["6ème à la 4ème", "3ème", "2nde / 1ère", "Tle"],
       rows: [
         { label: "Tenue de sport", values: ["6 000 FCFA", "6 000 FCFA", "9 000 FCFA", "9 000 FCFA"] },
@@ -760,6 +763,9 @@ export const admissionsContent = {
     tuition: {
       title: "Écolage",
       visibleInProduction: true,
+      summaryVisibleInProduction: false,
+      summaryTitle: "Synthèse Écolage",
+      summaryDetail: "Renseignez ici une synthèse publique sans le détail complet du tableau.",
       columns: [
         "6ème à la 3ème (Affectés)",
         "6ème à la 3ème (Non affectés)",
