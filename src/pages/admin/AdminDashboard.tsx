@@ -77,6 +77,7 @@ const AdminDashboard: React.FC = () => {
   const [restoreError, setRestoreError] = useState('');
   const [restoreSuccess, setRestoreSuccess] = useState('');
   const [isRestorePanelOpen, setIsRestorePanelOpen] = useState(false);
+  const [isDeveloperInfoOpen, setIsDeveloperInfoOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -370,14 +371,27 @@ const AdminDashboard: React.FC = () => {
         </nav>
 
         <div className="absolute bottom-6 left-6 right-6">
-          <div className="rounded-xl border border-orange-700/60 bg-orange-900/60 p-3 text-xs text-orange-100">
-            <p className="text-[11px] uppercase tracking-wide text-orange-300">Développement & maintenance</p>
-            <p className="mt-1 font-semibold text-white">ESSOH Cyrille</p>
-            <p className="text-orange-200">ic_future / Hfablab</p>
-            <p className="mt-2 text-orange-200">Création: 2026</p>
-            <p className="text-orange-200">Email: ic.future16@gmail.com</p>
-            <p className="text-orange-200">Tél: +225 07 77 17 24 08</p>
-            <p className="mt-2 text-[11px] text-orange-300">Support technique et évolutions de la plateforme.</p>
+          <div className="rounded-xl border border-orange-700/60 bg-orange-900/60 text-xs text-orange-100 overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setIsDeveloperInfoOpen((prev) => !prev)}
+              className="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-left hover:bg-orange-800/40 transition-colors"
+            >
+              <span className="font-semibold text-orange-100">Information du développeur</span>
+              <ChevronDown className={`w-4 h-4 text-orange-300 transition-transform ${isDeveloperInfoOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isDeveloperInfoOpen && (
+              <div className="px-3 pb-3">
+                <p className="text-[11px] uppercase tracking-wide text-orange-300">Développement & maintenance</p>
+                <p className="mt-1 font-semibold text-white">ESSOH Cyrille</p>
+                <p className="text-orange-200">ic_future / Hfablab</p>
+                <p className="mt-2 text-orange-200">Création: 2026</p>
+                <p className="text-orange-200">Email: ic.future16@gmail.com</p>
+                <p className="text-orange-200">Tél: +225 07 77 17 24 08</p>
+                <p className="mt-2 text-[11px] text-orange-300">Support technique et évolutions de la plateforme.</p>
+              </div>
+            )}
           </div>
 
           <button
