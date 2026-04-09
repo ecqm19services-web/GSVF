@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import Hero from '@/components/ui/Hero';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { visionContent, histoireContent } from '@/data/content';
@@ -18,8 +18,6 @@ import {
   ArrowRight,
   User,
   Quote,
-  Play,
-  Maximize2,
   ChevronDown,
   type LucideIcon
 } from 'lucide-react';
@@ -64,24 +62,6 @@ const NotreEcoleContent: React.FC = () => {
   const histoire = (data as any).histoire || notreEcoleContent.histoire;
   const motDirecteur = (data as any).motDirecteur || notreEcoleContent.motDirecteur;
   const [expandedYear, setExpandedYear] = useState<number | null>(null);
-  const founderMediaRef = useRef<HTMLDivElement | null>(null);
-
-  const handleFounderFullscreen = async () => {
-    const element = founderMediaRef.current;
-    if (!element) return;
-
-    if (element.requestFullscreen) {
-      await element.requestFullscreen();
-      return;
-    }
-
-    const webkitElement = element as HTMLDivElement & {
-      webkitRequestFullscreen?: () => Promise<void> | void;
-    };
-    if (webkitElement.webkitRequestFullscreen) {
-      await webkitElement.webkitRequestFullscreen();
-    }
-  };
 
   return (
     <>
@@ -103,132 +83,47 @@ const NotreEcoleContent: React.FC = () => {
       </div>
 
       {/* Mot du Fondateur */}
-      <section id="mot-fondateur" className="relative z-20 pt-4 pb-20 bg-white -mt-20 sm:-mt-24 lg:-mt-28">
+      <section id="mot-fondateur" className="relative z-20 pt-4 md:pt-6 pb-8 md:pb-10 bg-white -mt-20 sm:-mt-24 lg:-mt-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Video à gauche */}
-            <div ref={founderMediaRef} className="relative aspect-video rounded-2xl overflow-hidden shadow-xl group cursor-pointer bg-black">
-              <img
-                src={founderPhoto}
-                alt="Photo du fondateur"
-                className="absolute inset-0 w-full h-full object-cover object-[center_22%]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-transparent to-transparent" />
-              <button
-                type="button"
-                onClick={handleFounderFullscreen}
-                className="absolute top-4 right-4 z-20 inline-flex items-center gap-2 rounded-full bg-black/45 hover:bg-black/60 text-white px-3 py-1.5 text-xs font-semibold backdrop-blur-sm transition-colors"
-                aria-label="Afficher la vidéo en plein écran"
-              >
-                <Maximize2 className="w-4 h-4" />
-                Plein écran
-              </button>
-              {/* Bouton play en bas */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 flex items-center gap-4">
-                <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:bg-white/40 transition-colors flex-shrink-0">
-                  <Play className="w-7 h-7 text-white ml-1" />
-                </div>
-                <p className="text-white text-sm md:text-base font-medium">Cliquez ici pour voir la vidéo de présentation</p>
-              </div>
-            </div>
-
-            {/* Texte à droite */}
-            <div className="bg-gradient-to-br from-blue-50 to-orange-50 rounded-3xl p-8 md:p-10">
-              <EditableText
-                as="h2"
-                path="motDirecteur.title"
-                value={motDirecteur.title}
-                className="text-3xl font-bold text-gray-900 mb-6"
-              />
-              <EditableText
-                as="p"
-                multiline
-                path="motDirecteur.message"
-                value={motDirecteur.message}
-                className="text-lg text-gray-700 leading-relaxed italic mb-6"
-              />
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center flex-shrink-0">
-                  <User className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <EditableText
-                    as="p"
-                    path="motDirecteur.name"
-                    value={motDirecteur.name}
-                    className="text-xl font-bold text-gray-900"
-                  />
-                  <EditableText
-                    as="p"
-                    path="motDirecteur.role"
-                    value={motDirecteur.role}
-                    className="text-blue-800 font-medium"
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-lg">
+            <div className="grid md:grid-cols-5 gap-0">
+              <div className="md:col-span-2 p-6 md:p-8 flex items-center justify-center">
+                <div className="relative w-64 h-80 md:w-full md:h-96">
+                  <img
+                    src={founderPhoto}
+                    alt="Photo du fondateur"
+                    className="w-full h-full rounded-2xl overflow-hidden shadow-md object-cover object-[center_22%]"
                   />
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Vision, Mission & Engagement */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl p-8">
-              <div className="w-14 h-14 bg-blue-800 rounded-2xl flex items-center justify-center mb-5">
-                <Eye className="w-7 h-7 text-white" />
+              <div className="md:col-span-3 p-6 md:p-8 flex flex-col justify-center">
+                <EditableText
+                  as="p"
+                  multiline
+                  path="motDirecteur.message"
+                  value={motDirecteur.message}
+                  className="text-base md:text-lg text-gray-700 leading-relaxed italic mb-8"
+                />
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center flex-shrink-0">
+                    <User className="w-7 h-7 text-white" />
+                  </div>
+                  <div>
+                    <EditableText
+                      as="p"
+                      path="motDirecteur.name"
+                      value={motDirecteur.name}
+                      className="text-lg font-bold text-gray-900"
+                    />
+                    <EditableText
+                      as="p"
+                      path="motDirecteur.role"
+                      value={motDirecteur.role}
+                      className="text-blue-800 font-medium text-sm"
+                    />
+                  </div>
+                </div>
               </div>
-              <EditableText
-                as="h2"
-                path="vision.title"
-                value={data.vision.title}
-                className="text-2xl font-bold text-gray-900 mb-3"
-              />
-              <EditableText
-                as="p"
-                multiline
-                path="vision.content"
-                value={data.vision.content}
-                className="text-gray-700 leading-relaxed"
-              />
-            </div>
-            <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-3xl p-8">
-              <div className="w-14 h-14 bg-amber-600 rounded-2xl flex items-center justify-center mb-5">
-                <Compass className="w-7 h-7 text-white" />
-              </div>
-              <EditableText
-                as="h2"
-                path="mission.title"
-                value={data.mission.title}
-                className="text-2xl font-bold text-gray-900 mb-3"
-              />
-              <EditableText
-                as="p"
-                multiline
-                path="mission.content"
-                value={data.mission.content}
-                className="text-gray-700 leading-relaxed"
-              />
-            </div>
-            <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-3xl p-8 md:col-span-2 lg:col-span-1">
-              <div className="w-14 h-14 bg-emerald-700 rounded-2xl flex items-center justify-center mb-5">
-                <CheckCircle className="w-7 h-7 text-white" />
-              </div>
-              <EditableText
-                as="h2"
-                path="commitment.title"
-                value={data.commitment.title}
-                className="text-2xl font-bold text-gray-900 mb-3"
-              />
-              <ul className="space-y-2">
-                {data.commitment.points.map((point, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-1" />
-                    <EditableText as="span" path={`commitment.points.${index}`} value={point} className="text-gray-700 text-sm leading-relaxed" />
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
         </div>

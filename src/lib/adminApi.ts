@@ -5,6 +5,11 @@ export type AdminUpdateStatusPayload = {
   publicNotes?: string;
 };
 
+export type AdminDeleteSubmissionPayload = {
+  type: 'contact' | 'admission';
+  id: string;
+};
+
 async function apiFetch<T>(
   url: string,
   token: string,
@@ -39,5 +44,12 @@ export async function adminUpdateStatus(token: string, payload: AdminUpdateStatu
   return apiFetch<{ updated: unknown }>(`/api/admin-update-status/`, token, {
     method: 'POST',
     body: JSON.stringify(payload),
+  });
+}
+
+export async function adminDeleteSubmission(token: string, payload: AdminDeleteSubmissionPayload) {
+  return apiFetch<{ ok: boolean; deleted: boolean }>(`/api/admin-update-status/`, token, {
+    method: 'POST',
+    body: JSON.stringify({ ...payload, action: 'delete' }),
   });
 }

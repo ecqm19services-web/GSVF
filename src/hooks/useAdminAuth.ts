@@ -3,6 +3,17 @@ import { useNavigate } from 'react-router-dom';
 
 const STORAGE_KEY = 'cpvf_admin_auth';
 
+type AdminLoginResult = {
+  ok: boolean;
+  error?: string;
+  requirePasswordChange?: boolean;
+};
+
+type AdminChangePasswordResult = {
+  ok: boolean;
+  error?: string;
+};
+
 function getStoredCredentials(): string | null {
   try {
     return sessionStorage.getItem(STORAGE_KEY);
@@ -24,7 +35,7 @@ export const useAdminAuth = () => {
 
   const isAuthenticated = !!token;
 
-  const login = useCallback(async (user: string, pass: string): Promise<boolean> => {
+  const login = useCallback(async (user: string, pass: string): Promise<AdminLoginResult> => {
     setIsLoading(true);
     try {
       const b64 = btoa(`${user}:${pass}`);
@@ -39,18 +50,73 @@ export const useAdminAuth = () => {
         body: JSON.stringify({ kind: 'json', payload: '{}' }),
       });
 
-      // 401 = bad credentials, anything else = credentials accepted
-      if (res.status === 401) {
-        return false;
+      if (!res.ok) {
+        let message = 'Identifiants incorrects.';
+        try {
+          const payload = await res.json();
+          if (payload && typeof payload.error === 'string' && payload.error.trim() !== '') {
+            message = payload.error;
+          }
+        } catch {
+          // Ignore malformed error payload.
+        }
+
+        if (res.status === 423) {
+          return {
+            ok: false,
+            error: 'Compte bloqué 30 minutes après trop de tentatives. Réessayez plus tard.',
+          };
+        }
+
+        if (res.status === 428) {
+          return {
+            ok: false,
+            error: 'Changement de mot de passe obligatoire avant accès.',
+            requirePasswordChange: true,
+          };
+        }
+
+        return { ok: false, error: message };
       }
 
       sessionStorage.setItem(STORAGE_KEY, b64);
       setToken(b64);
-      return true;
+      return { ok: true };
     } catch {
-      return false;
+      return { ok: false, error: 'Erreur réseau. Veuillez réessayer.' };
     } finally {
       setIsLoading(false);
+    }
+  }, []);
+
+  const changePassword = useCallback(async (user: string, currentPass: string, newPass: string): Promise<AdminChangePasswordResult> => {
+    try {
+      const b64 = btoa(`${user}:${currentPass}`);
+      const res = await fetch('/api/admin-change-password/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${b64}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ newPassword: newPass }),
+      });
+
+      if (!res.ok) {
+        let message = 'Impossible de changer le mot de passe.';
+        try {
+          const payload = await res.json();
+          if (payload && typeof payload.error === 'string' && payload.error.trim() !== '') {
+            message = payload.error;
+          }
+        } catch {
+          // ignore malformed payload
+        }
+        return { ok: false, error: message };
+      }
+
+      return { ok: true };
+    } catch {
+      return { ok: false, error: 'Erreur réseau. Veuillez réessayer.' };
     }
   }, []);
 
@@ -83,6 +149,7 @@ export const useAdminAuth = () => {
     isLoading,
     checkAuth,
     login,
+    changePassword,
     logout,
     requireAuth,
     user: null,

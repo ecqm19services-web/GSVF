@@ -1,5 +1,26 @@
 # Scripts de configuration Appwrite
 
+## bootstrap-admin-operators.cjs
+
+Génère automatiquement un fichier `server/_secure/admin-operators.json` avec des opérateurs individuels, chacun avec un mot de passe aléatoire fort hashé en bcrypt (compatible PHP), pour remplacer le compte admin partagé.
+
+### Utilisation
+
+```bash
+node scripts/bootstrap-admin-operators.cjs 10
+```
+
+Options:
+
+- `10` : nombre d'opérateurs à créer.
+- `--force` : écrase un fichier existant (à utiliser uniquement pour rotation complète des accès).
+
+### Important
+
+1. Le script affiche les mots de passe initiaux une seule fois dans la console.
+2. Transmets ces mots de passe de façon sécurisée (pas par chat public).
+3. Le backend bloque un opérateur pendant 30 minutes après 10 tentatives échouées.
+
 ## setup-appwrite-collection.js
 
 Script automatique pour créer la collection `site_pages` dans Appwrite avec tous les attributs et permissions nécessaires.

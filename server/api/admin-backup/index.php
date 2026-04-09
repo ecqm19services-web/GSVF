@@ -1,50 +1,12 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
+require_once __DIR__ . '/../../_secure/admin-audit-log.php';
+require_once __DIR__ . '/../../_secure/admin-auth.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
   http_response_code(204);
   exit;
-}
-
-function authenticateAdmin() {
-  $authUser = $_SERVER['PHP_AUTH_USER'] ?? '';
-  $authPass = $_SERVER['PHP_AUTH_PW'] ?? '';
-
-  if ($authUser === '' || $authPass === '') {
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
-    if (preg_match('/^Basic\s+(.+)$/i', $authHeader, $m)) {
-      $decoded = base64_decode($m[1]);
-      if ($decoded && strpos($decoded, ':') !== false) {
-        [$authUser, $authPass] = explode(':', $decoded, 2);
-      }
-    }
-  }
-
-  $authenticated = false;
-  $htpasswdFile = __DIR__ . '/../../_secure/.htpasswd';
-  if ($authUser !== '' && $authPass !== '' && file_exists($htpasswdFile)) {
-    $lines = file($htpasswdFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-      $parts = explode(':', $line, 2);
-      if (count($parts) !== 2) {
-        continue;
-      }
-      [$storedUser, $storedHash] = $parts;
-      if ($storedUser === $authUser) {
-        if (password_verify($authPass, $storedHash) || crypt($authPass, $storedHash) === $storedHash) {
-          $authenticated = true;
-        }
-        break;
-      }
-    }
-  }
-
-  if (!$authenticated) {
-    header('WWW-Authenticate: Basic realm="Admin API"');
-    http_response_code(401);
-    echo json_encode(['error' => 'Authentication required']);
-    exit;
-  }
 }
 
 function ensureBackupFolder($path) {
@@ -261,7 +223,7 @@ function createBackupZip($projectRoot, $backupFilePath) {
   return true;
 }
 
-authenticateAdmin();
+adminAuthenticateOrFail();
 
 $projectRoot = dirname(__DIR__, 2);
 $backupDir = $projectRoot . '/backups';
@@ -284,12 +246,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($fileName === '' || !preg_match('/^[a-zA-Z0-9._-]+\.zip$/', $fileName)) {
       http_response_code(400);
+      adminAuditLog('admin_restore_rejected', ['reason' => 'invalid_filename']);
       echo json_encode(['error' => 'Nom de sauvegarde invalide']);
       exit;
     }
 
     if ($mode !== 'A' && $mode !== 'B') {
       http_response_code(400);
+      adminAuditLog('admin_restore_rejected', ['reason' => 'invalid_mode', 'fileName' => $fileName]);
       echo json_encode(['error' => 'Mode de restauration invalide']);
       exit;
     }
@@ -297,6 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $expectedConfirmation = $mode === 'A' ? 'RESTAURER NIVEAU A' : 'RESTAURER NIVEAU B';
     if ($confirmationText !== $expectedConfirmation) {
       http_response_code(400);
+      adminAuditLog('admin_restore_rejected', ['reason' => 'invalid_confirmation', 'fileName' => $fileName, 'mode' => $mode]);
       echo json_encode(['error' => 'Confirmation de restauration invalide']);
       exit;
     }
@@ -305,6 +270,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $expectedCode = expectedDeveloperCodeForToday();
       if ($developerCode === '' || !hash_equals($expectedCode, strtolower($developerCode))) {
         http_response_code(403);
+        adminAuditLog('admin_restore_rejected', ['reason' => 'invalid_developer_code', 'fileName' => $fileName, 'mode' => $mode]);
         echo json_encode(['error' => 'Code développeur invalide']);
         exit;
       }
@@ -313,6 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $zipPath = $backupDir . '/' . $fileName;
     if (!is_file($zipPath)) {
       http_response_code(404);
+      adminAuditLog('admin_restore_rejected', ['reason' => 'backup_not_found', 'fileName' => $fileName, 'mode' => $mode]);
       echo json_encode(['error' => 'Sauvegarde introuvable']);
       exit;
     }
@@ -320,6 +287,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lockFile = $backupDir . '/.restore.lock';
     if (is_file($lockFile)) {
       http_response_code(409);
+      adminAuditLog('admin_restore_rejected', ['reason' => 'restore_lock', 'fileName' => $fileName, 'mode' => $mode]);
       echo json_encode(['error' => 'Une restauration est déjà en cours']);
       exit;
     }
@@ -330,9 +298,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       [$ok, $restoredCount, $restoredTargets] = restoreFromBackup($projectRoot, $zipPath, $mode);
       if (!$ok) {
         http_response_code(500);
+        adminAuditLog('admin_restore_failed', ['fileName' => $fileName, 'mode' => $mode]);
         echo json_encode(['error' => 'Impossible de lire la sauvegarde ZIP']);
         exit;
       }
+
+      adminAuditLog('admin_restore_success', [
+        'fileName' => $fileName,
+        'mode' => $mode,
+        'restoredCount' => $restoredCount,
+        'restoredTargets' => $restoredTargets,
+      ]);
 
       echo json_encode([
         'ok' => true,
@@ -356,9 +332,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   if (!createBackupZip($projectRoot, $backupFilePath)) {
     http_response_code(500);
+    adminAuditLog('admin_backup_failed', ['fileName' => $fileName]);
     echo json_encode(['error' => 'Unable to create backup ZIP']);
     exit;
   }
+
+  adminAuditLog('admin_backup_created', ['fileName' => $fileName]);
 
   echo json_encode([
     'ok' => true,

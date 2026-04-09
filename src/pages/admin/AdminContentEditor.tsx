@@ -7,7 +7,6 @@ import {
   visiteContent,
   visionContent,
   histoireContent,
-  excellenceContent,
   contactContent,
   mentionsLegalesContent,
   confidentialiteContent,
@@ -39,8 +38,6 @@ function getDefaultJsonPayload(page: string): string {
       return JSON.stringify(visionContent, null, 2);
     case 'histoire':
       return JSON.stringify(histoireContent, null, 2);
-    case 'excellence':
-      return JSON.stringify(excellenceContent, null, 2);
     case 'contact':
       return JSON.stringify(contactContent, null, 2);
     case 'mentions-legales':
@@ -66,7 +63,6 @@ const AdminContentEditor: React.FC = () => {
       'visite',
       'vision',
       'histoire',
-      'excellence',
       'contact',
       'mentions-legales',
       'confidentialite',

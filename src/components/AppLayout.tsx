@@ -4,7 +4,6 @@ import Layout from '@/components/layout/Layout';
 import HomeContent from '@/components/pages/HomeContent';
 import NotreEcoleContent from '@/components/pages/NotreEcoleContent';
 import ProgrammesContent from '@/components/pages/ProgrammesContent';
-import ExcellenceContent from '@/components/pages/ExcellenceContent';
 import VisiteContent from '@/components/pages/VisiteContent';
 import AdmissionsContent from '@/components/pages/AdmissionsContent';
 import ContactContent from '@/components/pages/ContactContent';
@@ -28,8 +27,6 @@ const AppLayout: React.FC = () => {
         return <NotreEcoleContent />;
       case '/programmes':
         return <ProgrammesContent />;
-      case '/excellence':
-        return <ExcellenceContent />;
       case '/visite':
         return <VisiteContent />;
       case '/admissions':

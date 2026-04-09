@@ -1,78 +1,510 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import Hero from '@/components/ui/Hero';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { homeContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
+import { useEditSession } from '@/contexts/EditSessionContext';
 import EditableText from '@/components/admin/EditableText';
-import { 
+import EditableImage from '@/components/admin/EditableImage';
+import {
   GraduationCap, 
-  Building2, 
-  Users, 
-  Globe,
   ArrowRight,
-  Quote,
+  ChevronLeft,
   ChevronRight,
   Award,
-  BookOpen,
-  Heart,
-  Star,
-  type LucideIcon
+  Trophy,
+  Medal,
+  User,
+  Play,
+  X,
+  ArrowUpRight,
+  Plus,
+  Trash2
 } from 'lucide-react';
 
-const iconMap: Record<string, LucideIcon> = {
-  academic: GraduationCap,
-  building: Building2,
-  users: Users,
-  globe: Globe
-};
-
 type HomeData = typeof homeContent;
+type HomeSections = HomeData['sections'];
+type HomeHero = HomeData['hero'];
+type HonorRollLevel = HomeSections['excellenceShowcase']['honorRoll']['levels'][number];
+type ExamCard = HomeSections['excellenceShowcase']['examCards'][number];
+type PracticalInfo = HomeSections['practicalInfo'];
+type PracticalTextItem = PracticalInfo['leftColumn']['trimesters'][number];
+type PracticalLinkItem = PracticalInfo['rightColumn']['firstCycleLinks'][number];
 
 const HomeContent: React.FC = () => {
   const { value: homeData } = usePageJsonContent<HomeData>('accueil', homeContent);
-  const sections = (homeData as any).sections || (homeContent as any).sections;
+  const editSession = useEditSession<HomeData>();
+  const resolvedHome = homeData || homeContent;
+  const sections: HomeSections = resolvedHome.sections;
+  const hero: HomeHero = resolvedHome.hero;
+  const heroImages = hero.slideshowImages?.length ? hero.slideshowImages : homeContent.hero.slideshowImages;
+  const [slideIndex, setSlideIndex] = useState(0);
+  const nextSlide = useCallback(() => {
+    setSlideIndex((prev) => (prev + 1) % heroImages.length);
+  }, [heroImages.length]);
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 5000);
+    return () => clearInterval(timer);
+  }, [nextSlide]);
+
+  const examResults = sections.examResults?.cards || homeContent.sections.examResults.cards;
+  const examIcons = [Trophy, Award, Medal];
+  const examColors = [
+    'from-amber-500 to-orange-500',
+    'from-blue-600 to-teal-500',
+    'from-blue-500 to-indigo-500'
+  ];
+  const excellenceShowcase = sections.excellenceShowcase || homeContent.sections.excellenceShowcase;
+  const practicalInfo = sections.practicalInfo || homeContent.sections.practicalInfo;
+
+  // Activity gallery slider — items arranged as columns of 2 (rows), sliding by 2 columns
+  const galleryItems: { src: string; caption: string }[] = sections.activityGallery?.items || homeContent.sections.activityGallery.items;
+  const [galleryPage, setGalleryPage] = useState(0);
+  // Build columns: each column holds 2 items (top + bottom row)
+  const galleryColumns: { src: string; caption: string }[][] = [];
+  for (let i = 0; i < galleryItems.length; i += 2) {
+    galleryColumns.push(galleryItems.slice(i, i + 2));
+  }
+  const totalCols = galleryColumns.length;
+  const visibleCols = 4;
+  const slideCols = 2;
+  const galleryMaxPage = Math.max(0, Math.ceil(Math.max(0, totalCols - visibleCols) / slideCols));
+  const galleryContent = sections.activityGallery || homeContent.sections.activityGallery;
+
+  // Actualités data
+  const actu = sections.actualites || homeContent.sections.actualites;
+  const actuItems: { title: string; body: string; linkText: string; linkUrl: string }[] =
+    actu.items || homeContent.sections.actualites.items;
+  const newsTickerText = actu.newsTicker?.text || homeContent.sections.actualites.newsTicker.text;
+  const belowImageMode = (actu.belowImage?.mode as 'text' | 'image' | undefined) || 'text';
+
+  // Video modal state
+  const [showVideo, setShowVideo] = useState(false);
+  const founderVideoUrl = sections.motFondateur?.videoUrl || homeContent.sections.motFondateur.videoUrl;
+
+  const addPracticalTextItem = (path: 'sections.practicalInfo.leftColumn.trimesters' | 'sections.practicalInfo.leftColumn.breaks') => {
+    if (!editSession) return;
+    const currentItems = path === 'sections.practicalInfo.leftColumn.trimesters'
+      ? practicalInfo.leftColumn.trimesters
+      : practicalInfo.leftColumn.breaks;
+    const nextItems: PracticalTextItem[] = [...currentItems, { title: '', body: '' }];
+    editSession.updateAtPath(path, nextItems);
+  };
+
+  const removePracticalTextItem = (
+    path: 'sections.practicalInfo.leftColumn.trimesters' | 'sections.practicalInfo.leftColumn.breaks',
+    indexToRemove: number
+  ) => {
+    if (!editSession) return;
+    const currentItems = path === 'sections.practicalInfo.leftColumn.trimesters'
+      ? practicalInfo.leftColumn.trimesters
+      : practicalInfo.leftColumn.breaks;
+    const nextItems = currentItems.filter((_, index) => index !== indexToRemove);
+    editSession.updateAtPath(path, nextItems);
+  };
+
+  const addPracticalLinkItem = (
+    path: 'sections.practicalInfo.rightColumn.firstCycleLinks' | 'sections.practicalInfo.rightColumn.secondCycleLinks'
+  ) => {
+    if (!editSession) return;
+    const currentItems = path === 'sections.practicalInfo.rightColumn.firstCycleLinks'
+      ? practicalInfo.rightColumn.firstCycleLinks
+      : practicalInfo.rightColumn.secondCycleLinks;
+    const nextItems: PracticalLinkItem[] = [...currentItems, { label: '', linkUrl: '' }];
+    editSession.updateAtPath(path, nextItems);
+  };
+
+  const removePracticalLinkItem = (
+    path: 'sections.practicalInfo.rightColumn.firstCycleLinks' | 'sections.practicalInfo.rightColumn.secondCycleLinks',
+    indexToRemove: number
+  ) => {
+    if (!editSession) return;
+    const currentItems = path === 'sections.practicalInfo.rightColumn.firstCycleLinks'
+      ? practicalInfo.rightColumn.firstCycleLinks
+      : practicalInfo.rightColumn.secondCycleLinks;
+    const nextItems = currentItems.filter((_, index) => index !== indexToRemove);
+    editSession.updateAtPath(path, nextItems);
+  };
+
   return (
     <>
-      {/* Hero Section */}
-      <Hero
-        title={homeData.hero.title}
-        subtitle={homeData.hero.subtitle}
-        description={homeData.hero.description}
-        ctaPrimary={{ text: homeData.hero.ctaPrimary, link: '/notre-ecole#mot-fondateur' }}
-        ctaSecondary={{ text: homeData.hero.ctaSecondary, link: '/programmes' }}
-        backgroundImages={[
-          '/images/accueil/accueil_ecole.jpeg',
-          '/images/accueil/accueil_ecole_eleves.jpeg',
-          '/images/accueil/accueil_ecole_eleves_alt.jpeg',
-        ]}
-        slideDuration={5000}
-        size="large"
-      />
+      {/* Hero Slideshow – images only, no text overlay */}
+      <section className="relative h-[60vh] md:h-[70vh] lg:h-[75vh] overflow-hidden">
+        <div className="absolute inset-0">
+          {heroImages.map((src, i) => (
+            <div
+              key={src}
+              className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+              style={{ opacity: i === slideIndex ? 1 : 0 }}
+            >
+              <EditableImage
+                path={`hero.slideshowImages.${i}`}
+                src={src}
+                alt=""
+                className="w-full h-full"
+                imgClassName="w-full h-full object-cover"
+                folder="accueil"
+              />
+            </div>
+          ))}
+        </div>
+        {/* Slide indicators */}
+        <div className="absolute bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          {heroImages.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setSlideIndex(i)}
+              className={`w-3 h-3 rounded-full transition-all ${
+                i === slideIndex ? 'bg-white scale-110' : 'bg-white/50'
+              }`}
+            />
+          ))}
+        </div>
+        {/* "Nous formons les élites de demain" banner – overlapping the hero image */}
+        <div className="absolute bottom-0 inset-x-0 z-10">
+          <div className="bg-white/80 backdrop-blur-sm py-5 md:py-7">
+            <div className="max-w-5xl mx-auto px-4 text-center">
+              <EditableText
+                as="p"
+                path="hero.bannerText"
+                value={hero.bannerText || ''}
+                className="text-3xl md:text-4xl lg:text-5xl italic text-blue-900/80"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* Stats Section */}
-      <section className="pt-0 pb-5 bg-white relative -mt-10 sm:-mt-12 lg:-mt-14 z-10">
+      {/* Exam Results Blocks */}
+      <section className="pt-2 pb-10 bg-white relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {homeData.stats.map((stat, index) => (
-              <div 
-                key={index}
-                className="bg-white rounded-2xl p-6 text-center shadow-lg border border-gray-100 hover:shadow-xl transition-shadow"
-              >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {examResults.map((exam, index) => {
+              const Icon = examIcons[index % examIcons.length];
+              return (
+                <div
+                  key={index}
+                  className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 text-center relative overflow-hidden"
+                >
+                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${examColors[index]} opacity-10 rounded-full transform translate-x-8 -translate-y-8`} />
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${examColors[index]} flex items-center justify-center mx-auto mb-6`}>
+                    <Icon className="w-8 h-8 text-white" />
+                  </div>
+                  <EditableText
+                    as="h3"
+                    path={`sections.examResults.cards.${index}.name`}
+                    value={exam.name}
+                    className="text-xl font-bold text-gray-900 mb-2"
+                  />
+                  <EditableText
+                    as="div"
+                    path={`sections.examResults.cards.${index}.rate`}
+                    value={exam.rate}
+                    className="text-5xl font-bold text-blue-800 mb-2"
+                  />
+                  <EditableText
+                    as="p"
+                    path={`sections.examResults.cards.${index}.mentions`}
+                    value={exam.mentions}
+                    className="text-gray-600 mb-2"
+                  />
+                  <EditableText
+                    as="p"
+                    path={`sections.examResults.cards.${index}.rank`}
+                    value={exam.rank}
+                    className="text-sm text-blue-800 font-medium"
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Banner Bienvenue – image seule */}
+      <section>
+        <EditableImage
+          path="sections.bannerImage.src"
+          src={sections.bannerImage?.src}
+          alt="Bienvenue sur notre site"
+          className="w-full"
+          imgClassName="w-full h-auto object-contain"
+          folder="accueil"
+        />
+      </section>
+
+      {/* Mot du Fondateur */}
+      <section className="pt-4 md:pt-6 pb-8 md:pb-10 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-r from-blue-900 to-blue-800 rounded-t-2xl py-5 px-6 md:px-10">
+            <EditableText
+              as="h2"
+              path="sections.motFondateur.title"
+              value={sections.motFondateur?.title || 'Mot du Fondateur'}
+              className="text-2xl md:text-3xl font-bold text-white text-center"
+            />
+          </div>
+          <div className="bg-white border border-gray-200 border-t-0 rounded-b-2xl shadow-lg">
+            <div className="grid md:grid-cols-5 gap-0">
+              <div className="md:col-span-2 p-6 md:p-8 flex items-center justify-center">
+                <div className="relative w-64 h-80 md:w-full md:h-96 group">
+                  <EditableImage
+                    path="sections.motFondateur.photo"
+                    src={sections.motFondateur?.photo}
+                    alt="Photo du fondateur"
+                    className="w-full h-full rounded-2xl overflow-hidden shadow-md"
+                    imgClassName="w-full h-full object-cover object-[center_22%]"
+                    folder="accueil"
+                  />
+                  <button
+                    onClick={() => setShowVideo(true)}
+                    className="absolute inset-0 flex items-center justify-center bg-black/[0.025] hover:bg-black/5 transition-colors rounded-2xl cursor-pointer"
+                    aria-label="Lire la vidéo du fondateur"
+                  >
+                    <div className="w-16 h-16 md:w-20 md:h-20 bg-white/35 hover:bg-white/45 rounded-full flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                      <Play className="w-8 h-8 md:w-10 md:h-10 text-blue-800/45 ml-1" fill="currentColor" />
+                    </div>
+                  </button>
+                </div>
+              </div>
+              <div className="md:col-span-3 p-6 md:p-8 flex flex-col justify-center">
                 <EditableText
-                  as="div"
-                  path={`stats.${index}.value`}
-                  value={stat.value}
-                  className="text-4xl md:text-5xl font-bold text-blue-800 mb-2"
+                  as="p"
+                  multiline
+                  path="sections.motFondateur.message"
+                  value={sections.motFondateur?.message || ''}
+                  className="text-base md:text-lg text-gray-700 leading-relaxed italic mb-8"
+                />
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center flex-shrink-0">
+                    <User className="w-7 h-7 text-white" />
+                  </div>
+                  <div>
+                    <EditableText
+                      as="p"
+                      path="sections.motFondateur.name"
+                      value={sections.motFondateur?.name || 'M. DÉGBOUÉ YAO EULOGE'}
+                      className="text-lg font-bold text-gray-900"
+                    />
+                    <EditableText
+                      as="p"
+                      path="sections.motFondateur.role"
+                      value={sections.motFondateur?.role || 'Fondateur & Directeur Général'}
+                      className="text-blue-800 font-medium text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Activity Gallery */}
+      <section className="py-8 md:py-10 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-[0.82fr_1.38fr] gap-8 lg:gap-10 items-stretch">
+            <div className="bg-emerald-600 text-white rounded-2xl p-6 md:p-8 shadow-lg flex flex-col justify-between min-h-[520px]">
+              <div>
+                <EditableText
+                  as="p"
+                  path="sections.activityGallery.subtitle"
+                  value={galleryContent.subtitle || 'Moments forts'}
+                  className="text-sm md:text-base uppercase tracking-[0.2em] font-semibold text-emerald-100 mb-4"
                 />
                 <EditableText
-                  as="div"
-                  path={`stats.${index}.label`}
-                  value={stat.label}
-                  className="text-gray-600 font-medium"
+                  as="h2"
+                  multiline
+                  path="sections.activityGallery.title"
+                  value={galleryContent.title || 'Vie scolaire & médias'}
+                  className="text-3xl md:text-4xl font-bold leading-tight mb-6"
+                />
+                <EditableText
+                  as="p"
+                  multiline
+                  path="sections.activityGallery.description"
+                  value={galleryContent.description || ''}
+                  className="text-base md:text-lg leading-relaxed text-emerald-50 mb-8"
                 />
               </div>
-            ))}
+              <div className="border-t border-white/25 pt-6">
+                <EditableText
+                  as="p"
+                  multiline
+                  path="sections.activityGallery.highlight"
+                  value={galleryContent.highlight || ''}
+                  className="text-lg md:text-xl font-semibold leading-relaxed text-white"
+                />
+              </div>
+            </div>
+
+            <div className="relative bg-white rounded-2xl p-4 md:p-5 shadow-lg overflow-hidden min-h-[520px]">
+              <button
+                onClick={() => setGalleryPage((p) => Math.max(0, p - 1))}
+                disabled={galleryPage === 0}
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-white/95 shadow-lg rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-6 h-6 text-gray-700" />
+              </button>
+              <button
+                onClick={() => setGalleryPage((p) => Math.min(galleryMaxPage, p + 1))}
+                disabled={galleryPage >= galleryMaxPage}
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-white/95 shadow-lg rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="w-6 h-6 text-gray-700" />
+              </button>
+
+              <div className="overflow-hidden h-full">
+                <div
+                  className="flex transition-transform duration-500 ease-in-out h-full"
+                  style={{ transform: `translateX(-${galleryPage * (100 / totalCols * slideCols)}%)` }}
+                >
+                  {galleryColumns.map((col, colIdx) => (
+                    <div
+                      key={colIdx}
+                      className="flex-shrink-0 px-1.5 flex flex-col gap-3"
+                      style={{ width: `${100 / visibleCols}%` }}
+                    >
+                      {col.map((item, rowIdx) => {
+                        const itemIndex = colIdx * 2 + rowIdx;
+                        return (
+                          <div key={rowIdx} className="rounded-xl overflow-hidden bg-gray-100 h-[240px] md:h-[248px] relative group">
+                            <EditableImage
+                              path={`sections.activityGallery.items.${itemIndex}.src`}
+                              src={item.src}
+                              alt={item.caption}
+                              className="w-full h-full"
+                              imgClassName="w-full h-full object-cover"
+                              folder="galerie"
+                            />
+                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                              <EditableText
+                                as="p"
+                                path={`sections.activityGallery.items.${itemIndex}.caption`}
+                                value={item.caption}
+                                className="text-sm font-medium text-white"
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-center gap-2 mt-5">
+                {Array.from({ length: galleryMaxPage + 1 }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setGalleryPage(i)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all ${
+                      i === galleryPage ? 'bg-emerald-600 scale-110' : 'bg-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Actualités Section - right column 2x taller, horizontal ticker at top */}
+      <section className="pt-8 md:pt-10 pb-12 md:pb-14 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Horizontal news ticker at top */}
+          <div className="mb-6 overflow-hidden bg-blue-50 rounded-lg border border-blue-100">
+            <div className="actu-ticker-horizontal whitespace-nowrap py-3">
+              <EditableText
+                as="span"
+                path="sections.actualites.newsTicker.text"
+                value={newsTickerText}
+                className="text-sm md:text-base text-blue-800 font-medium inline-block px-4 pr-12"
+              />
+              <span aria-hidden="true" className="text-sm md:text-base text-blue-800 font-medium inline-block px-4 pr-12">
+                {newsTickerText}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-8 md:gap-10 items-start">
+            {/* Left column – 45% : square image + optional zone below */}
+            <div className="w-full md:w-[45%] flex-shrink-0">
+              <EditableImage
+                path="sections.actualites.image.src"
+                src={actu.image?.src}
+                alt="Actualité"
+                className="w-full aspect-square rounded-2xl overflow-hidden shadow-lg"
+                imgClassName="w-full h-full object-cover"
+                folder="actualites"
+              />
+              <div className="mt-4">
+                {belowImageMode === 'image' ? (
+                  <EditableImage
+                    path="sections.actualites.belowImage.imageSrc"
+                    src={actu.belowImage?.imageSrc}
+                    alt=""
+                    className="w-full aspect-video rounded-xl overflow-hidden"
+                    imgClassName="w-full h-full object-cover"
+                    folder="actualites"
+                  />
+                ) : (
+                  <div className="bg-blue-50 rounded-xl p-4">
+                    <EditableText
+                      as="p"
+                      multiline
+                      path="sections.actualites.belowImage.text"
+                      value={actu.belowImage?.text || ''}
+                      className="text-gray-700 text-sm leading-relaxed"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right column – 55% : 2x taller than left image */}
+            <div className="flex-1 w-full">
+              <EditableText
+                as="h2"
+                path="sections.actualites.title"
+                value={actu.title || 'Notre Actualité'}
+                className="text-2xl md:text-3xl font-bold text-gray-900 mb-6"
+              />
+
+              <div className="space-y-4 md:min-h-[600px]">
+                {actuItems.map((item, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-50 rounded-xl p-5 border border-gray-100"
+                  >
+                    <EditableText
+                      as="h3"
+                      path={`sections.actualites.items.${index}.title`}
+                      value={item.title}
+                      className="text-lg font-bold text-blue-900 mb-2"
+                    />
+                    <EditableText
+                      as="p"
+                      multiline
+                      path={`sections.actualites.items.${index}.body`}
+                      value={item.body}
+                      className="text-gray-700 text-sm leading-relaxed mb-3"
+                    />
+                    {item.linkText && item.linkUrl && (
+                      <a
+                        href={item.linkUrl}
+                        target={item.linkUrl.endsWith('.pdf') ? '_blank' : undefined}
+                        rel={item.linkUrl.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
+                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-700 hover:text-blue-900 transition-colors"
+                      >
+                        <ArrowRight className="w-4 h-4" />
+                        {item.linkText}
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -89,233 +521,479 @@ const HomeContent: React.FC = () => {
             descriptionPath="sections.features.description"
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {homeData.features.map((feature, index) => {
-              const Icon = iconMap[feature.icon] || GraduationCap;
-              return (
-                <div 
-                  key={index}
-                  className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 group"
-                >
-                  <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-800 transition-colors">
-                    <Icon className="w-7 h-7 text-blue-800 group-hover:text-white transition-colors" />
-                  </div>
-                  <EditableText
-                    as="h3"
-                    path={`features.${index}.title`}
-                    value={feature.title}
-                    className="text-xl font-bold text-gray-900 mb-3"
-                  />
-                  <EditableText
-                    as="p"
-                    multiline
-                    path={`features.${index}.description`}
-                    value={feature.description}
-                    className="text-gray-600 leading-relaxed"
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+          <div className="rounded-[28px] overflow-hidden bg-gradient-to-r from-[#d87421] via-[#e07c29] to-[#d87421] shadow-xl p-4 md:p-6 text-white mb-10">
+            <EditableText
+              as="p"
+              path="sections.excellenceShowcase.trimesterLabel"
+              value={excellenceShowcase.trimesterLabel || ''}
+              className="text-center text-sm md:text-xl font-extrabold uppercase tracking-wide mb-4 md:mb-6"
+            />
 
-      {/* About Preview */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <span className="inline-block px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-6">
-                <EditableText as="span" path="sections.aboutPreview.badge" value={sections.aboutPreview.badge} />
-              </span>
-              <EditableText
-                as="h2"
-                path="sections.aboutPreview.title"
-                value={sections.aboutPreview.title}
-                className="text-4xl font-bold text-gray-900 mb-6"
-              />
-              <EditableText
-                as="p"
-                multiline
-                path="sections.aboutPreview.paragraphs.0"
-                value={sections.aboutPreview.paragraphs[0]}
-                className="text-lg text-gray-600 mb-6 leading-relaxed"
-              />
-              <EditableText
-                as="p"
-                multiline
-                path="sections.aboutPreview.paragraphs.1"
-                value={sections.aboutPreview.paragraphs[1]}
-                className="text-lg text-gray-600 mb-8 leading-relaxed"
-              />
-              <div className="flex flex-wrap gap-4">
-                <Link
-                  to="/notre-ecole"
-                  className="inline-flex items-center gap-2 bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-                >
-                  <EditableText as="span" path="sections.aboutPreview.ctaPrimary" value={sections.aboutPreview.ctaPrimary} />
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-                <Link
-                  to="/notre-ecole"
-                  className="inline-flex items-center gap-2 border-2 border-blue-800 text-blue-800 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
-                >
-                  <EditableText as="span" path="sections.aboutPreview.ctaSecondary" value={sections.aboutPreview.ctaSecondary} />
-                </Link>
+            <div className="grid lg:grid-cols-[1.45fr_0.8fr] gap-4 md:gap-6 items-stretch">
+              <div className="rounded-[22px] overflow-hidden border-4 border-white/25 shadow-2xl bg-white/10 backdrop-blur-sm min-h-[260px] md:min-h-[360px]">
+                <EditableImage
+                  path="sections.excellenceShowcase.honorRoll.image"
+                  src={excellenceShowcase.honorRoll?.image}
+                  alt="Tableau d'honneur"
+                  className="w-full h-full"
+                  imgClassName="w-full h-full object-cover"
+                  folder="accueil"
+                />
               </div>
-            </div>
-            <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-blue-100 to-blue-200">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <GraduationCap className="w-24 h-24 text-blue-800 mx-auto mb-4" />
-                    <EditableText
-                      as="p"
-                      path="sections.aboutPreview.imageCaption"
-                      value={sections.aboutPreview.imageCaption}
-                      className="text-blue-700 font-medium"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-xl p-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Award className="w-6 h-6 text-blue-800" />
-                  </div>
-                  <div>
-                    <EditableText
-                      as="div"
-                      path="sections.aboutPreview.highlight.value"
-                      value={sections.aboutPreview.highlight.value}
-                      className="text-2xl font-bold text-gray-900"
-                    />
-                    <EditableText
-                      as="div"
-                      path="sections.aboutPreview.highlight.label"
-                      value={sections.aboutPreview.highlight.label}
-                      className="text-sm text-gray-500"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Programs Preview */}
-      <section className="py-20 bg-blue-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionTitle
-            subtitle={sections.programmesPreview.subtitle}
-            title={sections.programmesPreview.title}
-            description={sections.programmesPreview.description}
-            subtitlePath="sections.programmesPreview.subtitle"
-            titlePath="sections.programmesPreview.title"
-            descriptionPath="sections.programmesPreview.description"
-            light
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {sections.programmesPreview.cards.map((program: any, index: number) => {
-              const programmeIconMap: Record<string, LucideIcon> = {
-                heart: Heart,
-                book: BookOpen,
-                graduation: GraduationCap,
-                star: Star,
-              };
-              const Icon = programmeIconMap[program.icon] || GraduationCap;
-              return (
-              <Link
-                key={index}
-                to="/programmes"
-                className="group bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all"
-              >
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${program.color} flex items-center justify-center mb-4`}>
-                  <Icon className="w-7 h-7 text-white" />
+              <div className="rounded-[22px] bg-white/10 backdrop-blur-sm border border-white/15 px-5 py-6 md:px-8 md:py-8 flex flex-col justify-center">
+                <div className="mx-auto mb-4 w-20 h-20 md:w-24 md:h-24 rounded-full bg-white/15 flex items-center justify-center border border-white/25">
+                  <Award className="w-10 h-10 md:w-12 md:h-12 text-emerald-200" />
                 </div>
+
                 <EditableText
                   as="h3"
-                  path={`sections.programmesPreview.cards.${index}.title`}
-                  value={program.title}
-                  className="text-xl font-bold text-white mb-1"
+                  path="sections.excellenceShowcase.honorRoll.title"
+                  value={excellenceShowcase.honorRoll?.title || "Tableau d'honneur"}
+                  className="text-center text-2xl md:text-3xl font-black uppercase text-[#153f91] mb-2"
                 />
                 <EditableText
                   as="p"
-                  path={`sections.programmesPreview.cards.${index}.ages`}
-                  value={program.ages}
-                  className="text-blue-200 mb-4"
+                  path="sections.excellenceShowcase.honorRoll.subtitle"
+                  value={excellenceShowcase.honorRoll?.subtitle || ''}
+                  className="text-center text-sm md:text-base font-semibold text-white/95 mb-4"
                 />
-                <span className="inline-flex items-center text-white/80 group-hover:text-white transition-colors">
-                  <EditableText as="span" path="sections.programmesPreview.learnMore" value={sections.programmesPreview.learnMore} />
-                  <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </Link>
-              );
-            })}
+                <EditableText
+                  as="p"
+                  path="sections.excellenceShowcase.honorRoll.levelsTitle"
+                  value={excellenceShowcase.honorRoll?.levelsTitle || 'Par niveau'}
+                  className="text-center text-lg md:text-xl font-bold underline underline-offset-4 mb-4"
+                />
+
+                <div className="grid grid-cols-2 gap-x-6 gap-y-3 max-w-sm mx-auto w-full">
+                  {(excellenceShowcase.honorRoll?.levels || []).map((level: HonorRollLevel, index: number) => {
+                    const hasLink = !!level.linkUrl;
+                    const levelContent = (
+                      <>
+                        <EditableText
+                          as="span"
+                          path={`sections.excellenceShowcase.honorRoll.levels.${index}.label`}
+                          value={level.label || ''}
+                          className="font-bold text-white text-base md:text-lg underline underline-offset-4"
+                        />
+                        {hasLink && <ArrowUpRight className="w-4 h-4 text-white" />}
+                      </>
+                    );
+
+                    return hasLink ? (
+                      <a
+                        key={index}
+                        href={level.linkUrl}
+                        target={level.linkUrl.endsWith('.pdf') ? '_blank' : undefined}
+                        rel={level.linkUrl.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
+                        className="inline-flex items-center gap-2 hover:text-orange-100 transition-colors"
+                      >
+                        {levelContent}
+                      </a>
+                    ) : (
+                      <div key={index} className="inline-flex items-center gap-2">
+                        {levelContent}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-5 space-y-2">
+                  {(excellenceShowcase.honorRoll?.levels || []).map((level: HonorRollLevel, index: number) => (
+                    <EditableText
+                      key={index}
+                      as="p"
+                      path={`sections.excellenceShowcase.honorRoll.levels.${index}.linkUrl`}
+                      value={level.linkUrl || ''}
+                      className="text-[11px] md:text-xs text-white/75 text-center break-all"
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="text-center mt-12">
-            <Link
-              to="/programmes"
-              className="inline-flex items-center gap-2 bg-white text-blue-800 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
-            >
-              <EditableText as="span" path="sections.programmesPreview.cta" value={sections.programmesPreview.cta} />
-              <ArrowRight className="w-5 h-5" />
-            </Link>
+          <div className="mt-6 md:mt-8">
+            <EditableText
+              as="h3"
+              path="sections.excellenceShowcase.examResultsTitle"
+              value={excellenceShowcase.examResultsTitle || ''}
+              className="text-center text-xl md:text-3xl font-black uppercase text-[#b58d3c] mb-4 md:mb-6"
+            />
+
+            <div className="grid md:grid-cols-2 gap-5 md:gap-7">
+              {(excellenceShowcase.examCards || []).map((card: ExamCard, index: number) => {
+                const hasLink = !!card.linkUrl;
+                const cardInner = (
+                  <div className="group rounded-[24px] overflow-hidden bg-white shadow-xl border border-orange-100 hover:shadow-2xl transition-all">
+                    <div className="aspect-[4/3] overflow-hidden relative">
+                      <EditableImage
+                        path={`sections.excellenceShowcase.examCards.${index}.image`}
+                        src={card.image}
+                        alt={card.title || ''}
+                        className="w-full h-full"
+                        imgClassName="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        folder="accueil"
+                      />
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 md:p-5">
+                        <EditableText
+                          as="h4"
+                          path={`sections.excellenceShowcase.examCards.${index}.title`}
+                          value={card.title || ''}
+                          className="text-white text-xl md:text-2xl font-black leading-tight"
+                        />
+                        <EditableText
+                          as="p"
+                          path={`sections.excellenceShowcase.examCards.${index}.subtitle`}
+                          value={card.subtitle || ''}
+                          className="text-orange-100 text-sm md:text-base font-semibold mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="px-4 py-3 bg-orange-50 border-t border-orange-100">
+                      <EditableText
+                        as="p"
+                        path={`sections.excellenceShowcase.examCards.${index}.linkUrl`}
+                        value={card.linkUrl || ''}
+                        className="text-xs md:text-sm text-orange-800 break-all"
+                      />
+                    </div>
+                  </div>
+                );
+
+                return hasLink ? (
+                  <a
+                    key={index}
+                    href={card.linkUrl}
+                    target={card.linkUrl.endsWith('.pdf') ? '_blank' : undefined}
+                    rel={card.linkUrl.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
+                    className="block"
+                  >
+                    {cardInner}
+                  </a>
+                ) : (
+                  <div key={index}>{cardInner}</div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-16 md:py-20 bg-[#efe5de]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            subtitle={sections.testimonials.subtitle}
-            title={sections.testimonials.title}
-            description={sections.testimonials.description}
-            subtitlePath="sections.testimonials.subtitle"
-            titlePath="sections.testimonials.title"
-            descriptionPath="sections.testimonials.description"
+            subtitle={practicalInfo.subtitle}
+            title={practicalInfo.title}
+            description={practicalInfo.description}
+            subtitlePath="sections.practicalInfo.subtitle"
+            titlePath="sections.practicalInfo.title"
+            descriptionPath="sections.practicalInfo.description"
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {homeData.testimonials.map((testimonial, index) => (
-              <div 
-                key={index}
-                className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow"
-              >
-                <Quote className="w-10 h-10 text-blue-200 mb-4" />
+          <div className="grid lg:grid-cols-[1.03fr_1fr] gap-6 lg:gap-8 items-start">
+            <div className="bg-[#e6d59a] rounded-[22px] p-6 md:p-8 shadow-sm border border-[#d8c57b] text-slate-900">
+              <EditableText
+                as="h3"
+                path="sections.practicalInfo.leftColumn.title"
+                value={practicalInfo.leftColumn.title}
+                className="text-2xl md:text-4xl font-bold text-blue-700 underline underline-offset-4 mb-6"
+              />
+
+              <EditableText
+                as="p"
+                path="sections.practicalInfo.leftColumn.highlightTitle"
+                value={`* ${practicalInfo.leftColumn.highlightTitle}`}
+                className="text-lg md:text-xl font-bold text-lime-950 mb-5"
+              />
+
+              {editSession?.isEditing && (
+                <button
+                  onClick={() => addPracticalTextItem('sections.practicalInfo.leftColumn.trimesters')}
+                  className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors mb-5"
+                  title="Ajouter un trimestre"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Ajouter un trimestre</span>
+                </button>
+              )}
+
+              <div className="space-y-5">
+                {practicalInfo.leftColumn.trimesters.map((item, index) => (
+                  <div key={index} className="relative">
+                    {editSession?.isEditing && (
+                      <button
+                        onClick={() => removePracticalTextItem('sections.practicalInfo.leftColumn.trimesters', index)}
+                        className="absolute top-0 right-0 p-2 bg-red-600 text-white rounded-full hover:bg-red-700 shadow-lg z-10"
+                        title="Supprimer ce trimestre"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                    <EditableText
+                      as="h4"
+                      path={`sections.practicalInfo.leftColumn.trimesters.${index}.title`}
+                      value={item.title}
+                      className="text-lg md:text-xl font-bold text-rose-700 underline underline-offset-2 mb-1"
+                    />
+                    <EditableText
+                      as="p"
+                      multiline
+                      path={`sections.practicalInfo.leftColumn.trimesters.${index}.body`}
+                      value={item.body}
+                      className="text-base md:text-lg leading-relaxed text-slate-800 whitespace-pre-line"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8">
+                <EditableText
+                  as="h4"
+                  path="sections.practicalInfo.leftColumn.breaksTitle"
+                  value={practicalInfo.leftColumn.breaksTitle}
+                  className="text-xl md:text-2xl font-bold text-amber-800 mb-4"
+                />
+                {editSession?.isEditing && (
+                  <button
+                    onClick={() => addPracticalTextItem('sections.practicalInfo.leftColumn.breaks')}
+                    className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors mb-4"
+                    title="Ajouter un congé"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Ajouter un congé</span>
+                  </button>
+                )}
+                <div className="space-y-4">
+                  {practicalInfo.leftColumn.breaks.map((item, index) => (
+                    <div key={index} className="relative">
+                      {editSession?.isEditing && (
+                        <button
+                          onClick={() => removePracticalTextItem('sections.practicalInfo.leftColumn.breaks', index)}
+                          className="absolute top-0 right-0 p-2 bg-red-600 text-white rounded-full hover:bg-red-700 shadow-lg z-10"
+                          title="Supprimer ce congé"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                      <EditableText
+                        as="h5"
+                        path={`sections.practicalInfo.leftColumn.breaks.${index}.title`}
+                        value={item.title}
+                        className="text-lg font-bold text-blue-800 underline underline-offset-2 mb-1"
+                      />
+                      <EditableText
+                        as="p"
+                        multiline
+                        path={`sections.practicalInfo.leftColumn.breaks.${index}.body`}
+                        value={item.body}
+                        className="text-base leading-relaxed text-slate-800 whitespace-pre-line"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8">
+                <EditableText
+                  as="p"
+                  path="sections.practicalInfo.leftColumn.footerTitle"
+                  value={practicalInfo.leftColumn.footerTitle}
+                  className="text-lg md:text-xl font-bold text-blue-900 mb-1"
+                />
+                <EditableText
+                  as="p"
+                  path="sections.practicalInfo.leftColumn.footerLinkText"
+                  value={practicalInfo.leftColumn.footerLinkText}
+                  className="text-blue-700 underline underline-offset-2 font-semibold"
+                />
+                <EditableText
+                  as="p"
+                  path="sections.practicalInfo.leftColumn.footerLinkUrl"
+                  value={practicalInfo.leftColumn.footerLinkUrl}
+                  className="text-xs md:text-sm text-blue-900/70 break-all mt-1"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-[#434a7a] text-white rounded-[22px] p-6 md:p-8 shadow-sm">
+                <EditableText
+                  as="h3"
+                  path="sections.practicalInfo.rightColumn.topBoxTitle"
+                  value={practicalInfo.rightColumn.topBoxTitle}
+                  className="text-2xl font-extrabold uppercase mb-4"
+                />
+
+                <div className="space-y-5 text-base md:text-lg">
+                  <div>
+                    <EditableText
+                      as="p"
+                      path="sections.practicalInfo.rightColumn.firstCycleTitle"
+                      value={practicalInfo.rightColumn.firstCycleTitle}
+                      className="font-bold mb-2"
+                    />
+                    {editSession?.isEditing && (
+                      <button
+                        onClick={() => addPracticalLinkItem('sections.practicalInfo.rightColumn.firstCycleLinks')}
+                        className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors mb-3"
+                        title="Ajouter un lien du premier cycle"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Ajouter un niveau</span>
+                      </button>
+                    )}
+                    <div className="flex flex-wrap gap-x-3 gap-y-2">
+                      {practicalInfo.rightColumn.firstCycleLinks.map((item, index) => (
+                        <div key={index} className="inline-flex items-center gap-2">
+                          <EditableText
+                            as="span"
+                            path={`sections.practicalInfo.rightColumn.firstCycleLinks.${index}.label`}
+                            value={item.label}
+                            className="font-bold underline underline-offset-4 text-yellow-300"
+                          />
+                          {editSession?.isEditing && (
+                            <button
+                              onClick={() => removePracticalLinkItem('sections.practicalInfo.rightColumn.firstCycleLinks', index)}
+                              className="p-1 bg-red-600 text-white rounded-full hover:bg-red-700"
+                              title="Supprimer ce niveau"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 space-y-1">
+                      {practicalInfo.rightColumn.firstCycleLinks.map((item, index) => (
+                        <EditableText
+                          key={index}
+                          as="p"
+                          path={`sections.practicalInfo.rightColumn.firstCycleLinks.${index}.linkUrl`}
+                          value={item.linkUrl}
+                          className="text-xs text-white/70 break-all"
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <EditableText
+                      as="p"
+                      path="sections.practicalInfo.rightColumn.secondCycleTitle"
+                      value={practicalInfo.rightColumn.secondCycleTitle}
+                      className="font-bold mb-2"
+                    />
+                    {editSession?.isEditing && (
+                      <button
+                        onClick={() => addPracticalLinkItem('sections.practicalInfo.rightColumn.secondCycleLinks')}
+                        className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors mb-3"
+                        title="Ajouter un lien du second cycle"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Ajouter un niveau</span>
+                      </button>
+                    )}
+                    <div className="flex flex-wrap gap-x-3 gap-y-2">
+                      {practicalInfo.rightColumn.secondCycleLinks.map((item, index) => (
+                        <div key={index} className="inline-flex items-center gap-2">
+                          <EditableText
+                            as="span"
+                            path={`sections.practicalInfo.rightColumn.secondCycleLinks.${index}.label`}
+                            value={item.label}
+                            className="font-bold underline underline-offset-4 text-yellow-300"
+                          />
+                          {editSession?.isEditing && (
+                            <button
+                              onClick={() => removePracticalLinkItem('sections.practicalInfo.rightColumn.secondCycleLinks', index)}
+                              className="p-1 bg-red-600 text-white rounded-full hover:bg-red-700"
+                              title="Supprimer ce niveau"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 space-y-1">
+                      {practicalInfo.rightColumn.secondCycleLinks.map((item, index) => (
+                        <EditableText
+                          key={index}
+                          as="p"
+                          path={`sections.practicalInfo.rightColumn.secondCycleLinks.${index}.linkUrl`}
+                          value={item.linkUrl}
+                          className="text-xs text-white/70 break-all"
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <EditableText
+                      as="span"
+                      path="sections.practicalInfo.rightColumn.calendarTitle"
+                      value={practicalInfo.rightColumn.calendarTitle}
+                      className="font-extrabold uppercase inline"
+                    />{' '}
+                    <EditableText
+                      as="span"
+                      path="sections.practicalInfo.rightColumn.calendarText"
+                      value={practicalInfo.rightColumn.calendarText}
+                      className="text-yellow-200 inline"
+                    />{' '}
+                    <EditableText
+                      as="span"
+                      path="sections.practicalInfo.rightColumn.calendarLinkText"
+                      value={practicalInfo.rightColumn.calendarLinkText}
+                      className="underline underline-offset-2 text-yellow-300 font-semibold inline"
+                    />
+                    <EditableText
+                      as="p"
+                      path="sections.practicalInfo.rightColumn.calendarLinkUrl"
+                      value={practicalInfo.rightColumn.calendarLinkUrl}
+                      className="text-xs text-white/70 break-all mt-2"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <EditableImage
+                path="sections.practicalInfo.rightColumn.image"
+                src={practicalInfo.rightColumn.image}
+                alt={practicalInfo.rightColumn.topBoxTitle}
+                className="rounded-[22px] overflow-hidden border-4 border-white shadow-sm bg-white"
+                imgClassName="w-full h-full object-cover aspect-[4/3]"
+                folder="accueil"
+              />
+
+              <div className="bg-[#6c6d92] text-white rounded-[22px] p-6 md:p-8 shadow-sm">
+                <EditableText
+                  as="h3"
+                  path="sections.practicalInfo.rightColumn.parentsBoxTitle"
+                  value={practicalInfo.rightColumn.parentsBoxTitle}
+                  className="text-2xl md:text-3xl font-bold mb-5"
+                />
                 <EditableText
                   as="p"
                   multiline
-                  path={`testimonials.${index}.quote`}
-                  value={testimonial.quote}
-                  className="text-gray-700 mb-6 leading-relaxed italic"
+                  path="sections.practicalInfo.rightColumn.parentsBoxBody"
+                  value={practicalInfo.rightColumn.parentsBoxBody}
+                  className="text-base md:text-lg leading-relaxed whitespace-pre-line mb-5"
                 />
-                <div className="border-t border-gray-100 pt-6">
-                  <EditableText
-                    as="div"
-                    path={`testimonials.${index}.author`}
-                    value={testimonial.author}
-                    className="font-semibold text-gray-900"
-                  />
-                  <EditableText
-                    as="div"
-                    path={`testimonials.${index}.role`}
-                    value={testimonial.role}
-                    className="text-sm text-gray-500"
-                  />
-                  <EditableText
-                    as="div"
-                    path={`testimonials.${index}.achievement`}
-                    value={testimonial.achievement}
-                    className="text-sm text-blue-800 font-medium mt-1"
-                  />
-                </div>
+                <EditableText
+                  as="p"
+                  path="sections.practicalInfo.rightColumn.parentsBoxLinkText"
+                  value={practicalInfo.rightColumn.parentsBoxLinkText}
+                  className="underline underline-offset-2 font-semibold text-white"
+                />
+                <EditableText
+                  as="p"
+                  path="sections.practicalInfo.rightColumn.parentsBoxLinkUrl"
+                  value={practicalInfo.rightColumn.parentsBoxLinkUrl}
+                  className="text-xs text-white/70 break-all mt-2"
+                />
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
@@ -353,6 +1031,42 @@ const HomeContent: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Video Modal */}
+      {showVideo && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setShowVideo(false)}
+        >
+          <div
+            className="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowVideo(false)}
+              className="absolute top-3 right-3 z-10 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors"
+              aria-label="Fermer la vidéo"
+            >
+              <X className="w-5 h-5 text-gray-800" />
+            </button>
+            {founderVideoUrl ? (
+              <iframe
+                src={founderVideoUrl}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="Vidéo du fondateur"
+              />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center text-white gap-4">
+                <Play className="w-16 h-16 opacity-50" />
+                <p className="text-lg opacity-70">Vidéo à venir</p>
+                <p className="text-sm opacity-50">L'URL de la vidéo peut être configurée depuis l'admin</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 };

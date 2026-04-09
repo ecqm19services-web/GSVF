@@ -160,7 +160,7 @@ const HistoirePage: React.FC = () => {
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
-              to="/excellence"
+              to="/"
               className="inline-flex items-center justify-center gap-2 border-2 border-blue-800 text-blue-800 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-colors"
             >
               Nos résultats

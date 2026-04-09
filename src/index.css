@@ -130,3 +130,21 @@
 .markdown-preview ol {
   @apply my-4 ml-6;
 }
+
+/* Actualités horizontal news ticker */
+@keyframes actu-ticker-horizontal {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.actu-ticker-horizontal {
+  display: flex;
+  width: max-content;
+  animation: actu-ticker-horizontal 25s linear infinite;
+}
+.actu-ticker-horizontal:hover {
+  animation-play-state: paused;
+}
+
+.actu-ticker-horizontal > * {
+  flex: 0 0 auto;
+}

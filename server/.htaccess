@@ -10,6 +10,9 @@ RewriteRule ^api/ - [L]
 # Block direct access to server backup archives
 RewriteRule ^backups/ - [F,L]
 
+# Block direct access to server logs
+RewriteRule ^logs/ - [F,L]
+
 # Do not rewrite existing files/folders
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d

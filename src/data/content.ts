@@ -1,6 +1,8 @@
 // Content data for Collège Privé la Vision Future
 // This simulates Markdown content that would be editable via CMS
 
+import founderPhoto from '../../Fondateur_CPVF.png';
+
 export const siteConfig = {
   name: "Collège Privé la Vision Future",
   shortName: "CPVF",
@@ -22,9 +24,38 @@ export const homeContent = {
     subtitle: "L'excellence, Notre devise",
     description: "Depuis 2019, nous formons les leaders de demain en accompagnant chaque élève vers la réussite académique et l'épanouissement personnel à Grand-Bassam.",
     ctaPrimary: "Mot du fondateur",
-    ctaSecondary: "Découvrir nos programmes"
+    ctaSecondary: "Découvrir nos programmes",
+    bannerText: "Nous formons les élites de demain",
+    slideshowImages: [
+      "/images/accueil/accueil_ecole.jpeg",
+      "/images/accueil/accueil_ecole_eleves.jpeg",
+      "/images/accueil/accueil_ecole_eleves_alt.jpeg",
+      "/images/visite/espace_sport.jpeg"
+    ]
   },
   sections: {
+    examResults: {
+      cards: [
+        {
+          name: "CEPE 2024-2025",
+          rate: "100%",
+          mentions: "Tous les candidats admis",
+          rank: "Excellence confirmée"
+        },
+        {
+          name: "BEPC 2024-2025",
+          rate: "89,47%",
+          mentions: "Bonne performance académique",
+          rank: "Résultats publiés"
+        },
+        {
+          name: "BAC 2024-2025",
+          rate: "62,31%",
+          mentions: "Progression continue",
+          rank: "Résultats publiés"
+        }
+      ]
+    },
     features: {
       subtitle: "Pourquoi nous choisir",
       title: "Une éducation d'excellence",
@@ -74,6 +105,203 @@ export const homeContent = {
       description: "Inscrivez votre enfant dès maintenant et offrez-lui les meilleures chances de réussite.",
       primary: "Demander une inscription",
       secondary: "Nous contacter"
+    },
+    bannerImage: {
+      src: "/images/accueil/bienvenu.jpg"
+    },
+    excellenceShowcase: {
+      subtitle: "Une éducation d'excellence",
+      title: "Résultats scolaires, tableaux d'honneur et performances par classe",
+      trimesterLabel: "Résultats scolaires du deuxième trimestre 2025 - 2026",
+      honorRoll: {
+        image: "/images/accueil/accueil_ecole_eleves.jpeg",
+        title: "Tableau d'honneur",
+        subtitle: "2e trimestre | Tous secs",
+        levelsTitle: "Par niveau",
+        levels: [
+          { label: "6e", linkUrl: "" },
+          { label: "5e", linkUrl: "" },
+          { label: "4e", linkUrl: "" },
+          { label: "3e", linkUrl: "" },
+          { label: "2nde", linkUrl: "" },
+          { label: "1ère", linkUrl: "" },
+          { label: "Tle", linkUrl: "" }
+        ]
+      },
+      examResultsTitle: "Résultats examens 2024-2025",
+      examCards: [
+        {
+          image: "/images/accueil/accueil_ecole.jpeg",
+          title: "Résultats au Baccalauréat",
+          subtitle: "Session 2025",
+          linkUrl: ""
+        },
+        {
+          image: "/images/accueil/accueil_ecole_eleves_alt.jpeg",
+          title: "Résultats au BEPC",
+          subtitle: "Session 2025",
+          linkUrl: ""
+        }
+      ]
+    },
+    practicalInfo: {
+      subtitle: "Informations pratiques",
+      title: "Vie scolaire, emploi du temps et informations parents",
+      description: "Des blocs simples à mettre à jour pour aider l'administration à publier le calendrier, les emplois du temps, les devoirs et les informations utiles aux parents.",
+      leftColumn: {
+        title: "Activités de l'année scolaire 25 - 26",
+        highlightTitle: "Découpage de l'année scolaire 2025 - 2026",
+        trimesters: [
+          {
+            title: "Premier trimestre",
+            body: "Du lundi 8 septembre au vendredi 28 novembre 2025 | 11 semaines et 2 jours, soit 456 heures"
+          },
+          {
+            title: "Deuxième trimestre",
+            body: "Du lundi 1er décembre 2025 au vendredi 27 février 2026 | 10 semaines et 1 jour, soit 456 heures"
+          },
+          {
+            title: "Troisième trimestre",
+            body: "Du lundi 2 mars au vendredi 8 mai 2026 | 8 semaines et 2 jours, soit 336 heures"
+          },
+          {
+            title: "",
+            body: ""
+          }
+        ],
+        breaksTitle: "Congés scolaires 2025 - 2026",
+        breaks: [
+          {
+            title: "Toussaint",
+            body: "Du mardi 28 octobre 2025, après les cours du soir, au dimanche 02 novembre 2025 inclus."
+          },
+          {
+            title: "Noël et nouvel an",
+            body: "Du vendredi 19 décembre 2025, après les cours du soir, au dimanche 04 janvier 2026 inclus."
+          },
+          {
+            title: "Congés de février",
+            body: "Du mardi 17 février 2026, après les cours du soir, au dimanche 22 février 2026 inclus."
+          },
+          {
+            title: "Pâques",
+            body: "Du mardi 31 mars 2026, après les cours du soir, au dimanche 12 avril 2026 inclus."
+          },
+          {
+            title: "Grandes vacances",
+            body: "Du mercredi 15 juillet 2026 au dimanche 06 septembre 2026 inclus."
+          },
+          {
+            title: "",
+            body: ""
+          }
+        ],
+        footerTitle: "Le programme général 25-26 des activités du collège",
+        footerLinkText: "À consulter ici",
+        footerLinkUrl: ""
+      },
+      rightColumn: {
+        topBoxTitle: "Emploi du temps",
+        firstCycleTitle: "Premier cycle :",
+        firstCycleLinks: [
+          { label: "6ème", linkUrl: "" },
+          { label: "5ème", linkUrl: "" },
+          { label: "4ème", linkUrl: "" },
+          { label: "3ème", linkUrl: "" },
+          { label: "", linkUrl: "" },
+          { label: "", linkUrl: "" }
+        ],
+        secondCycleTitle: "Second cycle :",
+        secondCycleLinks: [
+          { label: "2nde", linkUrl: "" },
+          { label: "1ère", linkUrl: "" },
+          { label: "Tle", linkUrl: "" },
+          { label: "", linkUrl: "" },
+          { label: "", linkUrl: "" },
+          { label: "", linkUrl: "" }
+        ],
+        calendarTitle: "Calendrier des devoirs :",
+        calendarText: "Le calendrier des devoirs du Troisième Trimestre 2025 - 2026, allant du lundi 02 mars au 06 mai 2026.",
+        calendarLinkText: "À télécharger ici",
+        calendarLinkUrl: "",
+        image: "/images/accueil/accueil_ecole_eleves_alt.jpeg",
+        parentsBoxTitle: "Chers Parents,",
+        parentsBoxBody: "Retrouvez dans cet espace les informations utiles destinées aux parents : communications importantes, documents à consulter et indications pratiques pour accompagner la scolarité de votre enfant.\n\nCet encadré peut être mis à jour par l'administration selon les besoins de l'établissement.",
+        parentsBoxLinkText: "Consulter les informations",
+        parentsBoxLinkUrl: ""
+      }
+    },
+    motFondateur: {
+      title: "Mot du Fondateur",
+      photo: founderPhoto,
+      videoUrl: "",
+      message: "Depuis la création du Collège Privé la Vision Future en 2019, notre ambition a toujours été de former des citoyens responsables, compétents et ouverts sur le monde. Chaque jour, nous nous engageons à offrir à nos élèves un cadre d'apprentissage stimulant où l'excellence académique s'allie à l'épanouissement personnel. Je suis fier du chemin parcouru et confiant dans l'avenir que nous construisons ensemble.",
+      name: "M. DÉGBOUÉ YAO EULOGE",
+      role: "Fondateur & Directeur Général"
+    },
+    activityGallery: {
+      title: "Vie scolaire & médias",
+      subtitle: "Moments forts",
+      description: "Découvrez quelques temps forts de la vie du collège, les activités éducatives, les temps de partage et les événements qui rythment notre établissement tout au long de l'année.",
+      highlight: "Une galerie vivante pour illustrer l'ambiance, l'engagement et l'épanouissement de nos élèves.",
+      items: [
+        { src: "/images/visite/biblio.jpeg", caption: "Bibliothèque" },
+        { src: "/images/visite/salle_inf.jpeg", caption: "Salle informatique" },
+        { src: "/images/visite/cantine.jpeg", caption: "Cantine" },
+        { src: "/images/visite/espace_sport.jpeg", caption: "Espace sportif" },
+        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Laboratoire numérique" },
+        { src: "/images/accueil/accueil_ecole_eleves.jpeg", caption: "Vie scolaire" },
+        { src: "/images/accueil/accueil_ecole_eleves_alt.jpeg", caption: "Rassemblement" },
+        { src: "/images/accueil/accueil_ecole.jpeg", caption: "Notre campus" },
+        { src: "/images/visite/biblio.jpeg", caption: "Bibliothèque" },
+        { src: "/images/visite/salle_inf.jpeg", caption: "Salle informatique" },
+        { src: "/images/visite/cantine.jpeg", caption: "Cantine" },
+        { src: "/images/visite/espace_sport.jpeg", caption: "Espace sportif" },
+        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Laboratoire numérique" },
+        { src: "/images/accueil/accueil_ecole_eleves.jpeg", caption: "Vie scolaire" },
+        { src: "/images/accueil/accueil_ecole_eleves_alt.jpeg", caption: "Rassemblement" },
+        { src: "/images/accueil/accueil_ecole.jpeg", caption: "Notre campus" }
+      ]
+    },
+    actualites: {
+      title: "Notre Actualité",
+      image: {
+        src: "/images/accueil/accueil_ecole_eleves.jpeg"
+      },
+      belowImage: {
+        mode: "text" as const,
+        text: "Restez informé des dernières nouvelles de notre établissement.",
+        imageSrc: "/images/accueil/accueil_ecole.jpeg"
+      },
+      newsTicker: {
+        text: "Inscriptions ouvertes pour l'année 2025-2026 - Journée portes ouvertes le 15 juin 2025"
+      },
+      items: [
+        {
+          title: "Rentrée scolaire 2025-2026",
+          body: "La rentrée des classes est fixée au lundi 8 septembre 2025. Les parents sont invités à préparer les fournitures scolaires selon la liste disponible en téléchargement. L'accueil des nouveaux élèves se fera dès 7h30.",
+          linkText: "Télécharger la liste des fournitures",
+          linkUrl: ""
+        },
+        {
+          title: "Résultats examens 2024-2025",
+          body: "Nous sommes fiers d'annoncer d'excellents résultats : 100% au CEPE, 89,47% au BEPC et 62,31% au BAC. Félicitations à tous nos élèves et enseignants pour ces performances remarquables !",
+          linkText: "",
+          linkUrl: ""
+        },
+        {
+          title: "Lancement du programme de robotique",
+          body: "Dès la rentrée 2025-2026, le Collège Privé la Vision Future introduit un programme innovant de robotique éducative pour développer la logique, la créativité et les compétences STEM dès la classe de CP.",
+          linkText: "En savoir plus",
+          linkUrl: "/programmes"
+        },
+        {
+          title: "Journée portes ouvertes",
+          body: "Venez découvrir notre campus, rencontrer nos enseignants et échanger avec la direction lors de notre prochaine journée portes ouvertes. Inscription obligatoire.",
+          linkText: "S'inscrire à la journée",
+          linkUrl: "/contact"
+        }
+      ]
     }
   },
   stats: [
@@ -171,9 +399,9 @@ export const visiteContent = {
       title: "Entrée Principale & Accueil",
       description: "Un accueil chaleureux dans un cadre verdoyant. Notre entrée principale reflète les valeurs d'ouverture et d'excellence de notre établissement.",
       images: [
-        { src: "/images/visite/E1.webp", caption: "Portail principal" },
-        { src: "/images/visite/E2.webp", caption: "Allée d'accès" },
-        { src: "/images/visite/E3.webp", caption: "Bâtiment administratif" }
+        { src: "/images/accueil/accueil_ecole.jpeg", caption: "Portail principal" },
+        { src: "/images/accueil/accueil_ecole_eleves.jpeg", caption: "Allée d'accès" },
+        { src: "/images/accueil/accueil_ecole_eleves_alt.jpeg", caption: "Bâtiment administratif" }
       ]
     },
     {
@@ -181,9 +409,9 @@ export const visiteContent = {
       title: "Salles de Classe",
       description: "Des espaces d'apprentissage modernes et lumineux, dédiés à chaque niveau, favorisant la concentration et la réussite des élèves.",
       images: [
-        { src: "/images/visite/C1.webp", caption: "Salle de classe primaire" },
-        { src: "/images/visite/C2.webp", caption: "Salle de classe secondaire" },
-        { src: "/images/visite/C4.webp", caption: "Bibliothèque" }
+        { src: "/images/visite/salle_inf.jpeg", caption: "Salle de classe primaire" },
+        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Salle de classe secondaire" },
+        { src: "/images/visite/biblio.jpeg", caption: "Bibliothèque" }
       ]
     },
     {
@@ -191,7 +419,7 @@ export const visiteContent = {
       title: "Robotique & Informatique",
       description: "Une salle dédiée à la robotique et à l'informatique, où les élèves s'initient aux nouvelles technologies, à la programmation et à la pensée computationnelle.",
       images: [
-        { src: "/images/visite/C3.webp", caption: "Salle de robotique & informatique" }
+        { src: "/images/visite/salle_inf.jpeg", caption: "Salle de robotique & informatique" }
       ]
     },
     {
@@ -199,13 +427,13 @@ export const visiteContent = {
       title: "Laboratoires Scientifiques",
       description: "Une salle de laboratoire dédiée à la physique et à la chimie, ainsi qu'une salle de SVT, permettent une approche pratique des sciences.",
       images: [
-        { src: "/images/visite/S1.webp", caption: "Laboratoire de physique-chimie" },
-        { src: "/images/visite/S3.webp", caption: "Salle de SVT" }
+        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Laboratoire de physique-chimie" },
+        { src: "/images/visite/biblio.jpeg", caption: "Salle de SVT" }
       ],
       galleryImages: [
-        { src: "/images/visite/S1.webp", caption: "Laboratoire de physique-chimie" },
-        { src: "/images/visite/S2.webp", caption: "Laboratoire de physique-chimie — vue 2" },
-        { src: "/images/visite/S3.webp", caption: "Salle de SVT" }
+        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Laboratoire de physique-chimie" },
+        { src: "/images/visite/salle_inf.jpeg", caption: "Laboratoire de physique-chimie — vue 2" },
+        { src: "/images/visite/biblio.jpeg", caption: "Salle de SVT" }
       ]
     },
     {
@@ -213,8 +441,8 @@ export const visiteContent = {
       title: "Espace Sportif",
       description: "Un terrain polyvalent en plein air servant à la pratique du football, du basketball, du handball et du tennis. Un espace simple mais fonctionnel où les élèves développent leur esprit d'équipe et leur condition physique.",
       images: [
-        { src: "/images/visite/SP1.webp", caption: "Terrain polyvalent" },
-        { src: "/images/visite/SP2.webp", caption: "Activités sportives" }
+        { src: "/images/visite/espace_sport.jpeg", caption: "Terrain polyvalent" },
+        { src: "/images/visite/espace_sport.jpeg", caption: "Activités sportives" }
       ]
     },
     {
@@ -222,8 +450,8 @@ export const visiteContent = {
       title: "Restauration & Détente",
       description: "Un espace de restauration où les élèves prennent leurs repas dans un cadre convivial, avec des espaces de détente pour les pauses.",
       images: [
-        { src: "/images/visite/R1.webp", caption: "Cantine principale" },
-        { src: "/images/visite/R2.webp", caption: "Espace détente" }
+        { src: "/images/visite/cantine.jpeg", caption: "Cantine principale" },
+        { src: "/images/visite/cantine.jpeg", caption: "Espace détente" }
       ]
     }
   ]
@@ -982,7 +1210,6 @@ export const navigation = [
   { name: "Notre École", path: "/notre-ecole" },
   { name: "Visite", path: "/visite" },
   { name: "Programmes", path: "/programmes" },
-  { name: "Excellence", path: "/excellence" },
   { name: "Actualités", path: "/actualites" },
   { name: "Carrières", path: "/carrieres" },
   { name: "Admissions", path: "/admissions" },

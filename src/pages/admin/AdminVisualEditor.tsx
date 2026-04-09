@@ -4,7 +4,6 @@ import Layout from '@/components/layout/Layout';
 import HomeContent from '@/components/pages/HomeContent';
 import VisiteContent from '@/components/pages/VisiteContent';
 import NotreEcoleContent from '@/components/pages/NotreEcoleContent';
-import ExcellenceContent from '@/components/pages/ExcellenceContent';
 import ContactContent from '@/components/pages/ContactContent';
 import MentionsLegalesContent from '@/components/pages/MentionsLegalesContent';
 import ConfidentialiteContent from '@/components/pages/ConfidentialiteContent';
@@ -19,7 +18,6 @@ import { fetchPageContent, publishPageContent } from '@/lib/pageContentApi';
 import {
   homeContent,
   visiteContent,
-  excellenceContent,
   contactContent,
   mentionsLegalesContent,
   confidentialiteContent,
@@ -35,7 +33,6 @@ type EditablePage =
   | 'accueil'
   | 'visite'
   | 'notre-ecole'
-  | 'excellence'
   | 'contact'
   | 'mentions-legales'
   | 'confidentialite'
@@ -53,8 +50,6 @@ function getFallback(page: EditablePage): JsonLike {
       return visiteContent as unknown as JsonLike;
     case 'notre-ecole':
       return {} as JsonLike;
-    case 'excellence':
-      return excellenceContent as unknown as JsonLike;
     case 'contact':
       return contactContent as unknown as JsonLike;
     case 'mentions-legales':
@@ -79,7 +74,6 @@ const AdminVisualEditor: React.FC = () => {
       'accueil',
       'visite',
       'notre-ecole',
-      'excellence',
       'contact',
       'mentions-legales',
       'confidentialite',
@@ -104,8 +98,6 @@ const AdminVisualEditor: React.FC = () => {
         return <VisiteContent />;
       case 'notre-ecole':
         return <NotreEcoleContent />;
-      case 'excellence':
-        return <ExcellenceContent />;
       case 'contact':
         return <ContactContent />;
       case 'mentions-legales':

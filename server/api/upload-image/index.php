@@ -1,6 +1,8 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
+require_once __DIR__ . '/../../_secure/admin-auth.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
   http_response_code(204);
   exit;
@@ -12,40 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   exit;
 }
 
-// --- Authentication ---
-$authUser = $_SERVER['PHP_AUTH_USER'] ?? '';
-$authPass = $_SERVER['PHP_AUTH_PW'] ?? '';
-if ($authUser === '' || $authPass === '') {
-  $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
-  if (preg_match('/^Basic\s+(.+)$/i', $authHeader, $m)) {
-    $decoded = base64_decode($m[1]);
-    if ($decoded && strpos($decoded, ':') !== false) {
-      [$authUser, $authPass] = explode(':', $decoded, 2);
-    }
-  }
-}
-
-$authenticated = false;
-$htpasswdFile = __DIR__ . '/../../_secure/.htpasswd';
-if ($authUser !== '' && $authPass !== '' && file_exists($htpasswdFile)) {
-  $lines = file($htpasswdFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-  foreach ($lines as $line) {
-    [$storedUser, $storedHash] = explode(':', $line, 2);
-    if ($storedUser === $authUser) {
-      if (password_verify($authPass, $storedHash) || crypt($authPass, $storedHash) === $storedHash) {
-        $authenticated = true;
-      }
-      break;
-    }
-  }
-}
-
-if (!$authenticated) {
-  header('WWW-Authenticate: Basic realm="Admin API"');
-  http_response_code(401);
-  echo json_encode(['error' => 'Authentication required']);
-  exit;
-}
+adminAuthenticateOrFail();
 
 // --- File upload ---
 if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {

@@ -6,10 +6,14 @@ import { useAdminAuth } from '@/hooks/useAdminAuth';
 const AdminLoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [requirePasswordChange, setRequirePasswordChange] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const { isAuthenticated, isLoading, login } = useAdminAuth();
+  const { isAuthenticated, isLoading, login, changePassword } = useAdminAuth();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -21,14 +25,50 @@ const AdminLoginPage: React.FC = () => {
     e.preventDefault();
     setError(null);
 
+    if (requirePasswordChange) {
+      if (newPassword.trim() === '' || confirmPassword.trim() === '') {
+        setError('Veuillez saisir et confirmer le nouveau mot de passe.');
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        setError('La confirmation du nouveau mot de passe ne correspond pas.');
+        return;
+      }
+
+      setIsChangingPassword(true);
+      const changed = await changePassword(username.trim(), password, newPassword);
+      if (!changed.ok) {
+        setError(changed.error || 'Impossible de changer le mot de passe.');
+        setIsChangingPassword(false);
+        return;
+      }
+
+      const relogin = await login(username.trim(), newPassword);
+      setIsChangingPassword(false);
+      if (!relogin.ok) {
+        setError(relogin.error || 'Mot de passe changé mais reconnexion impossible. Réessayez.');
+        return;
+      }
+
+      setRequirePasswordChange(false);
+      setPassword(newPassword);
+      setNewPassword('');
+      setConfirmPassword('');
+      return;
+    }
+
     if (!username.trim() || !password.trim()) {
       setError('Veuillez remplir tous les champs.');
       return;
     }
 
-    const ok = await login(username.trim(), password);
-    if (!ok) {
-      setError('Identifiants incorrects.');
+    const result = await login(username.trim(), password);
+    if (!result.ok) {
+      if (result.requirePasswordChange) {
+        setRequirePasswordChange(true);
+      }
+      setError(result.error || 'Identifiants incorrects.');
     }
   };
 
@@ -64,7 +104,7 @@ const AdminLoginPage: React.FC = () => {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Mot de passe
+                {requirePasswordChange ? 'Mot de passe actuel' : 'Mot de passe'}
               </label>
               <input
                 id="password"
@@ -76,6 +116,42 @@ const AdminLoginPage: React.FC = () => {
               />
             </div>
 
+            {requirePasswordChange && (
+              <>
+                <div>
+                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                    Nouveau mot de passe
+                  </label>
+                  <input
+                    id="newPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                    Confirmer le nouveau mot de passe
+                  </label>
+                  <input
+                    id="confirmPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                  />
+                </div>
+
+                <p className="text-xs text-amber-700 bg-amber-50 rounded-lg px-3 py-2">
+                  Changement obligatoire: 16+ caractères, majuscule, minuscule, chiffre et caractère spécial.
+                </p>
+              </>
+            )}
+
             {error && (
               <div className="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-xl">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
@@ -85,16 +161,16 @@ const AdminLoginPage: React.FC = () => {
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || isChangingPassword}
               className="w-full py-3 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              {isLoading ? (
+              {(isLoading || isChangingPassword) ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Connexion...
+                  {requirePasswordChange ? 'Mise à jour...' : 'Connexion...'}
                 </>
               ) : (
-                'Se connecter'
+                requirePasswordChange ? 'Changer le mot de passe' : 'Se connecter'
               )}
             </button>
           </form>

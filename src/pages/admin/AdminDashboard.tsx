@@ -13,6 +13,7 @@ import {
   Filter,
   Download,
   Eye,
+  Trash2,
   Clock,
   CheckCircle,
   AlertCircle,
@@ -21,10 +22,14 @@ import {
   RotateCcw,
   ShieldCheck,
   ChevronDown,
-  X
+  X,
+  Users,
+  UserPlus,
+  ShieldOff,
+  Shield
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
-import { fetchAdminAdmissions, fetchAdminContacts, adminUpdateStatus } from '@/lib/adminApi';
+import { fetchAdminAdmissions, fetchAdminContacts, adminUpdateStatus, adminDeleteSubmission } from '@/lib/adminApi';
 import {
   createAdminBackup,
   downloadAdminBackup,
@@ -43,8 +48,16 @@ import {
   type ContactStatus,
   type AdmissionStatus
 } from '@/types/submissions';
+import {
+  fetchOperators,
+  createOperator,
+  toggleOperator,
+  resetOperatorPassword,
+  clearOperatorLockout,
+  type Operator,
+} from '@/lib/adminOperatorsApi';
 
-type TabType = 'contacts' | 'admissions';
+type TabType = 'contacts' | 'admissions' | 'operators';
 type ContactFilterStatus = ContactStatus | 'all';
 type AdmissionFilterStatus = AdmissionStatus | 'all';
 
@@ -55,9 +68,13 @@ const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('admissions');
   const [contacts, setContacts] = useState<ContactSubmission[]>([]);
   const [admissions, setAdmissions] = useState<AdmissionSubmission[]>([]);
+  const [operators, setOperators] = useState<Operator[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingOperators, setIsLoadingOperators] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<ContactFilterStatus | AdmissionFilterStatus>('all');
+  const [opActionMessage, setOpActionMessage] = useState<string>('');
+  const [opTempPassword, setOpTempPassword] = useState<string>('');
   const [selectedItem, setSelectedItem] = useState<ContactSubmission | AdmissionSubmission | null>(null);
   const [showDetail, setShowDetail] = useState(false);
   const [isBackingUp, setIsBackingUp] = useState(false);
@@ -78,6 +95,7 @@ const AdminDashboard: React.FC = () => {
   const [restoreSuccess, setRestoreSuccess] = useState('');
   const [isRestorePanelOpen, setIsRestorePanelOpen] = useState(false);
   const [isDeveloperInfoOpen, setIsDeveloperInfoOpen] = useState(false);
+  const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -89,6 +107,7 @@ const AdminDashboard: React.FC = () => {
     if (isAuthenticated) {
       loadData();
       loadBackups();
+      loadOperators();
     }
   }, [isAuthenticated, token]);
 
@@ -106,6 +125,103 @@ const AdminDashboard: React.FC = () => {
       console.error('Erreur chargement sauvegardes:', error);
     } finally {
       setIsLoadingBackups(false);
+    }
+  };
+
+  const loadOperators = async () => {
+    if (!token) return;
+    setIsLoadingOperators(true);
+    setOpActionMessage('');
+    setOpTempPassword('');
+    try {
+      const res = await fetchOperators(token);
+      setOperators(res.operators);
+    } catch (error) {
+      console.error('Erreur chargement opérateurs:', error);
+    } finally {
+      setIsLoadingOperators(false);
+    }
+  };
+
+  const handleCreateOperator = async () => {
+    if (!token) return;
+    setOpActionMessage('');
+    setOpTempPassword('');
+    try {
+      const res = await createOperator(token);
+      setOperators((prev) => [...prev, res.operator]);
+      setOpTempPassword(res.tempPassword);
+      setOpActionMessage(`Opérateur ${res.operator.id} créé. Mot de passe temporaire prêt.`);
+    } catch (error) {
+      alert((error as Error).message || 'Création impossible');
+    }
+  };
+
+  const handleToggleOperator = async (id: string) => {
+    if (!token) return;
+    setOpActionMessage('');
+    setOpTempPassword('');
+    try {
+      const res = await toggleOperator(token, id);
+      setOperators((prev) => prev.map((op) => (op.id === id ? res.operator : op)));
+      setOpActionMessage(res.operator.active ? 'Opérateur activé.' : 'Opérateur désactivé.');
+    } catch (error) {
+      alert((error as Error).message || 'Mise à jour impossible');
+    }
+  };
+
+  const handleResetOperatorPassword = async (id: string) => {
+    if (!token) return;
+    setOpActionMessage('');
+    setOpTempPassword('');
+    try {
+      const res = await resetOperatorPassword(token, id);
+      setOperators((prev) => prev.map((op) => (op.id === id ? res.operator : op)));
+      setOpTempPassword(res.tempPassword);
+      setOpActionMessage(`Mot de passe réinitialisé pour ${id}.`);
+    } catch (error) {
+      alert((error as Error).message || 'Reset impossible');
+    }
+  };
+
+  const handleClearLockout = async (id: string) => {
+    if (!token) return;
+    setOpActionMessage('');
+    setOpTempPassword('');
+    try {
+      await clearOperatorLockout(token, id);
+      setOpActionMessage(`Blocage effacé pour ${id}.`);
+    } catch (error) {
+      alert((error as Error).message || 'Impossible de débloquer');
+    }
+  };
+
+  const handleDeleteSubmission = async (type: 'contact' | 'admission', id: string, reference: string) => {
+    if (!token || !id) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Supprimer définitivement ${type === 'contact' ? 'ce contact' : 'cette admission'} (${reference}) ? Cette action est irreversible.`
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    setDeletingItemId(id);
+    try {
+      await adminDeleteSubmission(token, { type, id });
+      await loadData();
+
+      if (selectedItem?.$id === id) {
+        setShowDetail(false);
+        setSelectedItem(null);
+      }
+    } catch (error) {
+      console.error('Erreur suppression soumission:', error);
+      alert('Suppression impossible pour le moment. Veuillez reessayer.');
+    } finally {
+      setDeletingItemId(null);
     }
   };
 
@@ -361,6 +477,16 @@ const AdminDashboard: React.FC = () => {
           </button>
 
           <button
+            onClick={() => { setActiveTab('operators'); setStatusFilter('all'); loadOperators(); }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+              activeTab === 'operators' ? 'bg-white/20' : 'hover:bg-white/10'
+            }`}
+          >
+            <Users className="w-5 h-5" />
+            Opérateurs
+          </button>
+
+          <button
             onClick={handleBackup}
             disabled={!token || isBackingUp}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-white/10 text-orange-100 disabled:opacity-60"
@@ -587,167 +713,290 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="bg-white rounded-xl p-4 shadow-sm mb-6">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex-1 min-w-[200px]">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Rechercher par nom, email ou référence..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
+        {activeTab !== 'operators' && (
+          <>
+            {/* Filters */}
+            <div className="bg-white rounded-xl p-4 shadow-sm mb-6">
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex-1 min-w-[200px]">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Rechercher par nom, email ou référence..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <div className="relative">
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value as ContactFilterStatus | AdmissionFilterStatus)}
+                    className="appearance-none pl-4 pr-10 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
+                  >
+                    <option value="all">Tous les statuts</option>
+                    {activeTab === 'contacts' ? (
+                      <>
+                        <option value="new">Nouveau</option>
+                        <option value="in_progress">En cours</option>
+                        <option value="processed">Traité</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="new">Nouveau</option>
+                        <option value="under_review">En examen</option>
+                        <option value="interview_scheduled">Entretien programmé</option>
+                        <option value="approved">Approuvé</option>
+                        <option value="rejected">Rejeté</option>
+                        <option value="waitlist">Liste d'attente</option>
+                      </>
+                    )}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
+
+                <button
+                  onClick={loadData}
+                  className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  Actualiser
+                </button>
+
+                <button
+                  onClick={exportToCSV}
+                  className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  Export CSV
+                </button>
               </div>
             </div>
 
-            <div className="relative">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as ContactFilterStatus | AdmissionFilterStatus)}
-                className="appearance-none pl-4 pr-10 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
+            {/* Table */}
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              {isLoading ? (
+                <div className="p-12 text-center">
+                  <div className="w-8 h-8 border-4 border-orange-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                  <p className="text-gray-500">Chargement...</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Référence</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                        {activeTab === 'contacts' ? (
+                          <>
+                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nom</th>
+                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Sujet</th>
+                          </>
+                        ) : (
+                          <>
+                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Élève</th>
+                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Classe</th>
+                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Parent</th>
+                          </>
+                        )}
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {activeTab === 'contacts' ? (
+                        filteredContacts.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                              Aucun message de contact trouvé
+                            </td>
+                          </tr>
+                        ) : (
+                          filteredContacts.map((contact) => (
+                            <tr key={contact.$id} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 font-mono text-sm text-orange-700">{contact.reference}</td>
+                              <td className="px-6 py-4 text-sm text-gray-500">{formatDate(contact.$createdAt)}</td>
+                              <td className="px-6 py-4">
+                                <div className="font-medium text-gray-900">{contact.lastName} {contact.firstName}</div>
+                                <div className="text-sm text-gray-500">{contact.email}</div>
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-900">{contact.subject}</td>
+                              <td className="px-6 py-4">{getStatusBadge('contact', contact.status)}</td>
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-4">
+                                  <button
+                                    onClick={() => { setSelectedItem(contact); setShowDetail(true); }}
+                                    className="text-orange-700 hover:text-orange-800 font-medium text-sm flex items-center gap-1"
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                    Voir
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteSubmission('contact', contact.$id || '', contact.reference)}
+                                    disabled={!contact.$id || deletingItemId === contact.$id}
+                                    className="text-red-600 hover:text-red-700 font-medium text-sm flex items-center gap-1 disabled:opacity-50"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                    {deletingItemId === contact.$id ? 'Suppression...' : 'Supprimer'}
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        )
+                      ) : (
+                        filteredAdmissions.length === 0 ? (
+                          <tr>
+                            <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                              Aucune demande d'admission trouvée
+                            </td>
+                          </tr>
+                        ) : (
+                          filteredAdmissions.map((admission) => (
+                            <tr key={admission.$id} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 font-mono text-sm text-orange-700">{admission.reference}</td>
+                              <td className="px-6 py-4 text-sm text-gray-500">{formatDate(admission.$createdAt)}</td>
+                              <td className="px-6 py-4">
+                                <div className="font-medium text-gray-900">{admission.studentLastName} {admission.studentFirstName}</div>
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-900">{admission.desiredClass}</td>
+                              <td className="px-6 py-4">
+                                <div className="text-sm text-gray-900">{admission.parentLastName} {admission.parentFirstName}</div>
+                                <div className="text-xs text-gray-500">{admission.parentPhone}</div>
+                              </td>
+                              <td className="px-6 py-4">{getStatusBadge('admission', admission.status)}</td>
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-4">
+                                  <button
+                                    onClick={() => { setSelectedItem(admission); setShowDetail(true); }}
+                                    className="text-orange-700 hover:text-orange-800 font-medium text-sm flex items-center gap-1"
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                    Voir
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteSubmission('admission', admission.$id || '', admission.reference)}
+                                    disabled={!admission.$id || deletingItemId === admission.$id}
+                                    className="text-red-600 hover:text-red-700 font-medium text-sm flex items-center gap-1 disabled:opacity-50"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                    {deletingItemId === admission.$id ? 'Suppression...' : 'Supprimer'}
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        )
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {activeTab === 'operators' && (
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="flex flex-wrap items-center gap-3 justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Gestion des opérateurs</h2>
+                <p className="text-sm text-gray-600">Créer, activer/désactiver, réinitialiser un mot de passe ou débloquer.</p>
+              </div>
+              <button
+                onClick={handleCreateOperator}
+                disabled={isLoadingOperators}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-60"
               >
-                <option value="all">Tous les statuts</option>
-                {activeTab === 'contacts' ? (
-                  <>
-                    <option value="new">Nouveau</option>
-                    <option value="in_progress">En cours</option>
-                    <option value="processed">Traité</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="new">Nouveau</option>
-                    <option value="under_review">En examen</option>
-                    <option value="interview_scheduled">Entretien programmé</option>
-                    <option value="approved">Approuvé</option>
-                    <option value="rejected">Rejeté</option>
-                    <option value="waitlist">Liste d'attente</option>
-                  </>
+                <UserPlus className="w-4 h-4" />
+                Nouvel opérateur
+              </button>
+            </div>
+
+            {opActionMessage && (
+              <div className="mt-4 p-3 rounded-lg bg-emerald-50 text-emerald-800 text-sm">
+                {opActionMessage}
+                {opTempPassword && (
+                  <div className="mt-1 font-mono text-xs bg-white px-2 py-1 rounded border border-emerald-200 inline-block">
+                    Mot de passe: {opTempPassword}
+                  </div>
                 )}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-            </div>
+              </div>
+            )}
 
-            <button
-              onClick={loadData}
-              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-              Actualiser
-            </button>
-
-            <button
-              onClick={exportToCSV}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              Export CSV
-            </button>
-          </div>
-        </div>
-
-        {/* Table */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          {isLoading ? (
-            <div className="p-12 text-center">
-              <div className="w-8 h-8 border-4 border-orange-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-gray-500">Chargement...</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
+            <div className="mt-4 overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Référence</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                    {activeTab === 'contacts' ? (
-                      <>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nom</th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Sujet</th>
-                      </>
-                    ) : (
-                      <>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Élève</th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Classe</th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Parent</th>
-                      </>
-                    )}
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">ID</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Nom</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Rôle</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Actif</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Chgt MDP</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Créé</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {activeTab === 'contacts' ? (
-                    filteredContacts.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                          Aucun message de contact trouvé
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredContacts.map((contact) => (
-                        <tr key={contact.$id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 font-mono text-sm text-orange-700">{contact.reference}</td>
-                          <td className="px-6 py-4 text-sm text-gray-500">{formatDate(contact.$createdAt)}</td>
-                          <td className="px-6 py-4">
-                            <div className="font-medium text-gray-900">{contact.lastName} {contact.firstName}</div>
-                            <div className="text-sm text-gray-500">{contact.email}</div>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">{contact.subject}</td>
-                          <td className="px-6 py-4">{getStatusBadge('contact', contact.status)}</td>
-                          <td className="px-6 py-4">
-                            <button
-                              onClick={() => { setSelectedItem(contact); setShowDetail(true); }}
-                              className="text-orange-700 hover:text-orange-800 font-medium text-sm flex items-center gap-1"
-                            >
-                              <Eye className="w-4 h-4" />
-                              Voir
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )
+                  {isLoadingOperators ? (
+                    <tr><td colSpan={7} className="px-4 py-6 text-center text-gray-500">Chargement...</td></tr>
+                  ) : operators.length === 0 ? (
+                    <tr><td colSpan={7} className="px-4 py-6 text-center text-gray-500">Aucun opérateur</td></tr>
                   ) : (
-                    filteredAdmissions.length === 0 ? (
-                      <tr>
-                        <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
-                          Aucune demande d'admission trouvée
+                    operators.map((op) => (
+                      <tr key={op.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 font-mono text-sm text-orange-700">{op.id}</td>
+                        <td className="px-4 py-3 text-sm text-gray-900">{op.displayName}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">{op.role}</td>
+                        <td className="px-4 py-3 text-sm">
+                          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${op.active ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-200 text-gray-700'}`}>
+                            {op.active ? 'Actif' : 'Inactif'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-sm">
+                          {op.mustChangePassword ? (
+                            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Oui</span>
+                          ) : (
+                            <span className="text-xs text-gray-500">Non</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{formatDate(op.createdAt || op.updatedAt || undefined)}</td>
+                        <td className="px-4 py-3 text-sm">
+                          <div className="flex flex-wrap gap-2">
+                            <button
+                              onClick={() => handleToggleOperator(op.id)}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border border-gray-200 hover:bg-gray-100"
+                            >
+                              {op.active ? <ShieldOff className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
+                              {op.active ? 'Désactiver' : 'Activer'}
+                            </button>
+                            <button
+                              onClick={() => handleResetOperatorPassword(op.id)}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-orange-600 text-white hover:bg-orange-700"
+                            >
+                              <RefreshCw className="w-4 h-4" />
+                              Reset MDP
+                            </button>
+                            <button
+                              onClick={() => handleClearLockout(op.id)}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border border-blue-200 text-blue-700 hover:bg-blue-50"
+                            >
+                              <ShieldAlert className="w-4 h-4" />
+                              Débloquer
+                            </button>
+                          </div>
                         </td>
                       </tr>
-                    ) : (
-                      filteredAdmissions.map((admission) => (
-                        <tr key={admission.$id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 font-mono text-sm text-orange-700">{admission.reference}</td>
-                          <td className="px-6 py-4 text-sm text-gray-500">{formatDate(admission.$createdAt)}</td>
-                          <td className="px-6 py-4">
-                            <div className="font-medium text-gray-900">{admission.studentLastName} {admission.studentFirstName}</div>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">{admission.desiredClass}</td>
-                          <td className="px-6 py-4">
-                            <div className="text-sm text-gray-900">{admission.parentLastName} {admission.parentFirstName}</div>
-                            <div className="text-xs text-gray-500">{admission.parentPhone}</div>
-                          </td>
-                          <td className="px-6 py-4">{getStatusBadge('admission', admission.status)}</td>
-                          <td className="px-6 py-4">
-                            <button
-                              onClick={() => { setSelectedItem(admission); setShowDetail(true); }}
-                              className="text-orange-700 hover:text-orange-800 font-medium text-sm flex items-center gap-1"
-                            >
-                              <Eye className="w-4 h-4" />
-                              Voir
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )
+                    ))
                   )}
                 </tbody>
               </table>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </main>
 
       {/* Detail Modal */}

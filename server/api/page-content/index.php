@@ -1,6 +1,9 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
+require_once __DIR__ . '/../../_secure/admin-audit-log.php';
+require_once __DIR__ . '/../../_secure/admin-auth.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
   http_response_code(204);
   exit;
@@ -47,47 +50,6 @@ function appwriteRequest($method, $url, $config, $body = null) {
     $json = ['raw' => $resp];
   }
   return [$code, $json];
-}
-
-function authenticateAdmin() {
-  $authUser = $_SERVER['PHP_AUTH_USER'] ?? '';
-  $authPass = $_SERVER['PHP_AUTH_PW'] ?? '';
-
-  if ($authUser === '' || $authPass === '') {
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
-    if (preg_match('/^Basic\s+(.+)$/i', $authHeader, $m)) {
-      $decoded = base64_decode($m[1]);
-      if ($decoded && strpos($decoded, ':') !== false) {
-        [$authUser, $authPass] = explode(':', $decoded, 2);
-      }
-    }
-  }
-
-  $authenticated = false;
-  $htpasswdFile = __DIR__ . '/../../_secure/.htpasswd';
-  if ($authUser !== '' && $authPass !== '' && file_exists($htpasswdFile)) {
-    $lines = file($htpasswdFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-      $parts = explode(':', $line, 2);
-      if (count($parts) !== 2) {
-        continue;
-      }
-      [$storedUser, $storedHash] = $parts;
-      if ($storedUser === $authUser) {
-        if (password_verify($authPass, $storedHash) || crypt($authPass, $storedHash) === $storedHash) {
-          $authenticated = true;
-        }
-        break;
-      }
-    }
-  }
-
-  if (!$authenticated) {
-    header('WWW-Authenticate: Basic realm="Admin API"');
-    http_response_code(401);
-    echo json_encode(['error' => 'Authentication required']);
-    exit;
-  }
 }
 
 $projectRoot = dirname(__DIR__, 2);
@@ -174,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-  authenticateAdmin();
+  adminAuthenticateOrFail();
 
   if ($page === '__auth_test__') {
     echo json_encode(['ok' => true]);
@@ -215,6 +177,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     echo json_encode(['error' => 'Unable to write content file']);
     exit;
   }
+
+  adminAuditLog('admin_page_content_published', [
+    'page' => $page,
+    'kind' => $kind,
+    'filePath' => str_replace('\\', '/', $filePath),
+  ]);
 
   $doc = [
     '$id' => 'file:' . $page,

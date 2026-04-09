@@ -1,0 +1,109 @@
+{
+  "generatedAt": "2026-03-04T04:57:51.246Z",
+  "lockPolicy": {
+    "maxFailedAttempts": 10,
+    "lockoutMinutes": 30
+  },
+  "operators": [
+    {
+      "id": "op01",
+      "displayName": "Operateur 01",
+      "role": "admin",
+      "active": true,
+      "mustChangePassword": true,
+      "passwordHash": "$2y$10$9kKRqdWq1KB/ElMduhb3UOx0kSvbAHBrAE7xXQCIybC3uTVyrJExK",
+      "passwordHistory": [],
+      "createdAt": "2026-03-04T04:57:49.255Z"
+    },
+    {
+      "id": "op02",
+      "displayName": "Operateur 02",
+      "role": "admin",
+      "active": true,
+      "mustChangePassword": true,
+      "passwordHash": "$2y$10$wGaCxEY8eLseAqQKcrGzhebPwN3MGAbFlCmoWpSL0IGcs.AJAbVfG",
+      "passwordHistory": [],
+      "createdAt": "2026-03-04T04:57:49.452Z"
+    },
+    {
+      "id": "op03",
+      "displayName": "Operateur 03",
+      "role": "admin",
+      "active": true,
+      "mustChangePassword": true,
+      "passwordHash": "$2y$10$4O2sc0VHZwKVdjhKpMLzjulViG1GKCBBrUE7uwd30P0SjOZ7uFk5S",
+      "passwordHistory": [],
+      "createdAt": "2026-03-04T04:57:49.627Z"
+    },
+    {
+      "id": "op04",
+      "displayName": "Operateur 04",
+      "role": "admin",
+      "active": true,
+      "mustChangePassword": true,
+      "passwordHash": "$2y$10$afglD5RpWf07JIF0lH3KBuHWiXmRVO4pcFWgrUENk06w1rzJdR1be",
+      "passwordHistory": [],
+      "createdAt": "2026-03-04T04:57:49.812Z"
+    },
+    {
+      "id": "op05",
+      "displayName": "Operateur 05",
+      "role": "admin",
+      "active": true,
+      "mustChangePassword": true,
+      "passwordHash": "$2y$10$IrJuvhWlr9pTz/PlsmwTie6AZzmUd2n/JBdwhFQz.B8yVrCm.2mr2",
+      "passwordHistory": [],
+      "createdAt": "2026-03-04T04:57:50.010Z"
+    },
+    {
+      "id": "op06",
+      "displayName": "Operateur 06",
+      "role": "admin",
+      "active": true,
+      "mustChangePassword": true,
+      "passwordHash": "$2y$10$m6UIAKy5GiSSKUkTeA.y/eo8juO/ztfLuoG.m1qnoO2JEFJ9jk48G",
+      "passwordHistory": [],
+      "createdAt": "2026-03-04T04:57:50.410Z"
+    },
+    {
+      "id": "op07",
+      "displayName": "Operateur 07",
+      "role": "admin",
+      "active": true,
+      "mustChangePassword": true,
+      "passwordHash": "$2y$10$CXOP3SbJguDsRPR5Qfxh1OT/AKyenWB31n0tWkqD7HngiJ8Qy6Ywy",
+      "passwordHistory": [],
+      "createdAt": "2026-03-04T04:57:50.661Z"
+    },
+    {
+      "id": "op08",
+      "displayName": "Operateur 08",
+      "role": "admin",
+      "active": true,
+      "mustChangePassword": true,
+      "passwordHash": "$2y$10$xTKgdmNeYrxD5K8AIAcQXuqCW7taYR1PCtf8HgK2/YHmqJxPpFX9K",
+      "passwordHistory": [],
+      "createdAt": "2026-03-04T04:57:50.864Z"
+    },
+    {
+      "id": "op09",
+      "displayName": "Operateur 09",
+      "role": "admin",
+      "active": true,
+      "mustChangePassword": true,
+      "passwordHash": "$2y$10$XKp.NjqiQzvlaIuyc2ds3OvTa5qNcSW/vKR1/cqH5muX4utJgMqvy",
+      "passwordHistory": [],
+      "createdAt": "2026-03-04T04:57:51.054Z"
+    },
+    {
+      "id": "op10",
+      "displayName": "Operateur 10",
+      "role": "admin",
+      "active": true,
+      "mustChangePassword": true,
+      "passwordHash": "$2y$10$vJCQDVqJoxiWz1hb70bh7.UsqgHl8rc3GzkHobTTmOkyWg7RjeQjm",
+      "passwordHistory": [],
+      "createdAt": "2026-03-04T04:57:51.246Z"
+    }
+  ]
+}
