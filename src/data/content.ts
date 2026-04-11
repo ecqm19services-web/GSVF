@@ -644,7 +644,7 @@ export const programmesContent = {
         "Initiation à la lecture et aux mathématiques",
         "Arts plastiques et musique"
       ],
-      image: "/images/programmes/M1.webp"
+      image: "/images/accueil/accueil_ecole_eleves.jpeg"
     },
     {
       id: "primaire",
@@ -658,7 +658,7 @@ export const programmesContent = {
         "Éducation sportive quotidienne",
         "Projets interdisciplinaires"
       ],
-      image: "/images/programmes/P1.webp"
+      image: "/images/accueil/accueil_ecole_eleves_alt.jpeg"
     },
     {
       id: "college",
@@ -672,7 +672,7 @@ export const programmesContent = {
         "Accueil des élèves affectés et non-affectés",
         "Suivi personnalisé de chaque élève"
       ],
-      image: "/images/programmes/CO1.webp"
+      image: "/images/visite/salle_inf.jpeg"
     },
     {
       id: "lycee",
@@ -687,7 +687,7 @@ export const programmesContent = {
         "Accueil des affectés et non-affectés",
         "Orientation et coaching personnalisé"
       ],
-      image: "/images/programmes/L1.webp"
+      image: "/images/visite/biblio.jpeg"
     }
   ],
   specialPrograms: [],

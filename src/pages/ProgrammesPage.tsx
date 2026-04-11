@@ -147,11 +147,12 @@ const ProgrammesPage: React.FC = () => {
                             ))}
                           </ul>
                         </div>
-                        <div className="aspect-video lg:aspect-square rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                          <div className="text-center">
-                            <Icon className="w-16 h-16 text-gray-400 mx-auto mb-2" />
-                            <p className="text-gray-500">{cycle.title}</p>
-                          </div>
+                        <div className="aspect-video lg:aspect-square rounded-xl overflow-hidden">
+                          <img
+                            src={(cycle as any).image || '/images/accueil/accueil_ecole.jpeg'}
+                            alt={cycle.title}
+                            className="w-full h-full object-cover rounded-xl"
+                          />
                         </div>
                       </div>
                     </div>

@@ -3,6 +3,7 @@ import Hero from '@/components/ui/Hero';
 import { programmesContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
+import EditableImage from '@/components/admin/EditableImage';
 import { 
   Heart,
   BookOpen,
@@ -176,16 +177,13 @@ const ProgrammesContent: React.FC = () => {
                             ))}
                           </ul>
                         </div>
-                        <div className="aspect-video lg:aspect-square rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                          <div className="text-center">
-                            <Icon className="w-16 h-16 text-gray-400 mx-auto mb-2" />
-                            <EditableText
-                              as="p"
-                              path={`cycles.${cycleIndex}.title`}
-                              value={cycle.title}
-                              className="text-gray-500"
-                            />
-                          </div>
+                        <div className="aspect-video lg:aspect-square rounded-xl overflow-hidden">
+                          <EditableImage
+                            path={`cycles.${cycleIndex}.image`}
+                            src={(cycle as any).image || '/images/accueil/accueil_ecole.jpeg'}
+                            alt={cycle.title}
+                            className="w-full h-full object-cover rounded-xl"
+                          />
                         </div>
                       </div>
                     </div>
