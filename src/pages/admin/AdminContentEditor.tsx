@@ -24,7 +24,21 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/components/ui/use-toast';
-import { FileText, LogOut, Monitor, Settings, BriefcaseBusiness } from 'lucide-react';
+import { FileText, LogOut, Monitor, Settings, BriefcaseBusiness, ExternalLink } from 'lucide-react';
+
+const pageLabels: Record<string, string> = {
+  accueil: 'Accueil',
+  visite: 'Visite',
+  'notre-ecole': 'Notre École',
+  vision: 'Vision',
+  histoire: 'Histoire',
+  contact: 'Contact',
+  'mentions-legales': 'Mentions Légales',
+  confidentialite: 'Confidentialité',
+  programmes: 'Programmes',
+  admissions: 'Admissions',
+  actualites: 'Actualités',
+};
 
 type Source = 'published' | 'local' | 'empty';
 
@@ -48,6 +62,9 @@ function getDefaultJsonPayload(page: string): string {
       return JSON.stringify(programmesContent, null, 2);
     case 'admissions':
       return JSON.stringify(admissionsContent, null, 2);
+    case 'notre-ecole':
+    case 'actualites':
+      return JSON.stringify({}, null, 2);
     default:
       return JSON.stringify({}, null, 2);
   }
@@ -61,6 +78,7 @@ const AdminContentEditor: React.FC = () => {
     () => [
       'accueil',
       'visite',
+      'notre-ecole',
       'vision',
       'histoire',
       'contact',
@@ -68,6 +86,7 @@ const AdminContentEditor: React.FC = () => {
       'confidentialite',
       'programmes',
       'admissions',
+      'actualites',
     ],
     []
   );
@@ -203,6 +222,16 @@ const AdminContentEditor: React.FC = () => {
             <BriefcaseBusiness className="w-5 h-5" />
             Offres d'emploi
           </Link>
+
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-orange-200 hover:text-white hover:bg-white/10"
+          >
+            <ExternalLink className="w-5 h-5" />
+            Voir le site
+          </a>
         </nav>
 
         <div className="absolute bottom-6 left-6 right-6">
@@ -245,7 +274,7 @@ const AdminContentEditor: React.FC = () => {
                     <SelectContent>
                       {allPages.map((p) => (
                         <SelectItem key={p} value={p}>
-                          {p}
+                          {pageLabels[p] || p}
                         </SelectItem>
                       ))}
                     </SelectContent>

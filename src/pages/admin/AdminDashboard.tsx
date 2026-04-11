@@ -26,7 +26,8 @@ import {
   Users,
   UserPlus,
   ShieldOff,
-  Shield
+  Shield,
+  ExternalLink
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { fetchAdminAdmissions, fetchAdminContacts, adminUpdateStatus, adminDeleteSubmission } from '@/lib/adminApi';
@@ -96,6 +97,7 @@ const AdminDashboard: React.FC = () => {
   const [isRestorePanelOpen, setIsRestorePanelOpen] = useState(false);
   const [isDeveloperInfoOpen, setIsDeveloperInfoOpen] = useState(false);
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
+  const [backupSuccess, setBackupSuccess] = useState('');
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -354,6 +356,7 @@ const AdminDashboard: React.FC = () => {
     }
 
     setBackupError('');
+    setBackupSuccess('');
     setIsBackingUp(true);
     try {
       const created = await createAdminBackup(token);
@@ -363,6 +366,8 @@ const AdminDashboard: React.FC = () => {
         savedPath: created.savedPath,
         createdAt: created.createdAt,
       });
+      setBackupSuccess(`Sauvegarde créée avec succès : ${created.fileName}`);
+      setTimeout(() => setBackupSuccess(''), 8000);
       await loadBackups();
     } catch (error) {
       setBackupError(error instanceof Error ? error.message : 'Erreur de sauvegarde');
@@ -415,7 +420,7 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-orange-950 text-white p-6">
+      <aside className="fixed left-0 top-0 h-full w-72 bg-orange-950 text-white p-6">
         <div className="mb-8">
           <h1 className="text-xl font-bold">Administration</h1>
           <p className="text-orange-200 text-sm">Vision Future</p>
@@ -447,7 +452,7 @@ const AdminDashboard: React.FC = () => {
           </Link>
 
           <button
-            onClick={() => { setActiveTab('admissions'); setStatusFilter('all'); }}
+            onClick={() => { setActiveTab('admissions'); setStatusFilter('all'); setSearchQuery(''); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
               activeTab === 'admissions' ? 'bg-white/20' : 'hover:bg-white/10'
             }`}
@@ -462,7 +467,7 @@ const AdminDashboard: React.FC = () => {
           </button>
           
           <button
-            onClick={() => { setActiveTab('contacts'); setStatusFilter('all'); }}
+            onClick={() => { setActiveTab('contacts'); setStatusFilter('all'); setSearchQuery(''); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
               activeTab === 'contacts' ? 'bg-white/20' : 'hover:bg-white/10'
             }`}
@@ -494,6 +499,16 @@ const AdminDashboard: React.FC = () => {
             <ShieldAlert className="w-5 h-5" />
             {isBackingUp ? 'Sauvegarde...' : 'Sauvegarder le site'}
           </button>
+
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-orange-200 hover:text-white hover:bg-white/10"
+          >
+            <ExternalLink className="w-5 h-5" />
+            Voir le site
+          </a>
         </nav>
 
         <div className="absolute bottom-6 left-6 right-6">
@@ -531,7 +546,7 @@ const AdminDashboard: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="ml-64 p-8">
+      <main className="ml-72 p-8">
         <div className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 p-5">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-start gap-3">
@@ -548,6 +563,9 @@ const AdminDashboard: React.FC = () => {
                 )}
                 {backupError && (
                   <p className="text-xs text-red-700 mt-2">{backupError}</p>
+                )}
+                {backupSuccess && (
+                  <p className="text-xs text-emerald-700 mt-2 font-semibold">{backupSuccess}</p>
                 )}
               </div>
             </div>

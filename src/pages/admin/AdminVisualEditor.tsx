@@ -26,7 +26,7 @@ import {
 } from '@/data/content';
 import { EditSessionProvider } from '@/contexts/EditSessionContext';
 import { PageJsonOverrideProvider } from '@/contexts/PageJsonOverrideContext';
-import { Monitor, Settings, FileText, LogOut, BriefcaseBusiness } from 'lucide-react';
+import { Monitor, Settings, FileText, LogOut, BriefcaseBusiness, ExternalLink } from 'lucide-react';
 import ErrorBoundary from '@/components/ui/ErrorBoundary';
 
 type EditablePage =
@@ -41,6 +41,18 @@ type EditablePage =
   | 'actualites';
 
 type JsonLike = Record<string, unknown> | unknown[];
+
+const pageLabels: Record<EditablePage, string> = {
+  accueil: 'Accueil',
+  visite: 'Visite',
+  'notre-ecole': 'Notre École',
+  contact: 'Contact',
+  'mentions-legales': 'Mentions Légales',
+  confidentialite: 'Confidentialité',
+  programmes: 'Programmes',
+  admissions: 'Admissions',
+  actualites: 'Actualités',
+};
 
 function getFallback(page: EditablePage): JsonLike {
   switch (page) {
@@ -233,6 +245,16 @@ const AdminVisualEditor: React.FC = () => {
             <BriefcaseBusiness className="w-5 h-5" />
             Offres d'emploi
           </Link>
+
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-orange-200 hover:text-white hover:bg-white/10"
+          >
+            <ExternalLink className="w-5 h-5" />
+            Voir le site
+          </a>
         </nav>
 
         <div className="absolute bottom-6 left-6 right-6">
@@ -266,7 +288,7 @@ const AdminVisualEditor: React.FC = () => {
                 >
                   {pages.map((p) => (
                     <option key={p} value={p}>
-                      {p}
+                      {pageLabels[p]}
                     </option>
                   ))}
                 </select>
