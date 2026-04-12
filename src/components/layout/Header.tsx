@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { navigation, siteConfig } from '@/data/content';
-import { Menu, X, Phone, Mail } from 'lucide-react';
+import { Menu, X, Phone, Mail, ChevronDown } from 'lucide-react';
+
+type NavItem = (typeof navigation)[number];
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -18,7 +21,20 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     setIsMenuOpen(false);
+    setMobileExpanded(null);
   }, [location]);
+
+  const visibleNav = navigation.filter(
+    (item) => item.path !== '/admissions' && item.path !== '/carrieres' && item.path !== '/visite'
+  );
+
+  const isActive = (item: NavItem) => {
+    if (location.pathname === item.path) return true;
+    if ('children' in item && (item as any).children) {
+      return (item as any).children.some((c: any) => location.pathname === c.path);
+    }
+    return false;
+  };
 
   return (
     <>
@@ -72,19 +88,58 @@ const Header: React.FC = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
-              {navigation.filter(item => item.path !== '/admissions' && item.path !== '/carrieres').map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    location.pathname === item.path
-                      ? 'bg-orange-100 text-orange-900'
-                      : 'text-gray-700 hover:bg-orange-50 hover:text-orange-800'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {visibleNav.map((item) => {
+                const children = (item as any).children as { name: string; path: string }[] | undefined;
+
+                if (children && children.length > 0) {
+                  return (
+                    <div key={item.path} className="relative group">
+                      <Link
+                        to={item.path}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 inline-flex items-center gap-1 ${
+                          isActive(item)
+                            ? 'bg-orange-100 text-orange-900'
+                            : 'text-gray-700 hover:bg-orange-50 hover:text-orange-800'
+                        }`}
+                      >
+                        {item.name}
+                        <ChevronDown className="w-3.5 h-3.5 transition-transform group-hover:rotate-180" />
+                      </Link>
+                      <div className="absolute left-0 top-full pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <div className="bg-white rounded-xl shadow-xl border border-gray-100 py-2 min-w-[200px]">
+                          {children.map((child) => (
+                            <Link
+                              key={child.path}
+                              to={child.path}
+                              className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
+                                location.pathname === child.path
+                                  ? 'bg-orange-50 text-orange-800'
+                                  : 'text-gray-700 hover:bg-orange-50 hover:text-orange-800'
+                              }`}
+                            >
+                              {child.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isActive(item)
+                        ? 'bg-orange-100 text-orange-900'
+                        : 'text-gray-700 hover:bg-orange-50 hover:text-orange-800'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
             </nav>
 
             {/* CTA Button */}
@@ -120,19 +175,57 @@ const Header: React.FC = () => {
         >
           <div className="bg-white border-t border-gray-100 px-4 py-4">
             <nav className="flex flex-col gap-1">
-              {navigation.filter(item => item.path !== '/admissions' && item.path !== '/carrieres').map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`px-4 py-3 rounded-lg font-medium transition-colors ${
-                    location.pathname === item.path
-                      ? 'bg-orange-100 text-orange-900'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {visibleNav.map((item) => {
+                const children = (item as any).children as { name: string; path: string }[] | undefined;
+                const expanded = mobileExpanded === item.path;
+
+                if (children && children.length > 0) {
+                  return (
+                    <div key={item.path}>
+                      <button
+                        onClick={() => setMobileExpanded(expanded ? null : item.path)}
+                        className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-medium transition-colors ${
+                          isActive(item) ? 'bg-orange-100 text-orange-900' : 'text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        {item.name}
+                        <ChevronDown className={`w-4 h-4 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+                      </button>
+                      {expanded && (
+                        <div className="ml-4 mt-1 flex flex-col gap-1 border-l-2 border-orange-200 pl-3">
+                          {children.map((child) => (
+                            <Link
+                              key={child.path}
+                              to={child.path}
+                              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                location.pathname === child.path
+                                  ? 'bg-orange-100 text-orange-900'
+                                  : 'text-gray-600 hover:bg-gray-100'
+                              }`}
+                            >
+                              {child.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`px-4 py-3 rounded-lg font-medium transition-colors ${
+                      isActive(item)
+                        ? 'bg-orange-100 text-orange-900'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
               <Link
                 to="/admissions"
                 className="mt-4 bg-gradient-to-r from-orange-500 to-orange-700 text-white px-6 py-3 rounded-lg font-medium text-center"

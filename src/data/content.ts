@@ -1258,11 +1258,111 @@ export const confidentialiteContent = {
   ],
 };
 
+export const equipeContent = {
+  hero: {
+    title: "Notre Équipe Pédagogique",
+    subtitle: "Des professionnels passionnés et engagés",
+    description: "Découvrez les enseignants et le personnel qui accompagnent nos élèves vers l'excellence au quotidien."
+  },
+  members: [
+    {
+      name: "M. Kouamé Yao",
+      title: "Directeur Général",
+      description: "Fondateur de l'établissement, il porte la vision d'une éducation d'excellence accessible à tous depuis 2019.",
+      photo: "/images/accueil/accueil_ecole.jpeg"
+    },
+    {
+      name: "Mme Awa Traoré",
+      title: "Directrice Pédagogique",
+      description: "Spécialiste en sciences de l'éducation, elle coordonne les programmes et assure la qualité de l'enseignement.",
+      photo: "/images/accueil/accueil_ecole_eleves.jpeg"
+    },
+    {
+      name: "M. Jean-Marc Brou",
+      title: "Professeur de Mathématiques",
+      description: "Agrégé de mathématiques, il prépare nos élèves aux examens avec rigueur et passion depuis 5 ans.",
+      photo: "/images/accueil/accueil_ecole_eleves_alt.jpeg"
+    },
+    {
+      name: "Mme Fatou Diallo",
+      title: "Professeure de Français",
+      description: "Diplômée en lettres modernes, elle transmet l'amour de la langue et de la littérature à nos élèves.",
+      photo: "/images/visite/salle_inf.jpeg"
+    },
+    {
+      name: "M. Éric N'Guessan",
+      title: "Professeur de Sciences",
+      description: "Passionné de physique-chimie et de SVT, il rend les sciences vivantes à travers des expériences pratiques.",
+      photo: "/images/visite/salle_inf_alt.jpeg"
+    },
+    {
+      name: "Mme Claire Konan",
+      title: "Professeure d'Anglais",
+      description: "Certifiée Cambridge, elle prépare nos élèves à devenir des citoyens du monde bilingues.",
+      photo: "/images/visite/biblio.jpeg"
+    },
+    {
+      name: "M. Ismaël Coulibaly",
+      title: "Responsable Informatique & Robotique",
+      description: "Ingénieur en informatique, il initie les élèves à la programmation et à la robotique éducative.",
+      photo: "/images/visite/salle_inf.jpeg"
+    },
+    {
+      name: "Mme Adjoua Koffi",
+      title: "Surveillante Générale",
+      description: "Garante de la discipline et du bien-être des élèves, elle veille au bon déroulement de la vie scolaire.",
+      photo: "/images/visite/cantine.jpeg"
+    }
+  ]
+};
+
+export const emploisDuTempsContent = {
+  hero: {
+    title: "Emplois du Temps",
+    subtitle: "Organisation des cours par classe",
+    description: "Consultez et téléchargez les emplois du temps annuels de chaque classe."
+  },
+  classes: [
+    { name: "6ème", pdf: "/documents/emploi-du-temps-default.pdf" },
+    { name: "5ème", pdf: "/documents/emploi-du-temps-default.pdf" },
+    { name: "4ème", pdf: "/documents/emploi-du-temps-default.pdf" },
+    { name: "3ème", pdf: "/documents/emploi-du-temps-default.pdf" },
+    { name: "2nde", pdf: "/documents/emploi-du-temps-default.pdf" },
+    { name: "1ère", pdf: "/documents/emploi-du-temps-default.pdf" },
+    { name: "Terminale", pdf: "/documents/emploi-du-temps-default.pdf" }
+  ]
+};
+
+export const actualitesSocialConfig = {
+  feeds: [
+    { id: "facebook", label: "Facebook", enabled: true, url: "" },
+    { id: "instagram", label: "Instagram", enabled: true, url: "" },
+    { id: "youtube", label: "YouTube", enabled: false, url: "" },
+    { id: "tiktok", label: "TikTok", enabled: false, url: "" },
+    { id: "linkedin", label: "LinkedIn", enabled: false, url: "" }
+  ]
+};
+
 export const navigation = [
   { name: "Accueil", path: "/" },
-  { name: "Notre École", path: "/notre-ecole" },
+  {
+    name: "Notre École",
+    path: "/notre-ecole",
+    children: [
+      { name: "Présentation", path: "/notre-ecole" },
+      { name: "Équipe Pédagogique", path: "/equipe" },
+      { name: "Visite Virtuelle", path: "/visite" }
+    ]
+  },
   { name: "Visite", path: "/visite" },
-  { name: "Programmes", path: "/programmes" },
+  {
+    name: "Programmes",
+    path: "/programmes",
+    children: [
+      { name: "Nos Programmes", path: "/programmes" },
+      { name: "Emplois du Temps", path: "/emplois-du-temps" }
+    ]
+  },
   { name: "Actualités", path: "/actualites" },
   { name: "Carrières", path: "/carrieres" },
   { name: "Admissions", path: "/admissions" },

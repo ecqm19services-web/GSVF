@@ -10,6 +10,8 @@ import ConfidentialiteContent from '@/components/pages/ConfidentialiteContent';
 import ProgrammesContent from '@/components/pages/ProgrammesContent';
 import AdmissionsContent from '@/components/pages/AdmissionsContent';
 import ActualitesContent from '@/components/pages/ActualitesContent';
+import EquipeContent from '@/components/pages/EquipeContent';
+import EmploisDuTempsContent from '@/components/pages/EmploisDuTempsContent';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
@@ -23,6 +25,8 @@ import {
   confidentialiteContent,
   programmesContent,
   admissionsContent,
+  equipeContent,
+  emploisDuTempsContent,
 } from '@/data/content';
 import { EditSessionProvider } from '@/contexts/EditSessionContext';
 import { PageJsonOverrideProvider } from '@/contexts/PageJsonOverrideContext';
@@ -33,10 +37,12 @@ type EditablePage =
   | 'accueil'
   | 'visite'
   | 'notre-ecole'
+  | 'equipe'
   | 'contact'
   | 'mentions-legales'
   | 'confidentialite'
   | 'programmes'
+  | 'emplois-du-temps'
   | 'admissions'
   | 'actualites';
 
@@ -46,10 +52,12 @@ const pageLabels: Record<EditablePage, string> = {
   accueil: 'Accueil',
   visite: 'Visite',
   'notre-ecole': 'Notre École',
+  equipe: 'Équipe Pédagogique',
   contact: 'Contact',
   'mentions-legales': 'Mentions Légales',
   confidentialite: 'Confidentialité',
   programmes: 'Programmes',
+  'emplois-du-temps': 'Emplois du Temps',
   admissions: 'Admissions',
   actualites: 'Actualités',
 };
@@ -74,6 +82,10 @@ function getFallback(page: EditablePage): JsonLike {
       return admissionsContent as unknown as JsonLike;
     case 'actualites':
       return {} as JsonLike;
+    case 'equipe':
+      return equipeContent as unknown as JsonLike;
+    case 'emplois-du-temps':
+      return emploisDuTempsContent as unknown as JsonLike;
   }
 }
 
@@ -92,6 +104,8 @@ const AdminVisualEditor: React.FC = () => {
       'programmes',
       'admissions',
       'actualites',
+      'equipe',
+      'emplois-du-temps',
     ],
     []
   );
@@ -122,6 +136,10 @@ const AdminVisualEditor: React.FC = () => {
         return <AdmissionsContent />;
       case 'actualites':
         return <ActualitesContent />;
+      case 'equipe':
+        return <EquipeContent />;
+      case 'emplois-du-temps':
+        return <EmploisDuTempsContent />;
     }
   };
 

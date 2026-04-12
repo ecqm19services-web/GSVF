@@ -12,6 +12,8 @@ import CareersContent from '@/components/pages/CareersContent';
 import CareerApplicationContent from '@/components/pages/CareerApplicationContent';
 import MentionsLegalesContent from '@/components/pages/MentionsLegalesContent';
 import ConfidentialiteContent from '@/components/pages/ConfidentialiteContent';
+import EquipeContent from '@/components/pages/EquipeContent';
+import EmploisDuTempsContent from '@/components/pages/EmploisDuTempsContent';
 import NotFound from '@/pages/NotFound';
 
 const AppLayout: React.FC = () => {
@@ -25,8 +27,12 @@ const AppLayout: React.FC = () => {
       case '/vision':
       case '/histoire':
         return <NotreEcoleContent />;
+      case '/equipe':
+        return <EquipeContent />;
       case '/programmes':
         return <ProgrammesContent />;
+      case '/emplois-du-temps':
+        return <EmploisDuTempsContent />;
       case '/visite':
         return <VisiteContent />;
       case '/admissions':
