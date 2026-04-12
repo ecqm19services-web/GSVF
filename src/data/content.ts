@@ -377,7 +377,8 @@ export const visiteContent = {
   hero: {
     title: "Visite Virtuelle du Campus",
     subtitle: "Découvrez nos installations et notre environnement d'apprentissage",
-    description: "Explorez notre campus à travers cette visite guidée interactive."
+    description: "Explorez notre campus à travers cette visite guidée interactive.",
+    backgroundImage: ""
   },
   ui: {
     zoneLabel: "Zone",
@@ -629,7 +630,8 @@ export const programmesContent = {
   hero: {
     title: "Nos Programmes",
     subtitle: "Un parcours éducatif complet de la maternelle au lycée",
-    description: "Découvrez nos cycles d'enseignement et nos spécialités."
+    description: "Découvrez nos cycles d'enseignement et nos spécialités.",
+    backgroundImage: ""
   },
   intro: "Le Collège Privé la Vision Future propose un parcours éducatif structuré avec un 1er cycle (de la 6e à la 3e) et un 2nd cycle (de la 2nde à la Terminale) avec les séries du BAC A1, A2, C et D. Les élèves affectés et non-affectés sont les bienvenus.",
   cycles: [
@@ -851,7 +853,8 @@ export const admissionsContent = {
   hero: {
     title: "Admissions",
     subtitle: "Rejoignez la famille de la Vision Future",
-    description: "Découvrez notre processus d'admission et les étapes pour inscrire votre enfant."
+    description: "Découvrez notre processus d'admission et les étapes pour inscrire votre enfant.",
+    backgroundImage: ""
   },
   intro: "Nous accueillons les élèves du 1er cycle (6e à 3e) et du 2nd cycle (2nde à Terminale A, D et C). Les affectés et non-affectés sont les bienvenus. Notre processus d'admission est simple et transparent.",
   process: [
@@ -1084,7 +1087,8 @@ export const contactContent = {
   hero: {
     title: "Contactez-Nous",
     subtitle: "Nous sommes à votre écoute",
-    description: "Une question ? N'hésitez pas à nous contacter par téléphone, email ou via le formulaire."
+    description: "Une question ? N'hésitez pas à nous contacter par téléphone, email ou via le formulaire.",
+    backgroundImage: ""
   },
   ui: {
     coordinatesTitle: "Nos coordonnées",

@@ -9,6 +9,7 @@ const CareersContent: React.FC = () => {
   const [offers, setOffers] = useState<CareerOffer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams] = useSearchParams();
+  const [heroBgImage, setHeroBgImage] = useState<string>('');
 
   useEffect(() => {
     const load = async () => {
@@ -24,6 +25,22 @@ const CareersContent: React.FC = () => {
     };
 
     load();
+  }, []);
+
+  useEffect(() => {
+    const loadHeroBg = async () => {
+      try {
+        const res = await fetch('/api/page-content/?page=carrieres');
+        const data = await res.json();
+        if (data.document?.content) {
+          const parsed = JSON.parse(data.document.content);
+          if (parsed.hero?.backgroundImage) {
+            setHeroBgImage(parsed.hero.backgroundImage);
+          }
+        }
+      } catch { /* ignore */ }
+    };
+    loadHeroBg();
   }, []);
 
   const publishedOffers = useMemo(
@@ -51,6 +68,8 @@ const CareersContent: React.FC = () => {
         title="Carrières"
         subtitle="Rejoignez l'équipe de la Vision Future"
         description="Consultez nos appels d'offres d'emploi et candidatez au poste qui vous correspond."
+        backgroundImage={heroBgImage || undefined}
+        heroImagePath="hero.backgroundImage"
         size="medium"
       />
 

@@ -92,7 +92,7 @@ const AdmissionsContent: React.FC = () => {
 
   return (
     <>
-      <Hero title={admissionsData.hero.title} subtitle={admissionsData.hero.subtitle} description={admissionsData.hero.description} size="medium" />
+      <Hero title={admissionsData.hero.title} subtitle={admissionsData.hero.subtitle} description={admissionsData.hero.description} backgroundImage={(admissionsData.hero as any).backgroundImage || undefined} heroImagePath="hero.backgroundImage" size="medium" />
 
       {/* Intro */}
       <section className="py-12 bg-white">

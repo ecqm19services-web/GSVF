@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight, Play, ImagePlus, Loader2 } from 'lucide-react';
 import EditableText from '@/components/admin/EditableText';
 import { useEditSession } from '@/contexts/EditSessionContext';
 
@@ -22,6 +22,7 @@ interface HeroProps {
   overlay?: boolean;
   size?: 'small' | 'medium' | 'large';
   align?: 'left' | 'center';
+  heroImagePath?: string;
 }
 
 const Hero: React.FC<HeroProps> = ({
@@ -35,13 +36,50 @@ const Hero: React.FC<HeroProps> = ({
   slideDuration = 5000,
   overlay = true,
   size = 'large',
-  align = 'center'
+  align = 'center',
+  heroImagePath
 }) => {
   const editSession = useEditSession<Record<string, unknown> | unknown[]>();
   const isEditing = !!editSession?.isEditing;
+  const heroBgInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingHeroBg, setIsUploadingHeroBg] = useState(false);
+  const [heroBgPreview, setHeroBgPreview] = useState<string | null>(null);
 
-  // Slideshow state
-  const images = backgroundImages && backgroundImages.length > 0 ? backgroundImages : backgroundImage ? [backgroundImage] : [];
+  const handleHeroBgChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editSession || !heroImagePath) return;
+    const localUrl = URL.createObjectURL(file);
+    setHeroBgPreview(localUrl);
+    setIsUploadingHeroBg(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      const creds = sessionStorage.getItem('cpvf_admin_auth');
+      const headers: Record<string, string> = {};
+      if (creds) headers['Authorization'] = `Basic ${creds}`;
+      const res = await fetch(`/api/upload-image/?folder=heroes`, {
+        method: 'POST', headers, body: formData,
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Upload failed' }));
+        throw new Error(err.error || 'Upload failed');
+      }
+      const data = await res.json();
+      editSession.updateAtPath(heroImagePath, data.url);
+      setHeroBgPreview(null);
+    } catch (err) {
+      console.error('[Hero] Upload error:', err);
+      setHeroBgPreview(null);
+      alert('Erreur lors de l\'upload: ' + (err instanceof Error ? err.message : 'Erreur inconnue'));
+    } finally {
+      setIsUploadingHeroBg(false);
+      if (heroBgInputRef.current) heroBgInputRef.current.value = '';
+    }
+  };
+
+  // Slideshow state – include heroBgPreview when available
+  const resolvedBgImage = heroBgPreview || backgroundImage;
+  const images = backgroundImages && backgroundImages.length > 0 ? backgroundImages : resolvedBgImage ? [resolvedBgImage] : [];
   const hasSlideshow = images.length > 1;
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -118,6 +156,30 @@ const Hero: React.FC<HeroProps> = ({
       {/* Decorative Elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-400/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
+
+      {/* Admin: change hero background image button */}
+      {isEditing && heroImagePath && (
+        <>
+          <input
+            ref={heroBgInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={handleHeroBgChange}
+          />
+          <button
+            type="button"
+            onClick={() => heroBgInputRef.current?.click()}
+            className="absolute top-4 right-4 z-30 flex items-center gap-2 bg-white/90 backdrop-blur-sm text-orange-900 px-3 py-2 rounded-lg shadow-lg hover:bg-white transition-colors text-sm font-semibold"
+          >
+            {isUploadingHeroBg ? (
+              <><Loader2 className="w-4 h-4 animate-spin" /> Upload...</>
+            ) : (
+              <><ImagePlus className="w-4 h-4" /> Image de fond</>
+            )}
+          </button>
+        </>
+      )}
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`flex flex-col ${alignClasses[align]} max-w-4xl ${align === 'center' ? 'mx-auto' : ''}`}>

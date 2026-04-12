@@ -38,6 +38,7 @@ const defaultArticles: Article[] = [
 const ActualitesContent: React.FC = () => {
   const [articles, setArticles] = useState<Article[]>(defaultArticles);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [heroBgImage, setHeroBgImage] = useState<string>('');
 
   // Load articles from API if available
   useEffect(() => {
@@ -49,6 +50,9 @@ const ActualitesContent: React.FC = () => {
           const parsed = JSON.parse(data.document.content);
           if (parsed.articles && Array.isArray(parsed.articles) && parsed.articles.length > 0) {
             setArticles(parsed.articles);
+          }
+          if (parsed.hero?.backgroundImage) {
+            setHeroBgImage(parsed.hero.backgroundImage);
           }
         }
       } catch {
@@ -64,6 +68,8 @@ const ActualitesContent: React.FC = () => {
         title="Actualités"
         subtitle="Restez informé de la vie du Collège Privé la Vision Future"
         description="Découvrez nos dernières nouvelles, événements et réalisations."
+        backgroundImage={heroBgImage || undefined}
+        heroImagePath="hero.backgroundImage"
         size="medium"
       />
 

@@ -84,6 +84,8 @@ const VisiteContent: React.FC = () => {
         title={data.hero.title}
         subtitle={data.hero.subtitle}
         description={data.hero.description}
+        backgroundImage={(data.hero as any).backgroundImage || undefined}
+        heroImagePath="hero.backgroundImage"
         size="medium"
       />
 

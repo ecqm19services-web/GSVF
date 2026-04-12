@@ -46,6 +46,8 @@ const ProgrammesContent: React.FC = () => {
         title={programmesData.hero.title}
         subtitle={programmesData.hero.subtitle}
         description={programmesData.hero.description}
+        backgroundImage={(programmesData.hero as any).backgroundImage || undefined}
+        heroImagePath="hero.backgroundImage"
         size="medium"
       />
 
