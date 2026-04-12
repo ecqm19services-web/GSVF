@@ -19,8 +19,11 @@ import {
   User,
   Quote,
   ChevronDown,
+  Plus,
+  Trash2,
   type LucideIcon
 } from 'lucide-react';
+import { useEditSession } from '@/contexts/EditSessionContext';
 import { Link } from 'react-router-dom';
 
 const iconMap: Record<string, LucideIcon> = {
@@ -57,11 +60,41 @@ type NotreEcoleData = typeof notreEcoleContent;
 
 const NotreEcoleContent: React.FC = () => {
   const { value: data } = usePageJsonContent<NotreEcoleData>('notre-ecole', notreEcoleContent);
+  const editSession = useEditSession<Record<string, unknown> | unknown[]>();
+  const isEditing = !!editSession?.isEditing;
+  const updateAtPath = editSession?.updateAtPath;
   const ui = (data as any).ui || (notreEcoleContent as any).ui;
   const histUi = (data as any).histoireUi || notreEcoleContent.histoireUi;
   const histoire = (data as any).histoire || notreEcoleContent.histoire;
   const motDirecteur = (data as any).motDirecteur || notreEcoleContent.motDirecteur;
   const [expandedYear, setExpandedYear] = useState<number | null>(null);
+
+  const handleAddTimelineEntry = () => {
+    if (!updateAtPath) return;
+    const newEntry = {
+      year: `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`,
+      title: "Nouvel événement",
+      description: "Description de cet événement.",
+      milestone: false
+    };
+    const current = [...(histoire.timeline || [])];
+    current.push(newEntry);
+    updateAtPath('histoire.timeline', current);
+    setExpandedYear(current.length - 1);
+  };
+
+  const handleRemoveTimelineEntry = (index: number) => {
+    if (!updateAtPath) return;
+    const current = [...(histoire.timeline || [])];
+    current.splice(index, 1);
+    updateAtPath('histoire.timeline', current);
+    if (expandedYear === index) setExpandedYear(null);
+  };
+
+  const handleToggleMilestone = (index: number) => {
+    if (!updateAtPath) return;
+    updateAtPath(`histoire.timeline.${index}.milestone`, !histoire.timeline[index]?.milestone);
+  };
 
   return (
     <>
@@ -282,24 +315,30 @@ const NotreEcoleContent: React.FC = () => {
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            <span className={`text-sm font-bold px-2.5 py-1 rounded-lg transition-colors ${
-                              item.milestone
-                                ? 'bg-blue-800 text-white'
-                                : isOpen
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-gray-100 text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-700'
-                            }`}>
-                              {item.year}
-                            </span>
-                            <span className={`font-semibold flex-1 transition-colors ${isOpen ? 'text-gray-900' : 'text-gray-700'}`}>
-                              {item.title}
-                            </span>
+                            <EditableText
+                              as="span"
+                              path={`histoire.timeline.${index}.year`}
+                              value={item.year}
+                              className={`text-sm font-bold px-2.5 py-1 rounded-lg transition-colors ${
+                                item.milestone
+                                  ? 'bg-blue-800 text-white'
+                                  : isOpen
+                                    ? 'bg-blue-100 text-blue-800'
+                                    : 'bg-gray-100 text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-700'
+                              }`}
+                            />
+                            <EditableText
+                              as="span"
+                              path={`histoire.timeline.${index}.title`}
+                              value={item.title}
+                              className={`font-semibold flex-1 transition-colors ${isOpen ? 'text-gray-900' : 'text-gray-700'}`}
+                            />
                             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180 text-blue-500' : ''}`} />
                           </div>
 
                           <div
                             className="overflow-hidden transition-all duration-300 ease-in-out"
-                            style={{ maxHeight: isOpen ? '150px' : '0px', opacity: isOpen ? 1 : 0 }}
+                            style={{ maxHeight: isOpen ? '200px' : '0px', opacity: isOpen ? 1 : 0 }}
                           >
                             <div className="pt-3 border-t border-gray-100 mt-3">
                               <EditableText
@@ -309,6 +348,28 @@ const NotreEcoleContent: React.FC = () => {
                                 value={item.description}
                                 className="text-gray-600 text-sm leading-relaxed"
                               />
+                              {isEditing && (
+                                <div className="flex items-center gap-2 mt-3">
+                                  <button
+                                    type="button"
+                                    onClick={(e) => { e.stopPropagation(); handleToggleMilestone(index); }}
+                                    className={`text-xs px-2 py-1 rounded-md font-medium transition-colors ${
+                                      item.milestone
+                                        ? 'bg-blue-800 text-white'
+                                        : 'bg-gray-200 text-gray-600 hover:bg-blue-100 hover:text-blue-800'
+                                    }`}
+                                  >
+                                    {item.milestone ? '★ Jalon' : '☆ Marquer comme jalon'}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => { e.stopPropagation(); handleRemoveTimelineEntry(index); }}
+                                    className="text-xs px-2 py-1 rounded-md font-medium bg-red-50 text-red-600 hover:bg-red-100 flex items-center gap-1"
+                                  >
+                                    <Trash2 className="w-3 h-3" /> Supprimer
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </button>
@@ -319,6 +380,19 @@ const NotreEcoleContent: React.FC = () => {
                     </div>
                   );
                 })}
+
+                {/* Add timeline entry button (admin only) */}
+                {isEditing && (
+                  <div className="ml-16 mt-4">
+                    <button
+                      type="button"
+                      onClick={handleAddTimelineEntry}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-sm font-semibold transition-colors"
+                    >
+                      <Plus className="w-4 h-4" /> Ajouter une date
+                    </button>
+                  </div>
+                )}
 
                 {/* End cap on trunk */}
                 <div className="absolute left-[18px] bottom-0 w-3 h-3 bg-blue-200 rounded-full border-2 border-gray-50" />
