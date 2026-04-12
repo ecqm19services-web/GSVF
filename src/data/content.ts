@@ -375,7 +375,7 @@ export const homeContent = {
 
 export const visiteContent = {
   hero: {
-    title: "Visite Virtuelle du Campus",
+    title: "Visite Virtuelle de l'Établissement",
     subtitle: "Découvrez nos installations et notre environnement d'apprentissage",
     description: "Explorez notre campus à travers cette visite guidée interactive.",
     backgroundImage: ""
@@ -403,6 +403,14 @@ export const visiteContent = {
         { src: "/images/accueil/accueil_ecole.jpeg", caption: "Portail principal" },
         { src: "/images/accueil/accueil_ecole_eleves.jpeg", caption: "Allée d'accès" },
         { src: "/images/accueil/accueil_ecole_eleves_alt.jpeg", caption: "Bâtiment administratif" }
+      ],
+      galleryImages: [
+        { src: "/images/accueil/accueil_ecole.jpeg", caption: "Portail principal" },
+        { src: "/images/accueil/accueil_ecole_eleves.jpeg", caption: "Allée d'accès" },
+        { src: "/images/accueil/accueil_ecole_eleves_alt.jpeg", caption: "Bâtiment administratif" },
+        { src: "/images/accueil/accueil_ecole.jpeg", caption: "Vue d'ensemble de l'entrée" },
+        { src: "/images/accueil/accueil_ecole_eleves.jpeg", caption: "Accueil des élèves" },
+        { src: "/images/accueil/accueil_ecole_eleves_alt.jpeg", caption: "Espace d'accueil" }
       ]
     },
     {
@@ -413,6 +421,15 @@ export const visiteContent = {
         { src: "/images/visite/salle_inf.jpeg", caption: "Salle de classe primaire" },
         { src: "/images/visite/salle_inf_alt.jpeg", caption: "Salle de classe secondaire" },
         { src: "/images/visite/biblio.jpeg", caption: "Bibliothèque" }
+      ],
+      galleryImages: [
+        { src: "/images/visite/salle_inf.jpeg", caption: "Salle de classe primaire" },
+        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Salle de classe secondaire" },
+        { src: "/images/visite/biblio.jpeg", caption: "Bibliothèque" },
+        { src: "/images/visite/salle_inf.jpeg", caption: "Vue d'ensemble de la salle" },
+        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Équipements pédagogiques" },
+        { src: "/images/visite/biblio.jpeg", caption: "Espace lecture" },
+        { src: "/images/visite/salle_inf.jpeg", caption: "Tableau interactif" }
       ]
     },
     {
@@ -420,7 +437,17 @@ export const visiteContent = {
       title: "Robotique & Informatique",
       description: "Une salle dédiée à la robotique et à l'informatique, où les élèves s'initient aux nouvelles technologies, à la programmation et à la pensée computationnelle.",
       images: [
-        { src: "/images/visite/salle_inf.jpeg", caption: "Salle de robotique & informatique" }
+        { src: "/images/visite/salle_inf.jpeg", caption: "Salle de robotique & informatique" },
+        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Postes informatiques" },
+        { src: "/images/visite/salle_inf.jpeg", caption: "Atelier robotique" }
+      ],
+      galleryImages: [
+        { src: "/images/visite/salle_inf.jpeg", caption: "Salle de robotique & informatique" },
+        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Postes informatiques" },
+        { src: "/images/visite/salle_inf.jpeg", caption: "Atelier robotique" },
+        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Robots éducatifs" },
+        { src: "/images/visite/salle_inf.jpeg", caption: "Programmation en classe" },
+        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Projets d'élèves" }
       ]
     },
     {
@@ -429,12 +456,16 @@ export const visiteContent = {
       description: "Une salle de laboratoire dédiée à la physique et à la chimie, ainsi qu'une salle de SVT, permettent une approche pratique des sciences.",
       images: [
         { src: "/images/visite/salle_inf_alt.jpeg", caption: "Laboratoire de physique-chimie" },
-        { src: "/images/visite/biblio.jpeg", caption: "Salle de SVT" }
+        { src: "/images/visite/biblio.jpeg", caption: "Salle de SVT" },
+        { src: "/images/visite/salle_inf.jpeg", caption: "Équipements scientifiques" }
       ],
       galleryImages: [
         { src: "/images/visite/salle_inf_alt.jpeg", caption: "Laboratoire de physique-chimie" },
-        { src: "/images/visite/salle_inf.jpeg", caption: "Laboratoire de physique-chimie — vue 2" },
-        { src: "/images/visite/biblio.jpeg", caption: "Salle de SVT" }
+        { src: "/images/visite/biblio.jpeg", caption: "Salle de SVT" },
+        { src: "/images/visite/salle_inf.jpeg", caption: "Équipements scientifiques" },
+        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Expériences en cours" },
+        { src: "/images/visite/salle_inf.jpeg", caption: "Microscopes et instruments" },
+        { src: "/images/visite/biblio.jpeg", caption: "Collections de spécimens" }
       ]
     },
     {
@@ -443,7 +474,16 @@ export const visiteContent = {
       description: "Un terrain polyvalent en plein air servant à la pratique du football, du basketball, du handball et du tennis. Un espace simple mais fonctionnel où les élèves développent leur esprit d'équipe et leur condition physique.",
       images: [
         { src: "/images/visite/espace_sport.jpeg", caption: "Terrain polyvalent" },
-        { src: "/images/visite/espace_sport.jpeg", caption: "Activités sportives" }
+        { src: "/images/visite/espace_sport.jpeg", caption: "Activités sportives" },
+        { src: "/images/visite/espace_sport.jpeg", caption: "Entraînement collectif" }
+      ],
+      galleryImages: [
+        { src: "/images/visite/espace_sport.jpeg", caption: "Terrain polyvalent" },
+        { src: "/images/visite/espace_sport.jpeg", caption: "Activités sportives" },
+        { src: "/images/visite/espace_sport.jpeg", caption: "Entraînement collectif" },
+        { src: "/images/visite/espace_sport.jpeg", caption: "Match de football" },
+        { src: "/images/visite/espace_sport.jpeg", caption: "Basketball" },
+        { src: "/images/visite/espace_sport.jpeg", caption: "Échauffement" }
       ]
     },
     {
@@ -452,7 +492,16 @@ export const visiteContent = {
       description: "Un espace de restauration où les élèves prennent leurs repas dans un cadre convivial, avec des espaces de détente pour les pauses.",
       images: [
         { src: "/images/visite/cantine.jpeg", caption: "Cantine principale" },
-        { src: "/images/visite/cantine.jpeg", caption: "Espace détente" }
+        { src: "/images/visite/cantine.jpeg", caption: "Espace détente" },
+        { src: "/images/visite/cantine.jpeg", caption: "Service des repas" }
+      ],
+      galleryImages: [
+        { src: "/images/visite/cantine.jpeg", caption: "Cantine principale" },
+        { src: "/images/visite/cantine.jpeg", caption: "Espace détente" },
+        { src: "/images/visite/cantine.jpeg", caption: "Service des repas" },
+        { src: "/images/visite/cantine.jpeg", caption: "Menu du jour" },
+        { src: "/images/visite/cantine.jpeg", caption: "Pause déjeuner" },
+        { src: "/images/visite/cantine.jpeg", caption: "Espace convivial" }
       ]
     }
   ]

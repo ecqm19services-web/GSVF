@@ -150,13 +150,14 @@ const Footer: React.FC = () => {
             <p className="text-gray-500 text-sm text-center md:text-left">
               © {currentYear} Collège Privé la Vision Future. Tous droits réservés.
             </p>
-            <div className="flex gap-6 text-sm">
+            <div className="flex items-center gap-6 text-sm">
               <Link to="/mentions-legales" className="text-gray-500 hover:text-orange-400 transition-colors">
                 Mentions légales
               </Link>
               <Link to="/confidentialite" className="text-gray-500 hover:text-orange-400 transition-colors">
                 Confidentialité
               </Link>
+              <span className="text-gray-600 text-xs">by <span className="font-semibold text-gray-400">ic_future</span></span>
             </div>
           </div>
         </div>

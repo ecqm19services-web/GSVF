@@ -78,6 +78,22 @@ const VisiteContent: React.FC = () => {
     updateAtPath(`sections.${sectionIndex}.images`, newImages);
   };
 
+  const addGalleryImageToSection = (sectionIndex: number) => {
+    if (!updateAtPath || !data) return;
+    const section = data.sections[sectionIndex] as any;
+    const currentGallery = section.galleryImages || [...section.images];
+    const newGallery = [...currentGallery, { src: '/placeholder.svg', caption: 'Nouvelle photo galerie' }];
+    updateAtPath(`sections.${sectionIndex}.galleryImages`, newGallery);
+  };
+
+  const removeGalleryImageFromSection = (sectionIndex: number, imageIndex: number) => {
+    if (!updateAtPath || !data) return;
+    const section = data.sections[sectionIndex] as any;
+    const currentGallery = section.galleryImages || [...section.images];
+    const newGallery = currentGallery.filter((_: any, i: number) => i !== imageIndex);
+    updateAtPath(`sections.${sectionIndex}.galleryImages`, newGallery);
+  };
+
   return (
     <>
       <Hero
@@ -209,6 +225,50 @@ const VisiteContent: React.FC = () => {
                     </div>
                   </div>
                 ))}
+
+                {/* Admin: Gallery images management */}
+                {isEditing && (
+                  <div className="col-span-2 mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-bold text-blue-800">Images galerie ({getGalleryImages(sectionIndex).length} photos)</h4>
+                      <button
+                        onClick={() => addGalleryImageToSection(sectionIndex)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-colors"
+                      >
+                        <Plus className="w-3 h-3" /> Ajouter à la galerie
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                      {getGalleryImages(sectionIndex).map((gImg: any, gIdx: number) => (
+                        <div key={gIdx} className="relative group/gal rounded-lg overflow-hidden aspect-square">
+                          <EditableImage
+                            path={`sections.${sectionIndex}.galleryImages.${gIdx}.src`}
+                            src={gImg.src}
+                            alt={gImg.caption}
+                            folder="visite"
+                            className="w-full h-full"
+                            imgClassName="w-full h-full object-cover"
+                          />
+                          <button
+                            onClick={(e) => { e.stopPropagation(); removeGalleryImageFromSection(sectionIndex, gIdx); }}
+                            className="absolute top-1 right-1 z-30 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover/gal:opacity-100 transition-opacity hover:bg-red-700"
+                            title="Supprimer"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                          <div className="absolute bottom-0 left-0 right-0 px-1 py-0.5 bg-black/50 z-20">
+                            <EditableText
+                              as="p"
+                              path={`sections.${sectionIndex}.galleryImages.${gIdx}.caption`}
+                              value={gImg.caption}
+                              className="text-white text-[10px] truncate"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
