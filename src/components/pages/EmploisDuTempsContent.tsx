@@ -70,8 +70,8 @@ const EmploisDuTempsContent: React.FC = () => {
         size="medium"
       />
 
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-10 bg-gray-50">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           {/* Tabs */}
           <div className="flex flex-wrap justify-center gap-2 mb-10">
             {data.classes.map((cls, index) => (
@@ -113,7 +113,7 @@ const EmploisDuTempsContent: React.FC = () => {
 
           {/* PDF content area */}
           {currentClass && (
-            <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+            <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
               <FileText className="w-16 h-16 text-orange-500 mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
                 Emploi du temps — {currentClass.name}
@@ -143,12 +143,12 @@ const EmploisDuTempsContent: React.FC = () => {
                 )}
               </div>
 
-              {/* PDF Preview iframe */}
-              <div className="mt-8 rounded-xl overflow-hidden border border-gray-200">
+              {/* PDF Preview iframe — full width */}
+              <div className="mt-6 rounded-xl overflow-hidden border border-gray-200">
                 <iframe
                   src={currentClass.pdf}
                   title={`Emploi du temps ${currentClass.name}`}
-                  className="w-full h-[600px]"
+                  className="w-full h-[85vh]"
                 />
               </div>
             </div>
