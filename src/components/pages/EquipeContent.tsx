@@ -67,48 +67,58 @@ const EquipeContent: React.FC = () => {
     return (
       <div
         ref={expandRef}
-        className="col-span-full bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden animate-in slide-in-from-top-2 duration-300"
+        className="col-span-full rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-top-2 duration-300 bg-[#181818] relative"
       >
-        <div className="flex flex-col md:flex-row">
-          {/* Large photo */}
-          <div className="md:w-1/3 aspect-[3/4] md:aspect-auto relative flex-shrink-0">
-            <EditableImage
-              path={`members.${expandedIndex}.photo`}
-              src={member.photo}
-              alt={member.name}
-              folder="equipe"
-              className="w-full h-full min-h-[280px]"
-              imgClassName="w-full h-full object-cover"
-            />
-          </div>
-          {/* Info */}
-          <div className="flex-1 p-6 md:p-10 flex flex-col justify-center relative">
-            <button
-              onClick={() => setExpandedIndex(null)}
-              className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors text-gray-600"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        {/* Close button */}
+        <button
+          onClick={() => setExpandedIndex(null)}
+          className="absolute top-4 right-4 z-30 p-2 rounded-full bg-[#181818] border border-gray-600 hover:border-white transition-colors text-white"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        {/* Hero image with gradient */}
+        <div className="relative w-full aspect-[16/7] md:aspect-[16/5] overflow-hidden">
+          <EditableImage
+            path={`members.${expandedIndex}.photo`}
+            src={member.photo}
+            alt={member.name}
+            folder="equipe"
+            className="w-full h-full"
+            imgClassName="w-full h-full object-cover object-top"
+          />
+          {/* Netflix-style gradient: bottom fade to dark */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#181818] via-[#181818]/40 to-transparent" />
+
+          {/* Name + title overlaid at bottom of image */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-10">
             <EditableText
               as="h2"
               path={`members.${expandedIndex}.name`}
               value={member.name}
-              className="text-2xl md:text-3xl font-bold text-gray-900 mb-2"
+              className="text-white text-2xl md:text-4xl font-extrabold drop-shadow-lg mb-1"
             />
-            <EditableText
-              as="p"
-              path={`members.${expandedIndex}.title`}
-              value={member.title}
-              className="text-orange-600 font-semibold text-base md:text-lg mb-4"
-            />
-            <EditableText
-              as="p"
-              multiline
-              path={`members.${expandedIndex}.description`}
-              value={member.description}
-              className="text-gray-600 text-base leading-relaxed"
-            />
+            <div className="flex items-center gap-3">
+              <span className="w-8 h-1 bg-orange-500 rounded-full" />
+              <EditableText
+                as="p"
+                path={`members.${expandedIndex}.title`}
+                value={member.title}
+                className="text-orange-400 font-semibold text-sm md:text-lg"
+              />
+            </div>
           </div>
+        </div>
+
+        {/* Description area — dark background */}
+        <div className="px-6 md:px-10 pb-8 pt-2">
+          <EditableText
+            as="p"
+            multiline
+            path={`members.${expandedIndex}.description`}
+            value={member.description}
+            className="text-gray-300 text-sm md:text-base leading-relaxed max-w-3xl"
+          />
         </div>
       </div>
     );
