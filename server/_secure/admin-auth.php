@@ -5,7 +5,7 @@ const ADMIN_LOCKOUTS_FILE = __DIR__ . '/admin-lockouts.json';
 const ADMIN_LEGACY_HTPASSWD_FILE = __DIR__ . '/.htpasswd';
 const ADMIN_MAX_FAILED_ATTEMPTS = 10;
 const ADMIN_LOCKOUT_SECONDS = 1800;
-const ADMIN_PASSWORD_MIN_LENGTH = 16;
+const ADMIN_PASSWORD_MIN_LENGTH = 8;
 const ADMIN_PASSWORD_HISTORY_LIMIT = 10;
 
 function adminAuthJsonResponse($statusCode, $body, $withChallenge = false) {
@@ -220,38 +220,11 @@ function adminAuthSaveOperators($operatorsById) {
 
 function adminAuthPasswordPolicyError($operatorId, $plainPassword, $operatorsById, $currentOperator) {
   if (!is_string($plainPassword) || strlen($plainPassword) < ADMIN_PASSWORD_MIN_LENGTH) {
-    return 'Le mot de passe doit contenir au moins 16 caractères.';
+    return 'Le mot de passe doit contenir au moins 8 caractères.';
   }
 
-  if (!preg_match('/[A-Z]/', $plainPassword) || !preg_match('/[a-z]/', $plainPassword) || !preg_match('/[0-9]/', $plainPassword) || !preg_match('/[^A-Za-z0-9]/', $plainPassword)) {
-    return 'Le mot de passe doit contenir majuscule, minuscule, chiffre et caractère spécial.';
-  }
-
-  $lowerPassword = strtolower($plainPassword);
-  $forbiddenFragments = [
-    strtolower((string)$operatorId),
-    'admin',
-    'cpvf',
-    'vision',
-    'ecole',
-    'college',
-    date('Y'),
-    date('Y', strtotime('-1 year')),
-    date('Y', strtotime('+1 year')),
-  ];
-  foreach ($forbiddenFragments as $fragment) {
-    if (strlen($fragment) >= 3 && strpos($lowerPassword, $fragment) !== false) {
-      return 'Le mot de passe contient un motif interdit.';
-    }
-  }
-
-  foreach ($operatorsById as $operator) {
-    if (!is_array($operator) || !isset($operator['passwordHash'])) {
-      continue;
-    }
-    if (adminAuthHashMatches($plainPassword, (string)$operator['passwordHash'])) {
-      return 'Ce mot de passe est déjà utilisé par un autre opérateur.';
-    }
+  if (!preg_match('/[A-Z]/', $plainPassword) || !preg_match('/[a-z]/', $plainPassword) || !preg_match('/[0-9]/', $plainPassword)) {
+    return 'Le mot de passe doit contenir majuscule, minuscule et chiffre.';
   }
 
   if (is_array($currentOperator) && isset($currentOperator['passwordHistory']) && is_array($currentOperator['passwordHistory'])) {

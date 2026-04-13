@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import SectionTitle from '@/components/ui/SectionTitle';
 import { homeContent } from '@/data/content';
@@ -19,7 +19,10 @@ import {
   X,
   ArrowUpRight,
   Plus,
-  Trash2
+  Trash2,
+  ImagePlus,
+  Loader2,
+  Images
 } from 'lucide-react';
 
 type HomeData = typeof homeContent;
@@ -82,6 +85,105 @@ const HomeContent: React.FC = () => {
   const [showVideo, setShowVideo] = useState(false);
   const founderVideoUrl = sections.motFondateur?.videoUrl || homeContent.sections.motFondateur.videoUrl;
 
+  // Slider manager state
+  const [sliderManagerOpen, setSliderManagerOpen] = useState(false);
+  const [isUploadingSlides, setIsUploadingSlides] = useState(false);
+  const sliderInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSliderMultiUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || !editSession) return;
+    setIsUploadingSlides(true);
+    const currentImages = [...heroImages];
+    const creds = sessionStorage.getItem('cpvf_admin_auth');
+    const headers: Record<string, string> = {};
+    if (creds) headers['Authorization'] = `Basic ${creds}`;
+
+    for (const file of Array.from(files)) {
+      try {
+        const formData = new FormData();
+        formData.append('image', file);
+        const res = await fetch('/api/upload-image/?folder=accueil', {
+          method: 'POST', headers, body: formData,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.url) currentImages.push(data.url);
+        }
+      } catch { /* skip failed */ }
+    }
+    editSession.updateAtPath('hero.slideshowImages', currentImages);
+    setIsUploadingSlides(false);
+    if (sliderInputRef.current) sliderInputRef.current.value = '';
+  };
+
+  const removeSlide = (index: number) => {
+    if (!editSession) return;
+    const newImages = heroImages.filter((_, i) => i !== index);
+    editSession.updateAtPath('hero.slideshowImages', newImages);
+    if (slideIndex >= newImages.length) setSlideIndex(Math.max(0, newImages.length - 1));
+  };
+
+  // Honor roll levels
+  const addHonorRollLevel = () => {
+    if (!editSession) return;
+    const current = excellenceShowcase.honorRoll?.levels || [];
+    editSession.updateAtPath('sections.excellenceShowcase.honorRoll.levels', [...current, { label: '', linkUrl: '' }]);
+  };
+  const removeHonorRollLevel = (i: number) => {
+    if (!editSession) return;
+    const current = excellenceShowcase.honorRoll?.levels || [];
+    editSession.updateAtPath('sections.excellenceShowcase.honorRoll.levels', current.filter((_, idx) => idx !== i));
+  };
+
+  // Exam cards
+  const addExamCard = () => {
+    if (!editSession) return;
+    const current = excellenceShowcase.examCards || [];
+    editSession.updateAtPath('sections.excellenceShowcase.examCards', [...current, { image: '/placeholder.svg', title: '', subtitle: '', linkUrl: '' }]);
+  };
+  const removeExamCard = (i: number) => {
+    if (!editSession) return;
+    const current = excellenceShowcase.examCards || [];
+    editSession.updateAtPath('sections.excellenceShowcase.examCards', current.filter((_, idx) => idx !== i));
+  };
+
+  // Parents box extra links
+  const parentsBoxLinks: { text: string; url: string }[] = practicalInfo.rightColumn.parentsBoxExtraLinks || [];
+
+  // Reusable document upload handler
+  const handleDocumentUpload = async (file: File, updatePath: string) => {
+    if (!editSession) return;
+    const formData = new FormData();
+    formData.append('image', file);
+    const creds = sessionStorage.getItem('cpvf_admin_auth');
+    const headers: Record<string, string> = {};
+    if (creds) headers['Authorization'] = `Basic ${creds}`;
+
+    try {
+      const res = await fetch('/api/upload-image/?folder=documents', {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.url) editSession.updateAtPath(updatePath, data.url);
+      }
+    } catch (err) {
+      console.error('Upload error:', err);
+    }
+  };
+
+  const addParentsBoxLink = () => {
+    if (!editSession) return;
+    editSession.updateAtPath('sections.practicalInfo.rightColumn.parentsBoxExtraLinks', [...parentsBoxLinks, { text: 'Nouveau lien', url: '' }]);
+  };
+  const removeParentsBoxLink = (i: number) => {
+    if (!editSession) return;
+    editSession.updateAtPath('sections.practicalInfo.rightColumn.parentsBoxExtraLinks', parentsBoxLinks.filter((_, idx) => idx !== i));
+  };
+
   const addPracticalTextItem = (path: 'sections.practicalInfo.leftColumn.trimesters' | 'sections.practicalInfo.leftColumn.breaks') => {
     if (!editSession) return;
     const currentItems = path === 'sections.practicalInfo.leftColumn.trimesters'
@@ -133,21 +235,26 @@ const HomeContent: React.FC = () => {
         <div className="absolute inset-0">
           {heroImages.map((src, i) => (
             <div
-              key={src}
+              key={src + i}
               className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
               style={{ opacity: i === slideIndex ? 1 : 0 }}
             >
-              <EditableImage
-                path={`hero.slideshowImages.${i}`}
-                src={src}
-                alt=""
-                className="w-full h-full"
-                imgClassName="w-full h-full object-cover"
-                folder="accueil"
-              />
+              <img src={src} alt="" className="w-full h-full object-cover" loading={i === 0 ? 'eager' : 'lazy'} />
             </div>
           ))}
         </div>
+
+        {/* Admin: floating slider manager button */}
+        {editSession?.isEditing && (
+          <button
+            onClick={() => setSliderManagerOpen((v) => !v)}
+            className="absolute top-4 right-4 z-30 flex items-center gap-2 bg-white/95 backdrop-blur-sm text-orange-800 px-4 py-2.5 rounded-xl shadow-lg hover:bg-white transition-colors text-sm font-bold"
+          >
+            <Images className="w-5 h-5" />
+            Gérer le slider ({heroImages.length} images)
+          </button>
+        )}
+
         {/* Slide indicators */}
         <div className="absolute bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 flex gap-2 z-10">
           {heroImages.map((_, i) => (
@@ -174,6 +281,83 @@ const HomeContent: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Admin: Slider manager panel */}
+      {editSession?.isEditing && sliderManagerOpen && (
+        <section className="bg-gray-900 border-b-4 border-orange-500">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-white font-bold text-lg flex items-center gap-2">
+                <Images className="w-5 h-5 text-orange-400" />
+                Gestion du slider — {heroImages.length} image{heroImages.length > 1 ? 's' : ''}
+              </h3>
+              <div className="flex items-center gap-3">
+                <input
+                  ref={sliderInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  className="hidden"
+                  onChange={handleSliderMultiUpload}
+                />
+                <button
+                  onClick={() => sliderInputRef.current?.click()}
+                  disabled={isUploadingSlides}
+                  className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-orange-700 transition-colors disabled:opacity-50"
+                >
+                  {isUploadingSlides ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> Upload en cours...</>
+                  ) : (
+                    <><ImagePlus className="w-4 h-4" /> Ajouter des images</>
+                  )}
+                </button>
+                <button
+                  onClick={() => setSliderManagerOpen(false)}
+                  className="p-2 rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+              {heroImages.map((src, i) => (
+                <div
+                  key={src + i}
+                  className={`relative group rounded-lg overflow-hidden border-2 cursor-pointer transition-all ${
+                    i === slideIndex ? 'border-orange-500 ring-2 ring-orange-500/50' : 'border-gray-700 hover:border-gray-500'
+                  }`}
+                  onClick={() => setSlideIndex(i)}
+                >
+                  <div className="aspect-video">
+                    <img src={src} alt={`Slide ${i + 1}`} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
+                  <span className="absolute top-1 left-1 bg-black/70 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                    {i + 1}
+                  </span>
+                  {heroImages.length > 1 && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); removeSlide(i); }}
+                      className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700"
+                      title="Supprimer cette image"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+              ))}
+              {/* Add placeholder */}
+              <button
+                onClick={() => sliderInputRef.current?.click()}
+                className="aspect-video rounded-lg border-2 border-dashed border-gray-600 flex flex-col items-center justify-center text-gray-500 hover:border-orange-500 hover:text-orange-400 transition-colors"
+              >
+                <Plus className="w-6 h-6" />
+                <span className="text-[10px] font-semibold mt-1">Ajouter</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Exam Results Blocks */}
       <section className="pt-2 pb-10 bg-white relative z-10">
@@ -490,16 +674,48 @@ const HomeContent: React.FC = () => {
                       value={item.body}
                       className="text-gray-700 text-sm leading-relaxed mb-3"
                     />
-                    {item.linkText && item.linkUrl && (
-                      <a
-                        href={item.linkUrl}
-                        target={item.linkUrl.endsWith('.pdf') ? '_blank' : undefined}
-                        rel={item.linkUrl.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
-                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-700 hover:text-blue-900 transition-colors"
-                      >
-                        <ArrowRight className="w-4 h-4" />
-                        {item.linkText}
-                      </a>
+                    {editSession?.isEditing ? (
+                      <div className="mt-2 bg-blue-50 rounded-lg p-3 border border-blue-200 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <label className="text-[11px] font-bold text-blue-800 shrink-0">Texte du lien :</label>
+                          <EditableText
+                            as="span"
+                            path={`sections.actualites.items.${index}.linkText`}
+                            value={item.linkText}
+                            className="text-sm text-blue-900 bg-white rounded px-2 py-1 border border-blue-200 flex-1"
+                          />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <label className="text-[11px] font-bold text-blue-800 shrink-0">🔗 URL :</label>
+                          <EditableText
+                            as="span"
+                            path={`sections.actualites.items.${index}.linkUrl`}
+                            value={item.linkUrl}
+                            className="text-sm text-blue-900 bg-white rounded px-2 py-1 border border-blue-200 flex-1 break-all"
+                          />
+                          <label className="cursor-pointer p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors" title="Uploader un PDF">
+                            <input
+                              type="file"
+                              accept=".pdf"
+                              className="hidden"
+                              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleDocumentUpload(f, `sections.actualites.items.${index}.linkUrl`); }}
+                            />
+                            <span className="text-xs font-bold">📄</span>
+                          </label>
+                        </div>
+                      </div>
+                    ) : (
+                      item.linkText && item.linkUrl && (
+                        <a
+                          href={item.linkUrl}
+                          target={item.linkUrl.endsWith('.pdf') ? '_blank' : undefined}
+                          rel={item.linkUrl.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
+                          className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-700 hover:text-blue-900 transition-colors"
+                        >
+                          <ArrowRight className="w-4 h-4" />
+                          {item.linkText}
+                        </a>
+                      )
                     )}
                   </div>
                 ))}
@@ -565,6 +781,15 @@ const HomeContent: React.FC = () => {
                   className="text-center text-lg md:text-xl font-bold underline underline-offset-4 mb-4"
                 />
 
+                {editSession?.isEditing && (
+                  <button
+                    onClick={addHonorRollLevel}
+                    className="mx-auto mb-3 inline-flex items-center gap-2 bg-green-600 text-white px-3 py-1.5 rounded-lg font-semibold text-sm hover:bg-green-700 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" /> Ajouter un niveau
+                  </button>
+                )}
+
                 <div className="grid grid-cols-2 gap-x-6 gap-y-3 max-w-sm mx-auto w-full">
                   {(excellenceShowcase.honorRoll?.levels || []).map((level: HonorRollLevel, index: number) => {
                     const hasLink = !!level.linkUrl;
@@ -580,35 +805,63 @@ const HomeContent: React.FC = () => {
                       </>
                     );
 
-                    return hasLink ? (
-                      <a
-                        key={index}
-                        href={level.linkUrl}
-                        target={level.linkUrl.endsWith('.pdf') ? '_blank' : undefined}
-                        rel={level.linkUrl.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
-                        className="inline-flex items-center gap-2 hover:text-orange-100 transition-colors"
-                      >
-                        {levelContent}
-                      </a>
-                    ) : (
-                      <div key={index} className="inline-flex items-center gap-2">
-                        {levelContent}
+                    return (
+                      <div key={index} className="relative">
+                        {editSession?.isEditing && (
+                          <button
+                            onClick={() => removeHonorRollLevel(index)}
+                            className="absolute -top-2 -right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700 z-10"
+                            title="Supprimer ce niveau"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        )}
+                        {hasLink && !editSession?.isEditing ? (
+                          <a
+                            href={level.linkUrl}
+                            target={level.linkUrl.endsWith('.pdf') ? '_blank' : undefined}
+                            rel={level.linkUrl.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
+                            className="inline-flex items-center gap-2 hover:text-orange-100 transition-colors"
+                          >
+                            {levelContent}
+                          </a>
+                        ) : (
+                          <div className="inline-flex items-center gap-2">
+                            {levelContent}
+                          </div>
+                        )}
                       </div>
                     );
                   })}
                 </div>
 
-                <div className="mt-5 space-y-2">
-                  {(excellenceShowcase.honorRoll?.levels || []).map((level: HonorRollLevel, index: number) => (
-                    <EditableText
-                      key={index}
-                      as="p"
-                      path={`sections.excellenceShowcase.honorRoll.levels.${index}.linkUrl`}
-                      value={level.linkUrl || ''}
-                      className="text-[11px] md:text-xs text-white/75 text-center break-all"
-                    />
-                  ))}
-                </div>
+                {editSession?.isEditing && (excellenceShowcase.honorRoll?.levels || []).length > 0 && (
+                  <div className="mt-4 bg-white/10 rounded-lg p-3 border border-white/20 space-y-2">
+                    <p className="text-[11px] font-bold text-yellow-300">🔗 URLs des documents par niveau :</p>
+                    {(excellenceShowcase.honorRoll?.levels || []).map((level: HonorRollLevel, index: number) => (
+                      <div key={index} className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] text-white/60 font-bold shrink-0">{level.label || `Niveau ${index + 1}`} →</span>
+                          <EditableText
+                            as="p"
+                            path={`sections.excellenceShowcase.honorRoll.levels.${index}.linkUrl`}
+                            value={level.linkUrl || ''}
+                            className="text-sm text-white break-all bg-white/10 rounded px-2 py-1 border border-white/20 flex-1"
+                          />
+                          <label className="cursor-pointer p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors" title="Uploader un PDF">
+                            <input
+                              type="file"
+                              accept=".pdf"
+                              className="hidden"
+                              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleDocumentUpload(f, `sections.excellenceShowcase.honorRoll.levels.${index}.linkUrl`); }}
+                            />
+                            <span className="text-xs font-bold">📄</span>
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -621,11 +874,29 @@ const HomeContent: React.FC = () => {
               className="text-center text-xl md:text-3xl font-black uppercase text-[#b58d3c] mb-4 md:mb-6"
             />
 
+            {editSession?.isEditing && (
+              <button
+                onClick={addExamCard}
+                className="mx-auto mb-4 inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-green-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" /> Ajouter une carte examen
+              </button>
+            )}
+
             <div className="grid md:grid-cols-2 gap-5 md:gap-7">
               {(excellenceShowcase.examCards || []).map((card: ExamCard, index: number) => {
                 const hasLink = !!card.linkUrl;
                 const cardInner = (
-                  <div className="group rounded-[24px] overflow-hidden bg-white shadow-xl border border-orange-100 hover:shadow-2xl transition-all">
+                  <div className="group rounded-[24px] overflow-hidden bg-white shadow-xl border border-orange-100 hover:shadow-2xl transition-all relative">
+                    {editSession?.isEditing && (
+                      <button
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeExamCard(index); }}
+                        className="absolute top-3 right-3 z-20 p-2 bg-red-600 text-white rounded-full hover:bg-red-700 shadow-lg"
+                        title="Supprimer cette carte"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                     <div className="aspect-[4/3] overflow-hidden relative">
                       <EditableImage
                         path={`sections.excellenceShowcase.examCards.${index}.image`}
@@ -650,18 +921,36 @@ const HomeContent: React.FC = () => {
                         />
                       </div>
                     </div>
-                    <div className="px-4 py-3 bg-orange-50 border-t border-orange-100">
-                      <EditableText
-                        as="p"
-                        path={`sections.excellenceShowcase.examCards.${index}.linkUrl`}
-                        value={card.linkUrl || ''}
-                        className="text-xs md:text-sm text-orange-800 break-all"
-                      />
-                    </div>
+                    {editSession?.isEditing ? (
+                      <div className="px-4 py-3 bg-orange-50 border-t border-orange-100">
+                        <label className="text-[11px] font-bold text-orange-800 block mb-1">🔗 URL du lien (page ou document) :</label>
+                        <div className="flex items-center gap-2">
+                          <EditableText
+                            as="p"
+                            path={`sections.excellenceShowcase.examCards.${index}.linkUrl`}
+                            value={card.linkUrl || ''}
+                            className="text-sm text-orange-900 break-all bg-white rounded px-2 py-1 border border-orange-200 flex-1"
+                          />
+                          <label className="cursor-pointer p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors" title="Uploader un PDF">
+                            <input
+                              type="file"
+                              accept=".pdf"
+                              className="hidden"
+                              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleDocumentUpload(f, `sections.excellenceShowcase.examCards.${index}.linkUrl`); }}
+                            />
+                            <span className="text-xs font-bold">📄</span>
+                          </label>
+                        </div>
+                      </div>
+                    ) : hasLink ? (
+                      <div className="px-4 py-3 bg-orange-50 border-t border-orange-100">
+                        <span className="text-xs md:text-sm text-orange-800 break-all">{card.linkUrl}</span>
+                      </div>
+                    ) : null}
                   </div>
                 );
 
-                return hasLink ? (
+                return hasLink && !editSession?.isEditing ? (
                   <a
                     key={index}
                     href={card.linkUrl}
@@ -807,12 +1096,35 @@ const HomeContent: React.FC = () => {
                   value={practicalInfo.leftColumn.footerLinkText}
                   className="text-blue-700 underline underline-offset-2 font-semibold"
                 />
-                <EditableText
-                  as="p"
-                  path="sections.practicalInfo.leftColumn.footerLinkUrl"
-                  value={practicalInfo.leftColumn.footerLinkUrl}
-                  className="text-xs md:text-sm text-blue-900/70 break-all mt-1"
-                />
+                {editSession?.isEditing ? (
+                  <div className="mt-2 bg-white/80 rounded-lg p-2 border border-blue-300">
+                    <label className="text-[11px] font-bold text-blue-800 block mb-1">🔗 URL du lien :</label>
+                    <div className="flex items-center gap-2">
+                      <EditableText
+                        as="p"
+                        path="sections.practicalInfo.leftColumn.footerLinkUrl"
+                        value={practicalInfo.leftColumn.footerLinkUrl}
+                        className="text-sm text-blue-900 break-all bg-white rounded px-2 py-1 border border-blue-200 flex-1"
+                      />
+                      <label className="cursor-pointer p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors" title="Uploader un PDF">
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          className="hidden"
+                          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleDocumentUpload(f, 'sections.practicalInfo.leftColumn.footerLinkUrl'); }}
+                        />
+                        <span className="text-xs font-bold">📄</span>
+                      </label>
+                    </div>
+                  </div>
+                ) : (
+                  <EditableText
+                    as="p"
+                    path="sections.practicalInfo.leftColumn.footerLinkUrl"
+                    value={practicalInfo.leftColumn.footerLinkUrl}
+                    className="text-xs md:text-sm text-blue-900/70 break-all mt-1 hidden"
+                  />
+                )}
               </div>
             </div>
 
@@ -864,17 +1176,31 @@ const HomeContent: React.FC = () => {
                         </div>
                       ))}
                     </div>
-                    <div className="mt-3 space-y-1">
-                      {practicalInfo.rightColumn.firstCycleLinks.map((item, index) => (
-                        <EditableText
-                          key={index}
-                          as="p"
-                          path={`sections.practicalInfo.rightColumn.firstCycleLinks.${index}.linkUrl`}
-                          value={item.linkUrl}
-                          className="text-xs text-white/70 break-all"
-                        />
-                      ))}
-                    </div>
+                    {editSession?.isEditing && (
+                      <div className="mt-3 space-y-2 bg-white/10 rounded-lg p-3 border border-white/20">
+                        <p className="text-[11px] font-bold text-yellow-300">🔗 URLs des liens :</p>
+                        {practicalInfo.rightColumn.firstCycleLinks.map((item, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <span className="text-[11px] text-white/60 font-bold shrink-0">{item.label} →</span>
+                            <EditableText
+                              as="p"
+                              path={`sections.practicalInfo.rightColumn.firstCycleLinks.${index}.linkUrl`}
+                              value={item.linkUrl}
+                              className="text-sm text-white break-all bg-white/10 rounded px-2 py-1 border border-white/20 flex-1"
+                            />
+                            <label className="cursor-pointer p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors" title="Uploader un PDF">
+                              <input
+                                type="file"
+                                accept=".pdf"
+                                className="hidden"
+                                onChange={(e) => { const f = e.target.files?.[0]; if (f) handleDocumentUpload(f, `sections.practicalInfo.rightColumn.firstCycleLinks.${index}.linkUrl`); }}
+                              />
+                              <span className="text-xs font-bold">📄</span>
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -915,17 +1241,31 @@ const HomeContent: React.FC = () => {
                         </div>
                       ))}
                     </div>
-                    <div className="mt-3 space-y-1">
-                      {practicalInfo.rightColumn.secondCycleLinks.map((item, index) => (
-                        <EditableText
-                          key={index}
-                          as="p"
-                          path={`sections.practicalInfo.rightColumn.secondCycleLinks.${index}.linkUrl`}
-                          value={item.linkUrl}
-                          className="text-xs text-white/70 break-all"
-                        />
-                      ))}
-                    </div>
+                    {editSession?.isEditing && (
+                      <div className="mt-3 space-y-2 bg-white/10 rounded-lg p-3 border border-white/20">
+                        <p className="text-[11px] font-bold text-yellow-300">🔗 URLs des liens :</p>
+                        {practicalInfo.rightColumn.secondCycleLinks.map((item, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <span className="text-[11px] text-white/60 font-bold shrink-0">{item.label} →</span>
+                            <EditableText
+                              as="p"
+                              path={`sections.practicalInfo.rightColumn.secondCycleLinks.${index}.linkUrl`}
+                              value={item.linkUrl}
+                              className="text-sm text-white break-all bg-white/10 rounded px-2 py-1 border border-white/20 flex-1"
+                            />
+                            <label className="cursor-pointer p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors" title="Uploader un PDF">
+                              <input
+                                type="file"
+                                accept=".pdf"
+                                className="hidden"
+                                onChange={(e) => { const f = e.target.files?.[0]; if (f) handleDocumentUpload(f, `sections.practicalInfo.rightColumn.secondCycleLinks.${index}.linkUrl`); }}
+                              />
+                              <span className="text-xs font-bold">📄</span>
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -947,12 +1287,28 @@ const HomeContent: React.FC = () => {
                       value={practicalInfo.rightColumn.calendarLinkText}
                       className="underline underline-offset-2 text-yellow-300 font-semibold inline"
                     />
-                    <EditableText
-                      as="p"
-                      path="sections.practicalInfo.rightColumn.calendarLinkUrl"
-                      value={practicalInfo.rightColumn.calendarLinkUrl}
-                      className="text-xs text-white/70 break-all mt-2"
-                    />
+                    {editSession?.isEditing ? (
+                      <div className="mt-2 bg-white/10 rounded-lg p-2 border border-white/20">
+                        <label className="text-[11px] font-bold text-yellow-300 block mb-1">🔗 URL du lien calendrier :</label>
+                        <div className="flex items-center gap-2">
+                          <EditableText
+                            as="p"
+                            path="sections.practicalInfo.rightColumn.calendarLinkUrl"
+                            value={practicalInfo.rightColumn.calendarLinkUrl}
+                            className="text-sm text-white break-all bg-white/10 rounded px-2 py-1 border border-white/20 flex-1"
+                          />
+                          <label className="cursor-pointer p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors" title="Uploader un PDF">
+                            <input
+                              type="file"
+                              accept=".pdf"
+                              className="hidden"
+                              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleDocumentUpload(f, 'sections.practicalInfo.rightColumn.calendarLinkUrl'); }}
+                            />
+                            <span className="text-xs font-bold">📄</span>
+                          </label>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -986,12 +1342,90 @@ const HomeContent: React.FC = () => {
                   value={practicalInfo.rightColumn.parentsBoxLinkText}
                   className="underline underline-offset-2 font-semibold text-white"
                 />
-                <EditableText
-                  as="p"
-                  path="sections.practicalInfo.rightColumn.parentsBoxLinkUrl"
-                  value={practicalInfo.rightColumn.parentsBoxLinkUrl}
-                  className="text-xs text-white/70 break-all mt-2"
-                />
+                {editSession?.isEditing ? (
+                  <div className="mt-2 bg-white/10 rounded-lg p-2 border border-white/20">
+                    <label className="text-[11px] font-bold text-yellow-300 block mb-1">🔗 URL du lien principal :</label>
+                    <div className="flex items-center gap-2">
+                      <EditableText
+                        as="p"
+                        path="sections.practicalInfo.rightColumn.parentsBoxLinkUrl"
+                        value={practicalInfo.rightColumn.parentsBoxLinkUrl}
+                        className="text-sm text-white break-all bg-white/10 rounded px-2 py-1 border border-white/20 flex-1"
+                      />
+                      <label className="cursor-pointer p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors" title="Uploader un PDF">
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          className="hidden"
+                          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleDocumentUpload(f, 'sections.practicalInfo.rightColumn.parentsBoxLinkUrl'); }}
+                        />
+                        <span className="text-xs font-bold">📄</span>
+                      </label>
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* Extra links for parents box */}
+                {parentsBoxLinks.map((link, i) => (
+                  <div key={i} className="mt-3">
+                    {editSession?.isEditing ? (
+                      <div className="bg-white/10 rounded-lg p-3 border border-white/20 space-y-2 relative">
+                        <button
+                          onClick={() => removeParentsBoxLink(i)}
+                          className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700"
+                          title="Supprimer ce lien"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                        <div className="flex items-center gap-2">
+                          <label className="text-[11px] font-bold text-yellow-300 shrink-0">Texte :</label>
+                          <EditableText
+                            as="span"
+                            path={`sections.practicalInfo.rightColumn.parentsBoxExtraLinks.${i}.text`}
+                            value={link.text}
+                            className="text-sm text-white bg-white/10 rounded px-2 py-1 border border-white/20 flex-1"
+                          />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <label className="text-[11px] font-bold text-yellow-300 shrink-0">🔗 URL :</label>
+                          <EditableText
+                            as="span"
+                            path={`sections.practicalInfo.rightColumn.parentsBoxExtraLinks.${i}.url`}
+                            value={link.url}
+                            className="text-sm text-white bg-white/10 rounded px-2 py-1 border border-white/20 flex-1 break-all"
+                          />
+                          <label className="cursor-pointer p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors" title="Uploader un PDF">
+                            <input
+                              type="file"
+                              accept=".pdf"
+                              className="hidden"
+                              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleDocumentUpload(f, `sections.practicalInfo.rightColumn.parentsBoxExtraLinks.${i}.url`); }}
+                            />
+                            <span className="text-xs font-bold">📄</span>
+                          </label>
+                        </div>
+                      </div>
+                    ) : link.url ? (
+                      <a
+                        href={link.url}
+                        target={link.url.endsWith('.pdf') ? '_blank' : undefined}
+                        rel={link.url.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
+                        className="underline underline-offset-2 font-semibold text-white hover:text-white/80 transition-colors block"
+                      >
+                        {link.text}
+                      </a>
+                    ) : null}
+                  </div>
+                ))}
+
+                {editSession?.isEditing && (
+                  <button
+                    onClick={addParentsBoxLink}
+                    className="mt-4 inline-flex items-center gap-2 bg-green-600 text-white px-3 py-1.5 rounded-lg font-semibold text-sm hover:bg-green-700 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" /> Ajouter un lien
+                  </button>
+                )}
               </div>
             </div>
           </div>

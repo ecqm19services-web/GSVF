@@ -147,7 +147,7 @@ const AdminLoginPage: React.FC = () => {
                 </div>
 
                 <p className="text-xs text-amber-700 bg-amber-50 rounded-lg px-3 py-2">
-                  Changement obligatoire: 16+ caractères, majuscule, minuscule, chiffre et caractère spécial.
+                  Changement obligatoire: 8+ caractères, majuscule, minuscule et chiffre.
                 </p>
               </>
             )}

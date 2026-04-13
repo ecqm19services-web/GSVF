@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 
 const DEFAULT_COUNT = 10;
-const MIN_PASSWORD_LEN = 18;
+const MIN_PASSWORD_LEN = 8;
 const OPERATOR_ID_PREFIX = 'op';
 
 const projectRoot = path.resolve(__dirname, '..');
@@ -37,7 +37,7 @@ function toPhpCompatibleBcrypt(hash) {
 }
 
 function randomPassword(length) {
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*+-_=.?';
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
   let out = '';
   while (out.length < length) {
     const bytes = crypto.randomBytes(length);

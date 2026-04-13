@@ -228,7 +228,8 @@ export const homeContent = {
         parentsBoxTitle: "Chers Parents,",
         parentsBoxBody: "Retrouvez dans cet espace les informations utiles destinées aux parents : communications importantes, documents à consulter et indications pratiques pour accompagner la scolarité de votre enfant.\n\nCet encadré peut être mis à jour par l'administration selon les besoins de l'établissement.",
         parentsBoxLinkText: "Consulter les informations",
-        parentsBoxLinkUrl: ""
+        parentsBoxLinkUrl: "",
+        parentsBoxExtraLinks: [] as { text: string; url: string }[]
       }
     },
     motFondateur: {
