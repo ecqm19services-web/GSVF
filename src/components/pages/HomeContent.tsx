@@ -63,14 +63,21 @@ const HomeContent: React.FC = () => {
   // Activity gallery slider — items arranged as columns of 2 (rows), sliding by 2 columns
   const galleryItems: { src: string; caption: string }[] = sections.activityGallery?.items || homeContent.sections.activityGallery.items;
   const [galleryPage, setGalleryPage] = useState(0);
+  const [isMobileGallery, setIsMobileGallery] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobileGallery(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
   // Build columns: each column holds 2 items (top + bottom row)
   const galleryColumns: { src: string; caption: string }[][] = [];
   for (let i = 0; i < galleryItems.length; i += 2) {
     galleryColumns.push(galleryItems.slice(i, i + 2));
   }
   const totalCols = galleryColumns.length;
-  const visibleCols = 4;
-  const slideCols = 2;
+  const visibleCols = isMobileGallery ? 2 : 4;
+  const slideCols = isMobileGallery ? 1 : 2;
   const galleryMaxPage = Math.max(0, Math.ceil(Math.max(0, totalCols - visibleCols) / slideCols));
   const galleryContent = sections.activityGallery || homeContent.sections.activityGallery;
 
@@ -133,6 +140,8 @@ const HomeContent: React.FC = () => {
   const removeHonorRollLevel = (i: number) => {
     if (!editSession) return;
     const current = excellenceShowcase.honorRoll?.levels || [];
+    const level = current[i];
+    if (!confirm(`Voulez-vous vraiment supprimer le niveau "${level?.label || `Niveau ${i + 1}`}" ?\n\nCliquez sur OK pour confirmer la suppression, ou Annuler pour annuler.`)) return;
     editSession.updateAtPath('sections.excellenceShowcase.honorRoll.levels', current.filter((_, idx) => idx !== i));
   };
 
@@ -145,6 +154,8 @@ const HomeContent: React.FC = () => {
   const removeExamCard = (i: number) => {
     if (!editSession) return;
     const current = excellenceShowcase.examCards || [];
+    const card = current[i];
+    if (!confirm(`Voulez-vous vraiment supprimer la carte "${card?.title || `Carte ${i + 1}`}" ?\n\nCliquez sur OK pour confirmer la suppression, ou Annuler pour annuler.`)) return;
     editSession.updateAtPath('sections.excellenceShowcase.examCards', current.filter((_, idx) => idx !== i));
   };
 
@@ -155,13 +166,13 @@ const HomeContent: React.FC = () => {
   const handleDocumentUpload = async (file: File, updatePath: string) => {
     if (!editSession) return;
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('document', file);
     const creds = sessionStorage.getItem('cpvf_admin_auth');
     const headers: Record<string, string> = {};
     if (creds) headers['Authorization'] = `Basic ${creds}`;
 
     try {
-      const res = await fetch('/api/upload-image/?folder=documents', {
+      const res = await fetch('/api/upload-document/?folder=documents', {
         method: 'POST',
         headers,
         body: formData,
@@ -169,6 +180,9 @@ const HomeContent: React.FC = () => {
       if (res.ok) {
         const data = await res.json();
         if (data.url) editSession.updateAtPath(updatePath, data.url);
+      } else {
+        const err = await res.json().catch(() => ({ error: 'Upload failed' }));
+        console.error('Upload error:', err.error || 'Upload failed');
       }
     } catch (err) {
       console.error('Upload error:', err);
@@ -181,6 +195,8 @@ const HomeContent: React.FC = () => {
   };
   const removeParentsBoxLink = (i: number) => {
     if (!editSession) return;
+    const link = parentsBoxLinks[i];
+    if (!confirm(`Voulez-vous vraiment supprimer le lien "${link?.text || `Lien ${i + 1}`}" ?\n\nCliquez sur OK pour confirmer la suppression, ou Annuler pour annuler.`)) return;
     editSession.updateAtPath('sections.practicalInfo.rightColumn.parentsBoxExtraLinks', parentsBoxLinks.filter((_, idx) => idx !== i));
   };
 
@@ -195,13 +211,15 @@ const HomeContent: React.FC = () => {
 
   const removePracticalTextItem = (
     path: 'sections.practicalInfo.leftColumn.trimesters' | 'sections.practicalInfo.leftColumn.breaks',
-    indexToRemove: number
+    index: number
   ) => {
     if (!editSession) return;
     const currentItems = path === 'sections.practicalInfo.leftColumn.trimesters'
       ? practicalInfo.leftColumn.trimesters
       : practicalInfo.leftColumn.breaks;
-    const nextItems = currentItems.filter((_, index) => index !== indexToRemove);
+    const item = currentItems[index];
+    if (!confirm(`Voulez-vous vraiment supprimer "${item?.title || `Élément ${index + 1}`}" ?\n\nCliquez sur OK pour confirmer la suppression, ou Annuler pour annuler.`)) return;
+    const nextItems = currentItems.filter((_, idx) => idx !== index);
     editSession.updateAtPath(path, nextItems);
   };
 
@@ -224,6 +242,8 @@ const HomeContent: React.FC = () => {
     const currentItems = path === 'sections.practicalInfo.rightColumn.firstCycleLinks'
       ? practicalInfo.rightColumn.firstCycleLinks
       : practicalInfo.rightColumn.secondCycleLinks;
+    const item = currentItems[indexToRemove];
+    if (!confirm(`Voulez-vous vraiment supprimer "${item?.label || `Lien ${indexToRemove + 1}`}" ?\n\nCliquez sur OK pour confirmer la suppression, ou Annuler pour annuler.`)) return;
     const nextItems = currentItems.filter((_, index) => index !== indexToRemove);
     editSession.updateAtPath(path, nextItems);
   };
@@ -488,13 +508,28 @@ const HomeContent: React.FC = () => {
       <section className="py-8 md:py-10 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-[0.82fr_1.38fr] gap-8 lg:gap-10 items-stretch">
-            <div className="bg-emerald-600 text-white rounded-2xl p-6 md:p-8 shadow-lg flex flex-col justify-between min-h-[520px]">
+            <div
+              className="text-white rounded-2xl p-6 md:p-8 shadow-lg flex flex-col justify-between min-h-[520px]"
+              style={{ backgroundColor: galleryContent.cardColor || '#434a7a' }}
+            >
               <div>
+                {editSession?.isEditing && (
+                  <div className="mb-4 flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2 border border-white/20">
+                    <label className="text-[11px] font-bold text-yellow-300 shrink-0">🎨 Couleur du panneau :</label>
+                    <input
+                      type="color"
+                      value={galleryContent.cardColor || '#434a7a'}
+                      onChange={(e) => editSession.updateAtPath('sections.activityGallery.cardColor', e.target.value)}
+                      className="w-8 h-8 rounded cursor-pointer border-0 bg-transparent"
+                    />
+                    <span className="text-xs text-white/70 font-mono">{galleryContent.cardColor || '#434a7a'}</span>
+                  </div>
+                )}
                 <EditableText
                   as="p"
                   path="sections.activityGallery.subtitle"
                   value={galleryContent.subtitle || 'Moments forts'}
-                  className="text-sm md:text-base uppercase tracking-[0.2em] font-semibold text-emerald-100 mb-4"
+                  className="text-sm md:text-base uppercase tracking-[0.2em] font-semibold text-white/80 mb-4"
                 />
                 <EditableText
                   as="h2"
@@ -508,7 +543,7 @@ const HomeContent: React.FC = () => {
                   multiline
                   path="sections.activityGallery.description"
                   value={galleryContent.description || ''}
-                  className="text-base md:text-lg leading-relaxed text-emerald-50 mb-8"
+                  className="text-base md:text-lg leading-relaxed text-white/90 mb-8"
                 />
               </div>
               <div className="border-t border-white/25 pt-6">
@@ -522,7 +557,7 @@ const HomeContent: React.FC = () => {
               </div>
             </div>
 
-            <div className="relative bg-white rounded-2xl p-4 md:p-5 shadow-lg overflow-hidden min-h-[520px]">
+            <div className="relative bg-white rounded-2xl p-3 md:p-5 shadow-lg overflow-hidden min-h-[520px]">
               <button
                 onClick={() => setGalleryPage((p) => Math.max(0, p - 1))}
                 disabled={galleryPage === 0}
@@ -541,7 +576,7 @@ const HomeContent: React.FC = () => {
               <div className="overflow-hidden h-full">
                 <div
                   className="flex transition-transform duration-500 ease-in-out h-full"
-                  style={{ transform: `translateX(-${galleryPage * (100 / totalCols * slideCols)}%)` }}
+                  style={{ transform: `translateX(-${galleryPage * (100 / totalCols * slideCols)}%)`, minWidth: `${(totalCols / visibleCols) * 100}%` }}
                 >
                   {galleryColumns.map((col, colIdx) => (
                     <div
@@ -552,21 +587,23 @@ const HomeContent: React.FC = () => {
                       {col.map((item, rowIdx) => {
                         const itemIndex = colIdx * 2 + rowIdx;
                         return (
-                          <div key={rowIdx} className="rounded-xl overflow-hidden bg-gray-100 h-[240px] md:h-[248px] relative group">
-                            <EditableImage
-                              path={`sections.activityGallery.items.${itemIndex}.src`}
-                              src={item.src}
-                              alt={item.caption}
-                              className="w-full h-full"
-                              imgClassName="w-full h-full object-cover"
-                              folder="galerie"
-                            />
-                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                          <div key={rowIdx} className="rounded-xl overflow-hidden bg-gray-100 h-[240px] md:h-[248px] relative group cursor-pointer">
+                            <div className="w-full h-full transition-transform duration-500 ease-in-out group-hover:scale-110">
+                              <EditableImage
+                                path={`sections.activityGallery.items.${itemIndex}.src`}
+                                src={item.src}
+                                alt={item.caption}
+                                className="w-full h-full"
+                                imgClassName="w-full h-full object-cover"
+                                folder="galerie"
+                              />
+                            </div>
+                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-3 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
                               <EditableText
                                 as="p"
                                 path={`sections.activityGallery.items.${itemIndex}.caption`}
                                 value={item.caption}
-                                className="text-sm font-medium text-white"
+                                className="text-sm font-semibold text-white drop-shadow"
                               />
                             </div>
                           </div>

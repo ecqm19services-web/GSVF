@@ -245,6 +245,7 @@ export const homeContent = {
       subtitle: "Moments forts",
       description: "Découvrez quelques temps forts de la vie du collège, les activités éducatives, les temps de partage et les événements qui rythment notre établissement tout au long de l'année.",
       highlight: "Une galerie vivante pour illustrer l'ambiance, l'engagement et l'épanouissement de nos élèves.",
+      cardColor: "#434a7a",
       items: [
         { src: "/images/visite/biblio.jpeg", caption: "Bibliothèque" },
         { src: "/images/visite/salle_inf.jpeg", caption: "Salle informatique" },
