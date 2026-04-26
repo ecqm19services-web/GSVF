@@ -3,11 +3,14 @@ import Hero from '@/components/ui/Hero';
 import { histoireContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
+import { useEditSession } from '@/contexts/EditSessionContext';
 import { 
   Star,
   ArrowRight,
   User,
-  Quote
+  Quote,
+  Plus,
+  Trash2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -15,6 +18,32 @@ type HistoireData = typeof histoireContent;
 
 const HistoireContent: React.FC = () => {
   const { value: data } = usePageJsonContent<HistoireData>('histoire', histoireContent);
+  const editSession = useEditSession<HistoireData>();
+  const isEditing = !!editSession?.isEditing;
+
+  const addTimelineItem = () => {
+    if (!editSession) return;
+    const current = (data as any).timeline || [];
+    editSession.updateAtPath('timeline', [...current, { year: '2025-2026', title: 'Nouvel événement', description: 'Description.', milestone: false }]);
+  };
+  const removeTimelineItem = (i: number) => {
+    if (!editSession) return;
+    const item = ((data as any).timeline || [])[i];
+    if (!confirm(`Supprimer "${item?.title || `Événement ${i + 1}`}" ?\n\nOK pour confirmer, Annuler pour annuler.`)) return;
+    editSession.updateAtPath('timeline', ((data as any).timeline || []).filter((_: unknown, idx: number) => idx !== i));
+  };
+
+  const addFounder = () => {
+    if (!editSession) return;
+    const current = (data as any).founders || [];
+    editSession.updateAtPath('founders', [...current, { name: 'Nouveau fondateur', role: 'Rôle', bio: 'Biographie.' }]);
+  };
+  const removeFounder = (i: number) => {
+    if (!editSession) return;
+    const founder = ((data as any).founders || [])[i];
+    if (!confirm(`Supprimer "${founder?.name || `Fondateur ${i + 1}`}" ?\n\nOK pour confirmer, Annuler pour annuler.`)) return;
+    editSession.updateAtPath('founders', ((data as any).founders || []).filter((_: unknown, idx: number) => idx !== i));
+  };
   const fallbackUi = (histoireContent as any).ui;
   const uiFromData = (data as any).ui || {};
   const ui = {
@@ -64,12 +93,12 @@ const HistoireContent: React.FC = () => {
             {/* Timeline Items */}
             <div className="space-y-12">
               {data.timeline.map((item, index) => (
-                <div 
-                  key={index}
-                  className={`relative flex items-center ${
-                    index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                  }`}
-                >
+                <div key={index} className="relative group/timeline">
+                  <div 
+                    className={`relative flex items-center ${
+                      index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                    }`}
+                  >
                   {/* Content */}
                   <div className={`w-full md:w-5/12 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
                     <div className={`bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-shadow ${
@@ -109,12 +138,33 @@ const HistoireContent: React.FC = () => {
                     }`} />
                   </div>
 
-                  {/* Empty space for alignment */}
-                  <div className="hidden md:block w-5/12" />
+                    {/* Empty space for alignment */}
+                    <div className="hidden md:block w-5/12" />
+                  </div>
+                  {isEditing && (
+                    <button
+                      onClick={() => removeTimelineItem(index)}
+                      className="absolute -top-2 -right-2 z-10 p-1.5 bg-red-600 text-white rounded-full opacity-0 group-hover/timeline:opacity-100 transition-opacity hover:bg-red-700 shadow"
+                      title="Supprimer cet événement"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
           </div>
+          {isEditing && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={addTimelineItem}
+                className="px-5 py-2.5 rounded-xl border-2 border-dashed border-blue-300 bg-white flex items-center gap-2 text-blue-600 hover:border-blue-600 transition-colors font-semibold text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Ajouter un événement
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -139,8 +189,17 @@ const HistoireContent: React.FC = () => {
             {data.founders.map((founder, index) => (
               <div 
                 key={index}
-                className="bg-gray-50 rounded-2xl p-8 flex flex-col items-center text-center"
+                className="bg-gray-50 rounded-2xl p-8 flex flex-col items-center text-center relative group/founder"
               >
+                {isEditing && (
+                  <button
+                    onClick={() => removeFounder(index)}
+                    className="absolute top-3 right-3 p-1.5 bg-red-600 text-white rounded-full opacity-0 group-hover/founder:opacity-100 transition-opacity hover:bg-red-700 shadow"
+                    title="Supprimer ce fondateur"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
                 <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center mb-6">
                   <User className="w-12 h-12 text-white" />
                 </div>
@@ -166,6 +225,17 @@ const HistoireContent: React.FC = () => {
               </div>
             ))}
           </div>
+          {isEditing && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={addFounder}
+                className="px-5 py-2.5 rounded-xl border-2 border-dashed border-gray-300 bg-white flex items-center gap-2 text-gray-500 hover:border-blue-500 hover:text-blue-600 transition-colors font-semibold text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Ajouter un fondateur
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

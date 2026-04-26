@@ -5,18 +5,47 @@ import { excellenceContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
 import EditableImage from '@/components/admin/EditableImage';
+import { useEditSession } from '@/contexts/EditSessionContext';
 import { 
   Trophy,
   Award,
   Medal,
   Star,
   Quote,
+  Plus,
+  Trash2,
 } from 'lucide-react';
 
 type ExcellenceData = typeof excellenceContent;
 
 const ExcellenceContent: React.FC = () => {
   const { value: data } = usePageJsonContent<ExcellenceData>('excellence', excellenceContent);
+  const editSession = useEditSession<ExcellenceData>();
+  const isEditing = !!editSession?.isEditing;
+
+  const addDistinction = () => {
+    if (!editSession) return;
+    const current = (data as any).distinctions || [];
+    editSession.updateAtPath('distinctions', [...current, { title: 'Nouvelle distinction', year: '2025', achievement: 'Description.', image: '/logo-vf.svg' }]);
+  };
+  const removeDistinction = (i: number) => {
+    if (!editSession) return;
+    const d = ((data as any).distinctions || [])[i];
+    if (!confirm(`Supprimer "${d?.title || `Distinction ${i + 1}`}" ?\n\nOK pour confirmer, Annuler pour annuler.`)) return;
+    editSession.updateAtPath('distinctions', ((data as any).distinctions || []).filter((_: unknown, idx: number) => idx !== i));
+  };
+
+  const addAlumni = () => {
+    if (!editSession) return;
+    const current = (data as any).alumni || [];
+    editSession.updateAtPath('alumni', [...current, { name: 'Nouvel ancien élève', promotion: '2025', achievement: 'Parcours.', image: '/logo-vf.svg' }]);
+  };
+  const removeAlumni = (i: number) => {
+    if (!editSession) return;
+    const alum = ((data as any).alumni || [])[i];
+    if (!confirm(`Supprimer "${alum?.name || `Alumni ${i + 1}`}" ?\n\nOK pour confirmer, Annuler pour annuler.`)) return;
+    editSession.updateAtPath('alumni', ((data as any).alumni || []).filter((_: unknown, idx: number) => idx !== i));
+  };
   const fallbackUi = (excellenceContent as any).ui;
   const uiFromData = (data as any).ui || {};
   const ui = {
@@ -121,8 +150,17 @@ const ExcellenceContent: React.FC = () => {
             {data.distinctions.map((distinction, index) => (
               <div 
                 key={index}
-                className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm hover:shadow-lg transition-shadow"
+                className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm hover:shadow-lg transition-shadow relative group/dist"
               >
+                {isEditing && (
+                  <button
+                    onClick={() => removeDistinction(index)}
+                    className="absolute top-3 right-3 p-1.5 bg-red-600 text-white rounded-full opacity-0 group-hover/dist:opacity-100 transition-opacity hover:bg-red-700 shadow z-10"
+                    title="Supprimer cette distinction"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
                 <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border-2 border-amber-200">
                   <EditableImage
                     path={`distinctions.${index}.image`}
@@ -153,6 +191,17 @@ const ExcellenceContent: React.FC = () => {
               </div>
             ))}
           </div>
+          {isEditing && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={addDistinction}
+                className="px-5 py-2.5 rounded-xl border-2 border-dashed border-amber-300 bg-white flex items-center gap-2 text-amber-600 hover:border-amber-500 transition-colors font-semibold text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Ajouter une distinction
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -174,8 +223,17 @@ const ExcellenceContent: React.FC = () => {
               return (
                 <div 
                   key={index}
-                  className="bg-gray-50 rounded-2xl p-6 hover:bg-white hover:shadow-lg transition-all group flex flex-col"
+                  className="bg-gray-50 rounded-2xl p-6 hover:bg-white hover:shadow-lg transition-all group flex flex-col relative"
                 >
+                  {isEditing && (
+                    <button
+                      onClick={() => removeAlumni(index)}
+                      className="absolute top-3 right-3 p-1.5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 shadow z-10"
+                      title="Supprimer cet alumni"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-200 flex-shrink-0">
                       <EditableImage
@@ -214,11 +272,19 @@ const ExcellenceContent: React.FC = () => {
               );
             })}
           </div>
+          {isEditing && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={addAlumni}
+                className="px-5 py-2.5 rounded-xl border-2 border-dashed border-blue-300 bg-white flex items-center gap-2 text-blue-600 hover:border-blue-600 transition-colors font-semibold text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Ajouter un ancien élève
+              </button>
+            </div>
+          )}
         </div>
       </section>
-
-
-
     </>
   );
 };

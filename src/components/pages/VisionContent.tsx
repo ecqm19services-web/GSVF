@@ -4,6 +4,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import { visionContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
+import { useEditSession } from '@/contexts/EditSessionContext';
 import { 
   Star, 
   Shield, 
@@ -15,6 +16,8 @@ import {
   Compass,
   CheckCircle,
   ArrowRight,
+  Plus,
+  Trash2,
   type LucideIcon
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -32,7 +35,33 @@ type VisionData = typeof visionContent;
 
 const VisionContent: React.FC = () => {
   const { value: data } = usePageJsonContent<VisionData>('vision', visionContent);
+  const editSession = useEditSession<VisionData>();
+  const isEditing = !!editSession?.isEditing;
   const ui = (data as any).ui || (visionContent as any).ui;
+
+  const addValue = () => {
+    if (!editSession) return;
+    const current = (data as any).values || [];
+    editSession.updateAtPath('values', [...current, { icon: 'star', title: 'Nouvelle valeur', description: 'Description de cette valeur.' }]);
+  };
+  const removeValue = (i: number) => {
+    if (!editSession) return;
+    const val = ((data as any).values || [])[i];
+    if (!confirm(`Supprimer "${val?.title || `Valeur ${i + 1}`}" ?\n\nOK pour confirmer, Annuler pour annuler.`)) return;
+    editSession.updateAtPath('values', ((data as any).values || []).filter((_: unknown, idx: number) => idx !== i));
+  };
+
+  const addPoint = () => {
+    if (!editSession) return;
+    const current = (data as any).commitment?.points || [];
+    editSession.updateAtPath('commitment.points', [...current, 'Nouveau point d\'engagement.']);
+  };
+  const removePoint = (i: number) => {
+    if (!editSession) return;
+    if (!confirm(`Supprimer ce point d'engagement ?\n\nOK pour confirmer, Annuler pour annuler.`)) return;
+    editSession.updateAtPath('commitment.points', ((data as any).commitment?.points || []).filter((_: unknown, idx: number) => idx !== i));
+  };
+
   return (
     <>
       <Hero
@@ -115,8 +144,17 @@ const VisionContent: React.FC = () => {
               return (
                 <div 
                   key={index}
-                  className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 group"
+                  className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 group relative"
                 >
+                  {isEditing && (
+                    <button
+                      onClick={() => removeValue(index)}
+                      className="absolute top-3 right-3 p-1.5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 shadow z-10"
+                      title="Supprimer cette valeur"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                   <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${colors[index % colors.length]} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                     <Icon className="w-7 h-7 text-white" />
                   </div>
@@ -137,6 +175,17 @@ const VisionContent: React.FC = () => {
               );
             })}
           </div>
+          {isEditing && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={addValue}
+                className="px-5 py-2.5 rounded-xl border-2 border-dashed border-blue-300 bg-white flex items-center gap-2 text-blue-600 hover:border-blue-600 transition-colors font-semibold text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Ajouter une valeur
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -163,12 +212,30 @@ const VisionContent: React.FC = () => {
               />
               <ul className="space-y-4">
                 {data.commitment.points.map((point, index) => (
-                  <li key={index} className="flex items-start gap-3">
+                  <li key={index} className="flex items-start gap-3 group/point">
                     <CheckCircle className="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" />
-                    <EditableText as="span" path={`commitment.points.${index}`} value={point} className="text-white" />
+                    <EditableText as="span" path={`commitment.points.${index}`} value={point} className="text-white flex-1" />
+                    {isEditing && (
+                      <button
+                        onClick={() => removePoint(index)}
+                        className="p-1 bg-red-600 text-white rounded-full opacity-0 group-hover/point:opacity-100 transition-opacity hover:bg-red-700 flex-shrink-0"
+                        title="Supprimer ce point"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
+              {isEditing && (
+                <button
+                  onClick={addPoint}
+                  className="mt-4 px-4 py-2 rounded-lg border-2 border-dashed border-blue-400 flex items-center gap-2 text-blue-300 hover:border-blue-200 hover:text-blue-100 transition-colors text-sm font-semibold"
+                >
+                  <Plus className="w-4 h-4" />
+                  Ajouter un point
+                </button>
+              )}
             </div>
             <div className="relative">
               <div className="aspect-square rounded-3xl bg-gradient-to-br from-blue-700 to-blue-800 p-12 flex items-center justify-center">

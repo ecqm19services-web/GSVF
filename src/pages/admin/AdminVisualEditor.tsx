@@ -12,6 +12,9 @@ import AdmissionsContent from '@/components/pages/AdmissionsContent';
 import ActualitesContent from '@/components/pages/ActualitesContent';
 import EquipeContent from '@/components/pages/EquipeContent';
 import EmploisDuTempsContent from '@/components/pages/EmploisDuTempsContent';
+import HistoireContent from '@/components/pages/HistoireContent';
+import VisionContent from '@/components/pages/VisionContent';
+import ExcellenceContent from '@/components/pages/ExcellenceContent';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
@@ -27,6 +30,9 @@ import {
   admissionsContent,
   equipeContent,
   emploisDuTempsContent,
+  histoireContent,
+  visionContent,
+  excellenceContent,
 } from '@/data/content';
 import { EditSessionProvider } from '@/contexts/EditSessionContext';
 import { PageJsonOverrideProvider } from '@/contexts/PageJsonOverrideContext';
@@ -44,7 +50,10 @@ type EditablePage =
   | 'programmes'
   | 'emplois-du-temps'
   | 'admissions'
-  | 'actualites';
+  | 'actualites'
+  | 'histoire'
+  | 'vision'
+  | 'excellence';
 
 type JsonLike = Record<string, unknown> | unknown[];
 
@@ -60,6 +69,9 @@ const pageLabels: Record<EditablePage, string> = {
   'emplois-du-temps': 'Emplois du Temps',
   admissions: 'Admissions',
   actualites: 'Actualités',
+  histoire: 'Histoire',
+  vision: 'Vision & Mission',
+  excellence: 'Excellence',
 };
 
 function getFallback(page: EditablePage): JsonLike {
@@ -82,6 +94,12 @@ function getFallback(page: EditablePage): JsonLike {
       return admissionsContent as unknown as JsonLike;
     case 'actualites':
       return {} as JsonLike;
+    case 'histoire':
+      return histoireContent as unknown as JsonLike;
+    case 'vision':
+      return visionContent as unknown as JsonLike;
+    case 'excellence':
+      return excellenceContent as unknown as JsonLike;
     case 'equipe':
       return equipeContent as unknown as JsonLike;
     case 'emplois-du-temps':
@@ -98,14 +116,17 @@ const AdminVisualEditor: React.FC = () => {
       'accueil',
       'visite',
       'notre-ecole',
-      'contact',
-      'mentions-legales',
-      'confidentialite',
+      'histoire',
+      'vision',
+      'excellence',
+      'equipe',
       'programmes',
       'admissions',
       'actualites',
-      'equipe',
       'emplois-du-temps',
+      'contact',
+      'mentions-legales',
+      'confidentialite',
     ],
     []
   );
@@ -140,6 +161,12 @@ const AdminVisualEditor: React.FC = () => {
         return <EquipeContent />;
       case 'emplois-du-temps':
         return <EmploisDuTempsContent />;
+      case 'histoire':
+        return <HistoireContent />;
+      case 'vision':
+        return <VisionContent />;
+      case 'excellence':
+        return <ExcellenceContent />;
     }
   };
 

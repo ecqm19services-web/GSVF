@@ -33,6 +33,8 @@ const EquipeContent: React.FC = () => {
 
   const removeMember = (index: number) => {
     if (!updateAtPath || !data) return;
+    const member = data.members[index];
+    if (!confirm(`Supprimer "${member?.name || `Membre ${index + 1}`}" ?\n\nOK pour confirmer, Annuler pour annuler.`)) return;
     const newMembers = data.members.filter((_, i) => i !== index);
     updateAtPath('members', newMembers);
     if (expandedIndex === index) setExpandedIndex(null);
