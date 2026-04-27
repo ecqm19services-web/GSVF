@@ -85,6 +85,8 @@ const NotreEcoleContent: React.FC = () => {
 
   const handleRemoveTimelineEntry = (index: number) => {
     if (!updateAtPath) return;
+    const item = (histoire.timeline || [])[index];
+    if (!confirm(`Supprimer "${item?.title || `Événement ${index + 1}`}" ?\n\nOK pour confirmer, Annuler pour annuler.`)) return;
     const current = [...(histoire.timeline || [])];
     current.splice(index, 1);
     updateAtPath('histoire.timeline', current);

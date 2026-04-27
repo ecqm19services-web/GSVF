@@ -14,6 +14,11 @@ import {
   Settings2,
   ToggleLeft,
   ToggleRight,
+  Plus,
+  Trash2,
+  Pencil,
+  X,
+  Check,
 } from 'lucide-react';
 
 interface Article {
@@ -80,6 +85,8 @@ const ActualitesContent: React.FC = () => {
   const [heroBgImage, setHeroBgImage] = useState<string>('');
   const [socialFeeds, setSocialFeeds] = useState<SocialFeed[]>(actualitesSocialConfig.feeds);
   const [showSocialAdmin, setShowSocialAdmin] = useState(false);
+  const [editingArticleId, setEditingArticleId] = useState<string | null>(null);
+  const [editingArticle, setEditingArticle] = useState<Article | null>(null);
 
   const { isEditing } = useEditSession() || {};
 
@@ -106,6 +113,82 @@ const ActualitesContent: React.FC = () => {
     };
     loadData();
   }, []);
+
+  const saveArticles = async (newArticles: Article[]) => {
+    setArticles(newArticles);
+    // persist via API
+    try {
+      const token = sessionStorage.getItem('cpvf_admin_auth') || '';
+      const existing = await fetch('/api/page-content/?page=actualites').then(r => r.json()).catch(() => ({}));
+      const current = existing.document?.content ? JSON.parse(existing.document.content) : {};
+      const updated = { ...current, articles: newArticles };
+      await fetch('/api/page-content/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Basic ${token}` },
+        body: JSON.stringify({ page: 'actualites', content: JSON.stringify(updated) }),
+      });
+    } catch { /* ignore */ }
+  };
+
+  const addArticle = () => {
+    const newArticle: Article = {
+      id: Date.now().toString(),
+      title: 'Nouvel article',
+      excerpt: 'Résumé de l’article.',
+      content: '',
+      date: new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }),
+      category: 'Actualité',
+    };
+    saveArticles([newArticle, ...articles]);
+    setEditingArticleId(newArticle.id);
+    setEditingArticle(newArticle);
+  };
+
+  const removeArticle = (id: string) => {
+    const article = articles.find(a => a.id === id);
+    if (!confirm(`Supprimer "${article?.title || 'cet article'}" ?\n\nOK pour confirmer, Annuler pour annuler.`)) return;
+    saveArticles(articles.filter(a => a.id !== id));
+    if (selectedArticle?.id === id) setSelectedArticle(null);
+  };
+
+  const startEditArticle = (article: Article, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingArticleId(article.id);
+    setEditingArticle({ ...article });
+  };
+
+  const saveEditArticle = () => {
+    if (!editingArticle) return;
+    saveArticles(articles.map(a => a.id === editingArticle.id ? editingArticle : a));
+    setEditingArticleId(null);
+    setEditingArticle(null);
+  };
+
+  const cancelEditArticle = () => {
+    setEditingArticleId(null);
+    setEditingArticle(null);
+  };
+
+  const handleArticleImageUpload = async () => {
+    if (!editingArticle) return;
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'actualites');
+      try {
+        const token = sessionStorage.getItem('cpvf_admin_auth') || '';
+        const res = await fetch('/api/upload-image/', { method: 'POST', headers: { Authorization: `Basic ${token}` }, body: formData });
+        const result = await res.json();
+        if (result.url) setEditingArticle(prev => prev ? { ...prev, image: result.url } : prev);
+      } catch { /* ignore */ }
+    };
+    input.click();
+  };
 
   // Save social config when admin changes it
   const toggleFeed = (feedId: string) => {
@@ -348,36 +431,100 @@ const ActualitesContent: React.FC = () => {
                   <Newspaper className="w-5 h-5 text-orange-600" />
                   <h2 className="text-xl font-bold text-gray-900">Articles</h2>
                 </div>
-                <div className="grid grid-cols-1 gap-4">
-                  {articles.map((article) => (
-                    <article
-                      key={article.id}
-                      className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group cursor-pointer border border-gray-100"
-                      onClick={() => setSelectedArticle(article)}
+      <div className="grid grid-cols-1 gap-4">
+                  {isEditing && (
+                    <button
+                      onClick={addArticle}
+                      className="flex items-center gap-2 justify-center w-full py-3 rounded-xl border-2 border-dashed border-blue-300 text-blue-600 hover:border-blue-500 hover:bg-blue-50 transition-colors font-semibold text-sm"
                     >
-                      {article.image && (
-                        <div className="aspect-[16/9] overflow-hidden">
-                          <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <Plus className="w-4 h-4" /> Nouvel article
+                    </button>
+                  )}
+                  {articles.map((article) => (
+                    <div key={article.id} className="relative group/art">
+                      {/* Edit mode inline form */}
+                      {isEditing && editingArticleId === article.id && editingArticle ? (
+                        <div className="bg-white rounded-xl shadow border border-blue-200 p-4 space-y-2">
+                          <input
+                            type="text"
+                            placeholder="Titre"
+                            value={editingArticle.title}
+                            onChange={e => setEditingArticle(prev => prev ? { ...prev, title: e.target.value } : prev)}
+                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-300 outline-none"
+                          />
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              placeholder="Catégorie"
+                              value={editingArticle.category}
+                              onChange={e => setEditingArticle(prev => prev ? { ...prev, category: e.target.value } : prev)}
+                              className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-300 outline-none"
+                            />
+                            <input
+                              type="text"
+                              placeholder="Date (ex: Juillet 2025)"
+                              value={editingArticle.date}
+                              onChange={e => setEditingArticle(prev => prev ? { ...prev, date: e.target.value } : prev)}
+                              className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-300 outline-none"
+                            />
+                          </div>
+                          <textarea
+                            placeholder="Résumé"
+                            value={editingArticle.excerpt}
+                            rows={2}
+                            onChange={e => setEditingArticle(prev => prev ? { ...prev, excerpt: e.target.value } : prev)}
+                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-300 outline-none resize-none"
+                          />
+                          <textarea
+                            placeholder="Contenu complet (optionnel)"
+                            value={editingArticle.content}
+                            rows={3}
+                            onChange={e => setEditingArticle(prev => prev ? { ...prev, content: e.target.value } : prev)}
+                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-300 outline-none resize-none"
+                          />
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={handleArticleImageUpload}
+                              className="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                            >📷 Image</button>
+                            {editingArticle.image && <span className="text-xs text-green-600 truncate flex-1">{editingArticle.image.split('/').pop()}</span>}
+                          </div>
+                          <div className="flex gap-2 pt-1">
+                            <button onClick={saveEditArticle} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs font-semibold hover:bg-green-700"><Check className="w-3 h-3" /> Enregistrer</button>
+                            <button onClick={cancelEditArticle} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gray-200 text-gray-700 text-xs font-semibold hover:bg-gray-300"><X className="w-3 h-3" /> Annuler</button>
+                          </div>
                         </div>
+                      ) : (
+                        <article
+                          className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group cursor-pointer border border-gray-100"
+                          onClick={() => !isEditing && setSelectedArticle(article)}
+                        >
+                          {article.image && (
+                            <div className="aspect-[16/9] overflow-hidden">
+                              <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                            </div>
+                          )}
+                          <div className="p-4">
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <span className="px-2.5 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">{article.category}</span>
+                              <span className="text-gray-400 text-xs flex items-center gap-1"><Calendar className="w-3 h-3" />{article.date}</span>
+                            </div>
+                            <h3 className="text-[15px] font-bold text-gray-900 mb-1.5 group-hover:text-blue-800 transition-colors line-clamp-2">{article.title}</h3>
+                            <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">{article.excerpt}</p>
+                          </div>
+                          {isEditing && (
+                            <div className="flex gap-1 p-2 border-t border-gray-100">
+                              <button onClick={(e) => startEditArticle(article, e)} className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-semibold transition-colors">
+                                <Pencil className="w-3 h-3" /> Modifier
+                              </button>
+                              <button onClick={(e) => { e.stopPropagation(); removeArticle(article.id); }} className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-xs font-semibold transition-colors">
+                                <Trash2 className="w-3 h-3" /> Supprimer
+                              </button>
+                            </div>
+                          )}
+                        </article>
                       )}
-                      <div className="p-4">
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <span className="px-2.5 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                            {article.category}
-                          </span>
-                          <span className="text-gray-400 text-xs flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {article.date}
-                          </span>
-                        </div>
-                        <h3 className="text-[15px] font-bold text-gray-900 mb-1.5 group-hover:text-blue-800 transition-colors line-clamp-2">
-                          {article.title}
-                        </h3>
-                        <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">
-                          {article.excerpt}
-                        </p>
-                      </div>
-                    </article>
+                    </div>
                   ))}
                 </div>
               </div>

@@ -73,6 +73,7 @@ const VisiteContent: React.FC = () => {
 
   const removeImageFromSection = (sectionIndex: number, imageIndex: number) => {
     if (!updateAtPath || !data) return;
+    if (!confirm('Supprimer cette image ?\n\nOK pour confirmer, Annuler pour annuler.')) return;
     const section = data.sections[sectionIndex];
     const newImages = section.images.filter((_, i) => i !== imageIndex);
     updateAtPath(`sections.${sectionIndex}.images`, newImages);
@@ -88,6 +89,7 @@ const VisiteContent: React.FC = () => {
 
   const removeGalleryImageFromSection = (sectionIndex: number, imageIndex: number) => {
     if (!updateAtPath || !data) return;
+    if (!confirm('Supprimer cette photo de la galerie ?\n\nOK pour confirmer, Annuler pour annuler.')) return;
     const section = data.sections[sectionIndex] as any;
     const currentGallery = section.galleryImages || [...section.images];
     const newGallery = currentGallery.filter((_: any, i: number) => i !== imageIndex);

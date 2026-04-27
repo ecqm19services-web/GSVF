@@ -4,6 +4,7 @@ import { programmesContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
 import EditableImage from '@/components/admin/EditableImage';
+import { useEditSession } from '@/contexts/EditSessionContext';
 import { 
   Heart,
   BookOpen,
@@ -13,6 +14,8 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronUp,
+  Plus,
+  Trash2,
   type LucideIcon
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -34,10 +37,49 @@ const cycleColors: { [key: string]: string } = {
 const ProgrammesContent: React.FC = () => {
   const [expandedCycle, setExpandedCycle] = useState<string | null>('maternelle');
   const { value: programmesData } = usePageJsonContent('programmes', programmesContent);
+  const editSession = useEditSession();
+  const isEditing = !!editSession?.isEditing;
   const ui = (programmesData as any).ui || (programmesContent as any).ui;
 
   const toggleCycle = (id: string) => {
     setExpandedCycle(expandedCycle === id ? null : id);
+  };
+
+  const addCycle = () => {
+    if (!editSession) return;
+    const current = (programmesData as any).cycles || [];
+    const newId = `cycle-${Date.now()}`;
+    editSession.updateAtPath('cycles', [...current, {
+      id: newId,
+      title: 'Nouveau cycle',
+      ages: 'Ages',
+      description: 'Description du cycle.',
+      features: ['Point clé 1'],
+      image: '/images/accueil/accueil_ecole.jpeg',
+    }]);
+    setExpandedCycle(newId);
+  };
+
+  const removeCycle = (index: number) => {
+    if (!editSession) return;
+    const cycle = ((programmesData as any).cycles || [])[index];
+    if (!confirm(`Supprimer le cycle "${cycle?.title || `Cycle ${index + 1}`}" ?\n\nOK pour confirmer, Annuler pour annuler.`)) return;
+    const newCycles = ((programmesData as any).cycles || []).filter((_: unknown, i: number) => i !== index);
+    editSession.updateAtPath('cycles', newCycles);
+  };
+
+  const addFeature = (cycleIndex: number) => {
+    if (!editSession) return;
+    const cycle = ((programmesData as any).cycles || [])[cycleIndex];
+    const newFeatures = [...(cycle?.features || []), 'Nouveau point'];
+    editSession.updateAtPath(`cycles.${cycleIndex}.features`, newFeatures);
+  };
+
+  const removeFeature = (cycleIndex: number, fIndex: number) => {
+    if (!editSession) return;
+    const cycle = ((programmesData as any).cycles || [])[cycleIndex];
+    const newFeatures = (cycle?.features || []).filter((_: unknown, i: number) => i !== fIndex);
+    editSession.updateAtPath(`cycles.${cycleIndex}.features`, newFeatures);
   };
 
   return (
@@ -74,8 +116,15 @@ const ProgrammesContent: React.FC = () => {
                 <a
                   key={cycle.id}
                   href={`#${cycle.id}`}
-                  className="bg-white rounded-xl p-6 text-center shadow-sm hover:shadow-lg transition-all group"
+                  className="bg-white rounded-xl p-6 text-center shadow-sm hover:shadow-lg transition-all group relative"
                 >
+                  {isEditing && (
+                    <button
+                      onClick={(e) => { e.preventDefault(); removeCycle(cycleIndex); }}
+                      className="absolute top-2 right-2 p-1.5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 z-10"
+                      title="Supprimer ce cycle"
+                    ><Trash2 className="w-3 h-3" /></button>
+                  )}
                   <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${cycleColors[cycle.id]} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
                     <Icon className="w-7 h-7 text-white" />
                   </div>
@@ -110,8 +159,15 @@ const ProgrammesContent: React.FC = () => {
                 <div 
                   key={cycle.id}
                   id={cycle.id}
-                  className="bg-white rounded-2xl shadow-sm overflow-hidden"
+                  className="bg-white rounded-2xl shadow-sm overflow-hidden relative group/cycle"
                 >
+                  {isEditing && (
+                    <button
+                      onClick={() => removeCycle(cycleIndex)}
+                      className="absolute top-4 right-4 z-20 p-1.5 bg-red-600 text-white rounded-full opacity-0 group-hover/cycle:opacity-100 transition-opacity hover:bg-red-700"
+                      title="Supprimer ce cycle"
+                    ><Trash2 className="w-4 h-4" /></button>
+                  )}
                   {/* Header - Clickable on mobile */}
                   <button
                     onClick={() => toggleCycle(cycle.id)}
@@ -167,17 +223,32 @@ const ProgrammesContent: React.FC = () => {
                           />
                           <ul className="space-y-3">
                             {cycle.features.map((feature, fIndex) => (
-                              <li key={fIndex} className="flex items-start gap-3">
+                              <li key={fIndex} className="flex items-start gap-3 group/feat">
                                 <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                                 <EditableText
                                   as="span"
                                   path={`cycles.${cycleIndex}.features.${fIndex}`}
                                   value={feature}
-                                  className="text-gray-700"
+                                  className="text-gray-700 flex-1"
                                 />
+                                {isEditing && (
+                                  <button
+                                    onClick={() => removeFeature(cycleIndex, fIndex)}
+                                    className="p-1 bg-red-600 text-white rounded-full opacity-0 group-hover/feat:opacity-100 transition-opacity hover:bg-red-700 flex-shrink-0"
+                                    title="Supprimer ce point"
+                                  ><Trash2 className="w-3 h-3" /></button>
+                                )}
                               </li>
                             ))}
                           </ul>
+                          {isEditing && (
+                            <button
+                              onClick={() => addFeature(cycleIndex)}
+                              className="mt-3 flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 hover:border-primary hover:text-primary transition-colors font-semibold"
+                            >
+                              <Plus className="w-3 h-3" /> Ajouter un point
+                            </button>
+                          )}
                         </div>
                         <div className="aspect-video lg:aspect-square rounded-xl overflow-hidden">
                           <EditableImage
@@ -248,6 +319,19 @@ const ProgrammesContent: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {isEditing && (
+        <section className="py-6 bg-gray-50 border-t border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
+            <button
+              onClick={addCycle}
+              className="px-6 py-3 rounded-xl border-2 border-dashed border-gray-300 bg-white flex items-center gap-2 text-gray-500 hover:border-primary hover:text-primary transition-colors font-semibold"
+            >
+              <Plus className="w-5 h-5" /> Ajouter un cycle
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* CTA */}
       <section className="py-20 bg-white">

@@ -4,12 +4,15 @@ import ContactForm from '@/components/forms/ContactForm';
 import { contactContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
-import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { useEditSession } from '@/contexts/EditSessionContext';
+import { MapPin, Phone, Mail, Clock, Plus, Trash2 } from 'lucide-react';
 
 type ContactData = typeof contactContent;
 
 const ContactContent: React.FC = () => {
   const { value: data } = usePageJsonContent<ContactData>('contact', contactContent);
+  const editSession = useEditSession<ContactData>();
+  const isEditing = !!editSession?.isEditing;
   const fallbackUi = (contactContent as any).ui;
   const uiFromData = (data as any).ui || {};
   const ui = {
@@ -26,21 +29,69 @@ const ContactContent: React.FC = () => {
             <div className="lg:col-span-1">
               <EditableText as="h2" path="ui.coordinatesTitle" value={ui.coordinatesTitle} className="text-2xl font-bold text-gray-900 mb-8" />
               <div className="space-y-6">
+                {/* Address */}
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><MapPin className="w-6 h-6 text-blue-800" /></div>
-                  <div><EditableText as="h3" path="info.address.title" value={data.info.address.title} className="font-semibold text-gray-900 mb-1" />{data.info.address.lines.map((line, i) => <EditableText key={i} as="p" path={`info.address.lines.${i}`} value={line} className="text-gray-600" />)}</div>
+                  <div className="flex-1">
+                    <EditableText as="h3" path="info.address.title" value={data.info.address.title} className="font-semibold text-gray-900 mb-1" />
+                    {data.info.address.lines.map((line, i) => (
+                      <div key={i} className="flex items-center gap-1 group/adr">
+                        <EditableText as="p" path={`info.address.lines.${i}`} value={line} className="text-gray-600 flex-1" />
+                        {isEditing && (
+                          <button onClick={() => { if(confirm('Supprimer cette ligne ?')) editSession?.updateAtPath('info.address.lines', data.info.address.lines.filter((_,j)=>j!==i)); }} className="p-1 text-red-500 opacity-0 group-hover/adr:opacity-100 transition-opacity"><Trash2 className="w-3 h-3" /></button>
+                        )}
+                      </div>
+                    ))}
+                    {isEditing && <button onClick={() => editSession?.updateAtPath('info.address.lines', [...data.info.address.lines, 'Nouvelle ligne'])} className="mt-1 flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"><Plus className="w-3 h-3" /> Ajouter</button>}
+                  </div>
                 </div>
+                {/* Phone */}
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><Phone className="w-6 h-6 text-blue-800" /></div>
-                  <div><EditableText as="h3" path="info.phone.title" value={data.info.phone.title} className="font-semibold text-gray-900 mb-1" />{data.info.phone.numbers.map((num, i) => <a key={i} href={`tel:${num}`} className="block text-gray-600 hover:text-blue-800"><EditableText as="span" path={`info.phone.numbers.${i}`} value={num} /></a>)}</div>
+                  <div className="flex-1">
+                    <EditableText as="h3" path="info.phone.title" value={data.info.phone.title} className="font-semibold text-gray-900 mb-1" />
+                    {data.info.phone.numbers.map((num, i) => (
+                      <div key={i} className="flex items-center gap-1 group/ph">
+                        <a href={`tel:${num}`} className="block text-gray-600 hover:text-blue-800 flex-1"><EditableText as="span" path={`info.phone.numbers.${i}`} value={num} /></a>
+                        {isEditing && (
+                          <button onClick={() => { if(confirm('Supprimer ce numéro ?')) editSession?.updateAtPath('info.phone.numbers', data.info.phone.numbers.filter((_,j)=>j!==i)); }} className="p-1 text-red-500 opacity-0 group-hover/ph:opacity-100 transition-opacity"><Trash2 className="w-3 h-3" /></button>
+                        )}
+                      </div>
+                    ))}
+                    {isEditing && <button onClick={() => editSession?.updateAtPath('info.phone.numbers', [...data.info.phone.numbers, '+225 00 00 00 00 00'])} className="mt-1 flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"><Plus className="w-3 h-3" /> Ajouter</button>}
+                  </div>
                 </div>
+                {/* Email */}
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><Mail className="w-6 h-6 text-blue-800" /></div>
-                  <div><EditableText as="h3" path="info.email.title" value={data.info.email.title} className="font-semibold text-gray-900 mb-1" />{data.info.email.addresses.map((email, i) => <a key={i} href={`mailto:${email}`} className="block text-gray-600 hover:text-blue-800"><EditableText as="span" path={`info.email.addresses.${i}`} value={email} /></a>)}</div>
+                  <div className="flex-1">
+                    <EditableText as="h3" path="info.email.title" value={data.info.email.title} className="font-semibold text-gray-900 mb-1" />
+                    {data.info.email.addresses.map((email, i) => (
+                      <div key={i} className="flex items-center gap-1 group/em">
+                        <a href={`mailto:${email}`} className="block text-gray-600 hover:text-blue-800 flex-1"><EditableText as="span" path={`info.email.addresses.${i}`} value={email} /></a>
+                        {isEditing && (
+                          <button onClick={() => { if(confirm('Supprimer cette adresse email ?')) editSession?.updateAtPath('info.email.addresses', data.info.email.addresses.filter((_,j)=>j!==i)); }} className="p-1 text-red-500 opacity-0 group-hover/em:opacity-100 transition-opacity"><Trash2 className="w-3 h-3" /></button>
+                        )}
+                      </div>
+                    ))}
+                    {isEditing && <button onClick={() => editSession?.updateAtPath('info.email.addresses', [...data.info.email.addresses, 'email@exemple.com'])} className="mt-1 flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"><Plus className="w-3 h-3" /> Ajouter</button>}
+                  </div>
                 </div>
+                {/* Hours */}
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"><Clock className="w-6 h-6 text-blue-800" /></div>
-                  <div><EditableText as="h3" path="info.hours.title" value={data.info.hours.title} className="font-semibold text-gray-900 mb-1" />{data.info.hours.schedule.map((time, i) => <EditableText key={i} as="p" path={`info.hours.schedule.${i}`} value={time} className="text-gray-600" />)}</div>
+                  <div className="flex-1">
+                    <EditableText as="h3" path="info.hours.title" value={data.info.hours.title} className="font-semibold text-gray-900 mb-1" />
+                    {data.info.hours.schedule.map((time, i) => (
+                      <div key={i} className="flex items-center gap-1 group/hr">
+                        <EditableText as="p" path={`info.hours.schedule.${i}`} value={time} className="text-gray-600 flex-1" />
+                        {isEditing && (
+                          <button onClick={() => { if(confirm('Supprimer cet horaire ?')) editSession?.updateAtPath('info.hours.schedule', data.info.hours.schedule.filter((_,j)=>j!==i)); }} className="p-1 text-red-500 opacity-0 group-hover/hr:opacity-100 transition-opacity"><Trash2 className="w-3 h-3" /></button>
+                        )}
+                      </div>
+                    ))}
+                    {isEditing && <button onClick={() => editSession?.updateAtPath('info.hours.schedule', [...data.info.hours.schedule, 'Lun-Ven : 07h30 - 18h00'])} className="mt-1 flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"><Plus className="w-3 h-3" /> Ajouter</button>}
+                  </div>
                 </div>
               </div>
             </div>

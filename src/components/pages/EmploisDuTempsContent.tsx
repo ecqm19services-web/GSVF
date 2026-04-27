@@ -24,6 +24,8 @@ const EmploisDuTempsContent: React.FC = () => {
 
   const removeClass = (index: number) => {
     if (!updateAtPath || !data) return;
+    const cls = data.classes[index];
+    if (!confirm(`Supprimer la classe "${cls?.name || `Classe ${index + 1}`}" ?\n\nOK pour confirmer, Annuler pour annuler.`)) return;
     const newClasses = data.classes.filter((_, i) => i !== index);
     updateAtPath('classes', newClasses);
     if (activeTab >= newClasses.length) setActiveTab(Math.max(0, newClasses.length - 1));
