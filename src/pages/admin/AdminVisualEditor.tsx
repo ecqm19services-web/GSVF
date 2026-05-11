@@ -15,6 +15,7 @@ import EmploisDuTempsContent from '@/components/pages/EmploisDuTempsContent';
 import HistoireContent from '@/components/pages/HistoireContent';
 import VisionContent from '@/components/pages/VisionContent';
 import ExcellenceContent from '@/components/pages/ExcellenceContent';
+import CareersContent from '@/components/pages/CareersContent';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
@@ -53,7 +54,8 @@ type EditablePage =
   | 'actualites'
   | 'histoire'
   | 'vision'
-  | 'excellence';
+  | 'excellence'
+  | 'carrieres';
 
 type JsonLike = Record<string, unknown> | unknown[];
 
@@ -72,6 +74,7 @@ const pageLabels: Record<EditablePage, string> = {
   histoire: 'Histoire',
   vision: 'Vision & Mission',
   excellence: 'Excellence',
+  carrieres: 'Carrières',
 };
 
 function getFallback(page: EditablePage): JsonLike {
@@ -104,6 +107,8 @@ function getFallback(page: EditablePage): JsonLike {
       return equipeContent as unknown as JsonLike;
     case 'emplois-du-temps':
       return emploisDuTempsContent as unknown as JsonLike;
+    case 'carrieres':
+      return {} as JsonLike;
   }
 }
 
@@ -127,6 +132,7 @@ const AdminVisualEditor: React.FC = () => {
       'contact',
       'mentions-legales',
       'confidentialite',
+      'carrieres',
     ],
     []
   );
@@ -167,6 +173,8 @@ const AdminVisualEditor: React.FC = () => {
         return <VisionContent />;
       case 'excellence':
         return <ExcellenceContent />;
+      case 'carrieres':
+        return <CareersContent />;
     }
   };
 

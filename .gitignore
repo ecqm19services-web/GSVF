@@ -20,6 +20,10 @@ dist-ssr
 # Generated content copy (source of truth is /content)
 public/content
 
+# Admin sensitive files
+server/_secure/acces-operateurs.csv
+server/_secure/reset-all-operators.php
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

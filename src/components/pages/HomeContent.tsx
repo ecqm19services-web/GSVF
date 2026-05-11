@@ -126,6 +126,7 @@ const HomeContent: React.FC = () => {
 
   const removeSlide = (index: number) => {
     if (!editSession) return;
+    if (!confirm(`Supprimer cette image du slider ?\n\nOK pour confirmer, Annuler pour annuler.`)) return;
     const newImages = heroImages.filter((_, i) => i !== index);
     editSession.updateAtPath('hero.slideshowImages', newImages);
     if (slideIndex >= newImages.length) setSlideIndex(Math.max(0, newImages.length - 1));
