@@ -12,6 +12,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminContentEditor from "./pages/admin/AdminContentEditor";
 import AdminVisualEditor from "./pages/admin/AdminVisualEditor";
 import AdminCareersPage from "./pages/admin/AdminCareersPage";
+import AdminDocumentationPage from "./pages/admin/AdminDocumentationPage";
 import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/ecqm19-admin/content" element={<AdminContentEditor />} />
             <Route path="/ecqm19-admin/visual" element={<AdminVisualEditor />} />
             <Route path="/ecqm19-admin/jobs" element={<AdminCareersPage />} />
+            <Route path="/ecqm19-admin/documentation" element={<AdminDocumentationPage />} />
             <Route path="/*" element={<Index />} />
           </Routes>
         </BrowserRouter>

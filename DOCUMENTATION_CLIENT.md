@@ -2,7 +2,7 @@
 
 **Site Web Administrable** - Version 1.0  
 **Date de livraison :** Mai 2026  
-**Développé par :** ic_future
+**Développé par :** M. ESSOH Cyrille  *by ic_future*
 
 ---
 

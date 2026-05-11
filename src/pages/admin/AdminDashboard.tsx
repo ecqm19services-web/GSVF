@@ -27,7 +27,8 @@ import {
   UserPlus,
   ShieldOff,
   Shield,
-  ExternalLink
+  ExternalLink,
+  BookOpen
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { fetchAdminAdmissions, fetchAdminContacts, adminUpdateStatus, adminDeleteSubmission } from '@/lib/adminApi';
@@ -509,6 +510,14 @@ const AdminDashboard: React.FC = () => {
             <ExternalLink className="w-5 h-5" />
             Voir le site
           </a>
+
+          <Link
+            to="/ecqm19-admin/documentation"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-orange-200 hover:text-white hover:bg-white/10"
+          >
+            <BookOpen className="w-5 h-5" />
+            Documentation
+          </Link>
         </nav>
 
         <div className="absolute bottom-6 left-6 right-6">
