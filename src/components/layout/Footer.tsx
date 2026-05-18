@@ -151,6 +151,9 @@ const Footer: React.FC = () => {
               © {currentYear} Collège Privé la Vision Future. Tous droits réservés.
             </p>
             <div className="flex items-center gap-6 text-sm">
+              <Link to="/suivi" className="text-gray-500 hover:text-orange-400 transition-colors">
+                Suivre ma demande
+              </Link>
               <Link to="/mentions-legales" className="text-gray-500 hover:text-orange-400 transition-colors">
                 Mentions légales
               </Link>
