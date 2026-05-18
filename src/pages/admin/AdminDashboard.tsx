@@ -100,6 +100,33 @@ const AdminDashboard: React.FC = () => {
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
   const [backupSuccess, setBackupSuccess] = useState('');
 
+  const OP_PASSPHRASE = 'op01-op02-op03-op04-op05-op06-op07-op08-op09-op10';
+  const [opConfirmModal, setOpConfirmModal] = useState<{
+    open: boolean;
+    label: string;
+    onConfirmed: () => void;
+  }>({ open: false, label: '', onConfirmed: () => {} });
+  const [opConfirmInput, setOpConfirmInput] = useState('');
+  const [opConfirmError, setOpConfirmError] = useState('');
+
+  const requireOpPassphrase = (label: string, onConfirmed: () => void) => {
+    setOpConfirmInput('');
+    setOpConfirmError('');
+    setOpConfirmModal({ open: true, label, onConfirmed });
+  };
+
+  const submitOpPassphrase = () => {
+    if (opConfirmInput !== OP_PASSPHRASE) {
+      setOpConfirmError('Phrase de confirmation incorrecte. Veuillez réessayer.');
+      return;
+    }
+    const fn = opConfirmModal.onConfirmed;
+    setOpConfirmModal({ open: false, label: '', onConfirmed: () => {} });
+    setOpConfirmInput('');
+    setOpConfirmError('');
+    fn();
+  };
+
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       navigate('/ecqm19-admin');
@@ -146,57 +173,67 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleCreateOperator = async () => {
-    if (!token) return;
-    setOpActionMessage('');
-    setOpTempPassword('');
-    try {
-      const res = await createOperator(token);
-      setOperators((prev) => [...prev, res.operator]);
-      setOpTempPassword(res.tempPassword);
-      setOpActionMessage(`Opérateur ${res.operator.id} créé. Mot de passe temporaire prêt.`);
-    } catch (error) {
-      alert((error as Error).message || 'Création impossible');
-    }
+  const handleCreateOperator = () => {
+    requireOpPassphrase('Créer un nouvel opérateur', async () => {
+      if (!token) return;
+      setOpActionMessage('');
+      setOpTempPassword('');
+      try {
+        const res = await createOperator(token);
+        setOperators((prev) => [...prev, res.operator]);
+        setOpTempPassword(res.tempPassword);
+        setOpActionMessage(`Opérateur ${res.operator.id} créé. Mot de passe temporaire prêt.`);
+      } catch (error) {
+        alert((error as Error).message || 'Création impossible');
+      }
+    });
   };
 
-  const handleToggleOperator = async (id: string) => {
-    if (!token) return;
-    setOpActionMessage('');
-    setOpTempPassword('');
-    try {
-      const res = await toggleOperator(token, id);
-      setOperators((prev) => prev.map((op) => (op.id === id ? res.operator : op)));
-      setOpActionMessage(res.operator.active ? 'Opérateur activé.' : 'Opérateur désactivé.');
-    } catch (error) {
-      alert((error as Error).message || 'Mise à jour impossible');
-    }
+  const handleToggleOperator = (id: string) => {
+    const op = operators.find((o) => o.id === id);
+    const action = op?.active ? 'Désactiver' : 'Activer';
+    requireOpPassphrase(`${action} l'opérateur ${id}`, async () => {
+      if (!token) return;
+      setOpActionMessage('');
+      setOpTempPassword('');
+      try {
+        const res = await toggleOperator(token, id);
+        setOperators((prev) => prev.map((o) => (o.id === id ? res.operator : o)));
+        setOpActionMessage(res.operator.active ? 'Opérateur activé.' : 'Opérateur désactivé.');
+      } catch (error) {
+        alert((error as Error).message || 'Mise à jour impossible');
+      }
+    });
   };
 
-  const handleResetOperatorPassword = async (id: string) => {
-    if (!token) return;
-    setOpActionMessage('');
-    setOpTempPassword('');
-    try {
-      const res = await resetOperatorPassword(token, id);
-      setOperators((prev) => prev.map((op) => (op.id === id ? res.operator : op)));
-      setOpTempPassword(res.tempPassword);
-      setOpActionMessage(`Mot de passe réinitialisé pour ${id}.`);
-    } catch (error) {
-      alert((error as Error).message || 'Reset impossible');
-    }
+  const handleResetOperatorPassword = (id: string) => {
+    requireOpPassphrase(`Réinitialiser le mot de passe de ${id}`, async () => {
+      if (!token) return;
+      setOpActionMessage('');
+      setOpTempPassword('');
+      try {
+        const res = await resetOperatorPassword(token, id);
+        setOperators((prev) => prev.map((op) => (op.id === id ? res.operator : op)));
+        setOpTempPassword(res.tempPassword);
+        setOpActionMessage(`Mot de passe réinitialisé pour ${id}.`);
+      } catch (error) {
+        alert((error as Error).message || 'Reset impossible');
+      }
+    });
   };
 
-  const handleClearLockout = async (id: string) => {
-    if (!token) return;
-    setOpActionMessage('');
-    setOpTempPassword('');
-    try {
-      await clearOperatorLockout(token, id);
-      setOpActionMessage(`Blocage effacé pour ${id}.`);
-    } catch (error) {
-      alert((error as Error).message || 'Impossible de débloquer');
-    }
+  const handleClearLockout = (id: string) => {
+    requireOpPassphrase(`Débloquer l'opérateur ${id}`, async () => {
+      if (!token) return;
+      setOpActionMessage('');
+      setOpTempPassword('');
+      try {
+        await clearOperatorLockout(token, id);
+        setOpActionMessage(`Blocage effacé pour ${id}.`);
+      } catch (error) {
+        alert((error as Error).message || 'Impossible de débloquer');
+      }
+    });
   };
 
   const handleDeleteSubmission = async (type: 'contact' | 'admission', id: string, reference: string) => {
@@ -1025,6 +1062,59 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
       </main>
+
+      {/* Operator Passphrase Confirmation Modal */}
+      {opConfirmModal.open && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <ShieldAlert className="w-5 h-5 text-red-600" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">Confirmation requise</h2>
+                <p className="text-sm text-gray-500">{opConfirmModal.label}</p>
+              </div>
+            </div>
+            <p className="text-sm text-gray-700 mb-3">
+              Pour confirmer cette action, saisissez exactement la phrase suivante :
+            </p>
+            <div className="bg-gray-100 rounded-lg px-3 py-2 font-mono text-sm text-gray-800 mb-4 select-all break-all">
+              op01-op02-op03-op04-op05-op06-op07-op08-op09-op10
+            </div>
+            <input
+              type="text"
+              value={opConfirmInput}
+              onChange={(e) => { setOpConfirmInput(e.target.value); setOpConfirmError(''); }}
+              onKeyDown={(e) => e.key === 'Enter' && submitOpPassphrase()}
+              placeholder="Saisissez la phrase ci-dessus..."
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none mb-2"
+              autoFocus
+            />
+            {opConfirmError && (
+              <p className="text-red-600 text-xs mb-3 flex items-center gap-1">
+                <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                {opConfirmError}
+              </p>
+            )}
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => { setOpConfirmModal({ open: false, label: '', onConfirmed: () => {} }); setOpConfirmInput(''); setOpConfirmError(''); }}
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors text-sm"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={submitOpPassphrase}
+                disabled={opConfirmInput !== 'op01-op02-op03-op04-op05-op06-op07-op08-op09-op10'}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+              >
+                Confirmer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Detail Modal */}
       {showDetail && selectedItem && (
