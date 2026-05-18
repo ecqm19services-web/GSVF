@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, AlertCircle } from 'lucide-react';
+import { Lock, AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 
 const AdminLoginPage: React.FC = () => {
@@ -146,9 +146,26 @@ const AdminLoginPage: React.FC = () => {
                   />
                 </div>
 
-                <p className="text-xs text-amber-700 bg-amber-50 rounded-lg px-3 py-2">
-                  Changement obligatoire: 8+ caractères, majuscule, minuscule et chiffre.
-                </p>
+                {/* Checklist en temps réel */}
+                <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 space-y-1.5 text-sm">
+                  {[
+                    { label: 'Au moins 8 caractères', ok: newPassword.length >= 8 },
+                    { label: 'Une lettre majuscule (A-Z)', ok: /[A-Z]/.test(newPassword) },
+                    { label: 'Une lettre minuscule (a-z)', ok: /[a-z]/.test(newPassword) },
+                    { label: 'Un chiffre (0-9)', ok: /[0-9]/.test(newPassword) },
+                    { label: 'Confirmation identique', ok: confirmPassword.length > 0 && newPassword === confirmPassword },
+                  ].map(({ label, ok }) => (
+                    <div key={label} className={`flex items-center gap-2 ${newPassword.length === 0 ? 'text-gray-400' : ok ? 'text-green-700' : 'text-red-600'}`}>
+                      {newPassword.length === 0
+                        ? <XCircle className="w-4 h-4 text-gray-300" />
+                        : ok
+                          ? <CheckCircle2 className="w-4 h-4 text-green-600" />
+                          : <XCircle className="w-4 h-4 text-red-500" />
+                      }
+                      <span>{label}</span>
+                    </div>
+                  ))}
+                </div>
               </>
             )}
 
@@ -161,7 +178,17 @@ const AdminLoginPage: React.FC = () => {
 
             <button
               type="submit"
-              disabled={isLoading || isChangingPassword}
+              disabled={
+                isLoading ||
+                isChangingPassword ||
+                (requirePasswordChange && (
+                  newPassword.length < 8 ||
+                  !/[A-Z]/.test(newPassword) ||
+                  !/[a-z]/.test(newPassword) ||
+                  !/[0-9]/.test(newPassword) ||
+                  newPassword !== confirmPassword
+                ))
+              }
               className="w-full py-3 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {(isLoading || isChangingPassword) ? (
