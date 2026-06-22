@@ -4,11 +4,19 @@ Ce document décrit les étapes pour configurer Appwrite comme backend du site.
 
 ---
 
+## 📧 Compte Appwrite
+
+**Email du compte :** `ecqm19services@gmail.com`
+
+Ce compte a accès au projet Appwrite utilisé pour ce site.
+
+---
+
 ## 1. Créer un Compte Appwrite
 
 1. Rendez-vous sur [cloud.appwrite.io](https://cloud.appwrite.io)
-2. Créez un compte gratuit ou connectez-vous
-3. Créez un nouveau projet nommé "Vision Future School"
+2. Connectez-vous avec `ecqm19services@gmail.com`
+3. Le projet "Vision Future School" existe déjà
 
 ---
 

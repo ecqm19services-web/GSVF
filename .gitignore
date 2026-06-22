@@ -22,7 +22,12 @@ public/content
 
 # Admin sensitive files
 server/_secure/acces-operateurs.csv
+server/_secure/acces-operateurs.xlsx
 server/_secure/reset-all-operators.php
+scripts/generate-operators-excel.cjs
+
+# Appwrite credentials (email reference)
+# Email: ecqm19services@gmail.com
 
 # Editor directories and files
 .vscode/*
