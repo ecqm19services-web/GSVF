@@ -36,44 +36,32 @@ if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
   exit;
 }
 
-$config = require __DIR__ . '/../../_secure/appwrite-config.php';
-
-function appwriteRequest($method, $url, $config, $body = null) {
-  $ch = curl_init($url);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-  curl_setopt($ch, CURLOPT_TIMEOUT, 20);
-  $headers = [
-    'Content-Type: application/json',
-    'X-Appwrite-Project: ' . $config['projectId'],
-    'X-Appwrite-Key: ' . $config['apiKey'],
-  ];
-  curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-  if ($body !== null) {
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
-  }
-  $resp = curl_exec($ch);
-  $err  = curl_error($ch);
-  $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-  curl_close($ch);
-  if ($resp === false) {
-    return [$code ?: 500, ['error' => $err ?: 'cURL request failed']];
-  }
-  $json = json_decode($resp, true);
-  if (!is_array($json)) {
-    $json = ['raw' => $resp];
-  }
-  return [$code, $json];
-}
-
-$endpoint = rtrim($config['endpoint'], '/');
-$db = $config['databaseId'];
-$col = 'contact_submissions';
-
+// Generate reference
 $year = date('Y');
 $random = rand(1000, 9999);
 $reference = "JOB-{$year}-{$random}";
 
+// Load existing contacts (job applications stored as contacts)
+$projectRoot = dirname(__DIR__, 2);
+$dataDir = $projectRoot . '/data';
+$contactsFile = $dataDir . '/contacts.json';
+
+if (!is_dir($dataDir)) {
+  mkdir($dataDir, 0755, true);
+}
+
+$contacts = [];
+if (file_exists($contactsFile)) {
+  $json = file_get_contents($contactsFile);
+  if ($json !== false) {
+    $decoded = json_decode($json, true);
+    if (is_array($decoded)) {
+      $contacts = $decoded;
+    }
+  }
+}
+
+// Create new contact entry for job application
 $extra = "Offre: " . trim($data['offerTitle']) . "\n";
 $extra .= "ID offre: " . trim($data['offerId']) . "\n";
 if (!empty($data['cvUrl']) && is_string($data['cvUrl'])) {
@@ -81,7 +69,7 @@ if (!empty($data['cvUrl']) && is_string($data['cvUrl'])) {
 }
 $extra .= "\nMessage candidat:\n" . trim($data['message']);
 
-$docData = [
+$newContact = [
   'reference' => $reference,
   'firstName' => trim($data['firstName']),
   'lastName' => trim($data['lastName']),
@@ -90,18 +78,18 @@ $docData = [
   'subject' => 'Candidature: ' . trim($data['offerTitle']),
   'message' => $extra,
   'status' => 'new',
+  'adminNotes' => '',
+  'processedAt' => null,
+  'createdAt' => gmdate('c'),
 ];
 
-$createUrl = "{$endpoint}/databases/{$db}/collections/{$col}/documents";
-$body = ['documentId' => 'unique()', 'data' => $docData];
-[$code, $result] = appwriteRequest('POST', $createUrl, $config, $body);
+$contacts[] = $newContact;
 
-if ($code >= 400) {
-  http_response_code($code);
-  echo json_encode([
-    'error' => $result['message'] ?? 'Failed to save job application',
-    'details' => $result,
-  ]);
+// Save to file
+$encoded = json_encode($contacts, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+if (file_put_contents($contactsFile, $encoded, LOCK_EX) === false) {
+  http_response_code(500);
+  echo json_encode(['error' => 'Failed to save job application']);
   exit;
 }
 

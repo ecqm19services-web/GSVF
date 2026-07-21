@@ -55,6 +55,7 @@ const AdminLoginPage: React.FC = () => {
       setPassword(newPassword);
       setNewPassword('');
       setConfirmPassword('');
+      navigate('/ecqm19-admin/visual');
       return;
     }
 

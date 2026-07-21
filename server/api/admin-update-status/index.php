@@ -15,8 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$config = require __DIR__ . '/../../_secure/appwrite-config.php';
-
 adminAuthenticateOrFail();
 
 $raw = file_get_contents('php://input');
@@ -28,49 +26,61 @@ if (!isset($payload['type'], $payload['id'])) {
     exit;
 }
 
-function appwriteRequest($method, $url, $config, $body = null) {
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    $headers = [
-        'Content-Type: application/json',
-        'X-Appwrite-Project: ' . $config['projectId'],
-        'X-Appwrite-Key: ' . $config['apiKey'],
-    ];
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    if ($body !== null) {
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
-    }
-    $resp = curl_exec($ch);
-    $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    return [$code, json_decode($resp, true) ?: ['raw' => $resp]];
-}
-
-$endpoint = rtrim($config['endpoint'], '/');
-$db = $config['databaseId'];
-$col = $payload['type'] === 'admission' ? 'admission_submissions' : 'contact_submissions';
+$projectRoot = dirname(__DIR__, 2);
+$dataDir = $projectRoot . '/data';
+$type = $payload['type'];
 $docId = $payload['id'];
 $action = isset($payload['action']) ? strtolower(trim((string)$payload['action'])) : 'status';
 
-$url = "{$endpoint}/databases/{$db}/collections/{$col}/documents/{$docId}";
+// Determine which file to use
+$dataFile = $type === 'admission' ? $dataDir . '/admissions.json' : $dataDir . '/contacts.json';
+
+if (!is_dir($dataDir)) {
+    mkdir($dataDir, 0755, true);
+}
+
+// Load data
+$items = [];
+if (file_exists($dataFile)) {
+    $json = file_get_contents($dataFile);
+    if ($json !== false) {
+        $decoded = json_decode($json, true);
+        if (is_array($decoded)) {
+            $items = $decoded;
+        }
+    }
+}
+
+// Find the item by reference (which is used as ID)
+$foundIndex = null;
+foreach ($items as $i => $item) {
+    if (isset($item['reference']) && $item['reference'] === $docId) {
+        $foundIndex = $i;
+        break;
+    }
+}
+
+if ($foundIndex === null) {
+    http_response_code(404);
+    echo json_encode(['error' => 'Submission not found']);
+    exit;
+}
 
 if ($action === 'delete') {
-    [$code, $data] = appwriteRequest('DELETE', $url, $config);
-
-    if ($code >= 200 && $code < 300) {
-        adminAuditLog('admin_submission_deleted', [
-            'type' => $payload['type'],
-            'id' => $docId,
-            'collection' => $col,
-        ]);
-        echo json_encode(['ok' => true, 'deleted' => true]);
+    array_splice($items, $foundIndex, 1);
+    
+    $encoded = json_encode($items, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if (file_put_contents($dataFile, $encoded, LOCK_EX) === false) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to delete submission']);
         exit;
     }
 
-    http_response_code($code);
-    echo json_encode(['error' => 'Unable to delete submission', 'details' => $data]);
+    adminAuditLog('admin_submission_deleted', [
+        'type' => $type,
+        'id' => $docId,
+    ]);
+    echo json_encode(['ok' => true, 'deleted' => true]);
     exit;
 }
 
@@ -80,23 +90,26 @@ if (!isset($payload['newStatus'])) {
     exit;
 }
 
-$updateData = [
-    'status' => $payload['newStatus']
-];
+// Update status
+$items[$foundIndex]['status'] = $payload['newStatus'];
 if (isset($payload['publicNotes'])) {
-    $updateData['adminNotes'] = $payload['publicNotes'];
+    $items[$foundIndex]['adminNotes'] = $payload['publicNotes'];
 }
-[$code, $data] = appwriteRequest('PATCH', $url, $config, ['data' => $updateData]);
+$items[$foundIndex]['processedAt'] = gmdate('c');
 
-if ($code >= 200 && $code < 300) {
-    adminAuditLog('admin_submission_status_updated', [
-        'type' => $payload['type'],
-        'id' => $docId,
-        'collection' => $col,
-        'newStatus' => (string)$payload['newStatus'],
-        'hasPublicNotes' => isset($payload['publicNotes']),
-    ]);
+// Save
+$encoded = json_encode($items, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+if (file_put_contents($dataFile, $encoded, LOCK_EX) === false) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Failed to update submission']);
+    exit;
 }
 
-http_response_code($code);
-echo json_encode(['updated' => $data]);
+adminAuditLog('admin_submission_status_updated', [
+    'type' => $type,
+    'id' => $docId,
+    'newStatus' => (string)$payload['newStatus'],
+    'hasPublicNotes' => isset($payload['publicNotes']),
+]);
+
+echo json_encode(['ok' => true, 'updated' => $items[$foundIndex]]);

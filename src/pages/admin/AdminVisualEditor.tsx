@@ -44,6 +44,7 @@ type EditablePage =
   | 'accueil'
   | 'visite'
   | 'notre-ecole'
+  | 'presentation'
   | 'equipe'
   | 'contact'
   | 'mentions-legales'
@@ -63,6 +64,7 @@ const pageLabels: Record<EditablePage, string> = {
   accueil: 'Accueil',
   visite: 'Visite',
   'notre-ecole': 'Notre École',
+  presentation: 'Présentation',
   equipe: 'Équipe Pédagogique',
   contact: 'Contact',
   'mentions-legales': 'Mentions Légales',
@@ -84,6 +86,7 @@ function getFallback(page: EditablePage): JsonLike {
     case 'visite':
       return visiteContent as unknown as JsonLike;
     case 'notre-ecole':
+    case 'presentation':
       return {} as JsonLike;
     case 'contact':
       return contactContent as unknown as JsonLike;
@@ -121,6 +124,7 @@ const AdminVisualEditor: React.FC = () => {
       'accueil',
       'visite',
       'notre-ecole',
+      'presentation',
       'histoire',
       'vision',
       'excellence',
@@ -150,6 +154,7 @@ const AdminVisualEditor: React.FC = () => {
       case 'visite':
         return <VisiteContent />;
       case 'notre-ecole':
+      case 'presentation':
         return <NotreEcoleContent />;
       case 'contact':
         return <ContactContent />;

@@ -8,39 +8,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-$config = require __DIR__ . '/../../_secure/appwrite-config.php';
-
 adminAuthenticateOrFail();
 
-function appwriteRequest($method, $url, $config, $body = null) {
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    $headers = [
-        'Content-Type: application/json',
-        'X-Appwrite-Project: ' . $config['projectId'],
-        'X-Appwrite-Key: ' . $config['apiKey'],
-    ];
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    if ($body !== null) {
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
-    }
-    $resp = curl_exec($ch);
-    $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    return [$code, json_decode($resp, true) ?: ['raw' => $resp]];
+$projectRoot = dirname(__DIR__, 2);
+$dataDir = $projectRoot . '/data';
+$contactsFile = $dataDir . '/contacts.json';
+
+if (!is_dir($dataDir)) {
+    mkdir($dataDir, 0755, true);
 }
 
-$endpoint = rtrim($config['endpoint'], '/');
-$db = $config['databaseId'];
-$col = 'contact_submissions';
+$contacts = [];
+if (file_exists($contactsFile)) {
+    $json = file_get_contents($contactsFile);
+    if ($json !== false) {
+        $decoded = json_decode($json, true);
+        if (is_array($decoded)) {
+            $contacts = $decoded;
+        }
+    }
+}
 
-// List documents, sorted by newest
-$qs = 'queries[]=' . urlencode(json_encode(['method' => 'orderDesc', 'attribute' => '$createdAt']));
-$url = "{$endpoint}/databases/{$db}/collections/{$col}/documents?{$qs}";
+// Sort by createdAt descending (newest first)
+usort($contacts, function($a, $b) {
+    $timeA = isset($a['createdAt']) ? strtotime($a['createdAt']) : 0;
+    $timeB = isset($b['createdAt']) ? strtotime($b['createdAt']) : 0;
+    return $timeB - $timeA;
+});
 
-[$code, $data] = appwriteRequest('GET', $url, $config);
-
-http_response_code($code);
-echo json_encode($data);
+echo json_encode(['documents' => $contacts, 'total' => count($contacts)]);
