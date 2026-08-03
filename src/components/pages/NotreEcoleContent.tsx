@@ -313,9 +313,17 @@ const NotreEcoleContent: React.FC = () => {
 
                       {/* Card content */}
                       <div className="ml-16">
-                        <button
+                        <div
+                          role="button"
+                          tabIndex={0}
                           onClick={() => setExpandedYear(isOpen ? null : index)}
-                          className={`w-full text-left rounded-xl transition-all duration-300 ${
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              setExpandedYear(isOpen ? null : index);
+                            }
+                          }}
+                          className={`w-full text-left rounded-xl transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
                             isOpen
                               ? 'bg-white shadow-lg ring-1 ring-blue-100 p-5'
                               : 'p-4 hover:bg-white/80 hover:shadow-md'
@@ -379,7 +387,7 @@ const NotreEcoleContent: React.FC = () => {
                               )}
                             </div>
                           </div>
-                        </button>
+                        </div>
                       </div>
 
                       {/* Spacer between items */}

@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useRef } from 'react';
 
 type JsonLike = Record<string, unknown> | unknown[];
 
@@ -54,25 +54,39 @@ export function EditSessionProvider<TDraft extends JsonLike>(props: {
   setDraft: (next: TDraft) => void;
   children: React.ReactNode;
 }) {
-  const isEditing = props.isEditing ?? true;
+  const { draft, setDraft, page, isEditing: isEditingProp, children } = props;
+  const isEditing = isEditingProp ?? true;
+
+  // Keep a live reference to the latest committed draft so that several
+  // successive `updateAtPath` calls issued within the same synchronous block
+  // (e.g. the Hero uploader which sets backgroundImage then clears
+  // backgroundColor) compose against the latest draft instead of a stale
+  // closure of `draft`, which used to make the second call overwrite
+  // the first one.
+  const draftRef = useRef<TDraft>(draft);
+  draftRef.current = draft;
 
   const updateAtPath = useCallback(
     (path: string, value: unknown) => {
-      props.setDraft(setValueAtPath(props.draft, path, value));
+      const next = setValueAtPath(draftRef.current, path, value);
+      // Keep the ref in sync synchronously so subsequent calls in the same
+      // tick build on top of this update rather than on the stale draft.
+      draftRef.current = next;
+      setDraft(next);
     },
-    [props]
+    [setDraft]
   );
 
   const value = useMemo<EditSessionState<TDraft>>(
     () => ({
-      page: props.page,
+      page,
       isEditing,
-      draft: props.draft,
-      setDraft: props.setDraft,
+      draft,
+      setDraft,
       updateAtPath,
     }),
-    [props.page, isEditing, props.draft, props.setDraft, updateAtPath]
+    [page, isEditing, draft, setDraft, updateAtPath]
   );
 
-  return <EditSessionContext.Provider value={value}>{props.children}</EditSessionContext.Provider>;
+  return <EditSessionContext.Provider value={value}>{children}</EditSessionContext.Provider>;
 }
