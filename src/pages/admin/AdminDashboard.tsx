@@ -28,7 +28,11 @@ import {
   ShieldOff,
   Shield,
   ExternalLink,
-  BookOpen
+  BookOpen,
+  HelpCircle,
+  Image,
+  Database,
+  Globe
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { fetchAdminAdmissions, fetchAdminContacts, adminUpdateStatus, adminDeleteSubmission } from '@/lib/adminApi';
@@ -59,7 +63,7 @@ import {
   type Operator,
 } from '@/lib/adminOperatorsApi';
 
-type TabType = 'contacts' | 'admissions' | 'operators';
+type TabType = 'contacts' | 'admissions' | 'operators' | 'documentation';
 type ContactFilterStatus = ContactStatus | 'all';
 type AdmissionFilterStatus = AdmissionStatus | 'all';
 
@@ -104,12 +108,12 @@ const AdminDashboard: React.FC = () => {
   const [opConfirmModal, setOpConfirmModal] = useState<{
     open: boolean;
     label: string;
-    onConfirmed: () => void;
+    onConfirmed: (phrase: string) => void;
   }>({ open: false, label: '', onConfirmed: () => {} });
   const [opConfirmInput, setOpConfirmInput] = useState('');
   const [opConfirmError, setOpConfirmError] = useState('');
 
-  const requireOpPassphrase = (label: string, onConfirmed: () => void) => {
+  const requireOpPassphrase = (label: string, onConfirmed: (phrase: string) => void) => {
     setOpConfirmInput('');
     setOpConfirmError('');
     setOpConfirmModal({ open: true, label, onConfirmed });
@@ -124,7 +128,7 @@ const AdminDashboard: React.FC = () => {
     setOpConfirmModal({ open: false, label: '', onConfirmed: () => {} });
     setOpConfirmInput('');
     setOpConfirmError('');
-    fn();
+    fn(opConfirmInput);
   };
 
   useEffect(() => {
@@ -174,12 +178,12 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleCreateOperator = () => {
-    requireOpPassphrase('Créer un nouvel opérateur', async () => {
+    requireOpPassphrase('Créer un nouvel opérateur', async (phrase) => {
       if (!token) return;
       setOpActionMessage('');
       setOpTempPassword('');
       try {
-        const res = await createOperator(token);
+        const res = await createOperator(token, phrase);
         setOperators((prev) => [...prev, res.operator]);
         setOpTempPassword(res.tempPassword);
         setOpActionMessage(`Opérateur ${res.operator.id} créé. Mot de passe temporaire prêt.`);
@@ -192,12 +196,12 @@ const AdminDashboard: React.FC = () => {
   const handleToggleOperator = (id: string) => {
     const op = operators.find((o) => o.id === id);
     const action = op?.active ? 'Désactiver' : 'Activer';
-    requireOpPassphrase(`${action} l'opérateur ${id}`, async () => {
+    requireOpPassphrase(`${action} l'opérateur ${id}`, async (phrase) => {
       if (!token) return;
       setOpActionMessage('');
       setOpTempPassword('');
       try {
-        const res = await toggleOperator(token, id);
+        const res = await toggleOperator(token, id, phrase);
         setOperators((prev) => prev.map((o) => (o.id === id ? res.operator : o)));
         setOpActionMessage(res.operator.active ? 'Opérateur activé.' : 'Opérateur désactivé.');
       } catch (error) {
@@ -207,12 +211,12 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleResetOperatorPassword = (id: string) => {
-    requireOpPassphrase(`Réinitialiser le mot de passe de ${id}`, async () => {
+    requireOpPassphrase(`Réinitialiser le mot de passe de ${id}`, async (phrase) => {
       if (!token) return;
       setOpActionMessage('');
       setOpTempPassword('');
       try {
-        const res = await resetOperatorPassword(token, id);
+        const res = await resetOperatorPassword(token, id, phrase);
         setOperators((prev) => prev.map((op) => (op.id === id ? res.operator : op)));
         setOpTempPassword(res.tempPassword);
         setOpActionMessage(`Mot de passe réinitialisé pour ${id}.`);
@@ -223,12 +227,12 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleClearLockout = (id: string) => {
-    requireOpPassphrase(`Débloquer l'opérateur ${id}`, async () => {
+    requireOpPassphrase(`Débloquer l'opérateur ${id}`, async (phrase) => {
       if (!token) return;
       setOpActionMessage('');
       setOpTempPassword('');
       try {
-        await clearOperatorLockout(token, id);
+        await clearOperatorLockout(token, id, phrase);
         setOpActionMessage(`Blocage effacé pour ${id}.`);
       } catch (error) {
         alert((error as Error).message || 'Impossible de débloquer');
@@ -548,35 +552,45 @@ const AdminDashboard: React.FC = () => {
             Voir le site
           </a>
 
-          <Link
-            to="/ecqm19-admin/documentation"
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-orange-200 hover:text-white hover:bg-white/10"
+          <button
+            onClick={() => setActiveTab('documentation')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+              activeTab === 'documentation' ? 'bg-white/20' : 'hover:bg-white/10'
+            }`}
           >
             <BookOpen className="w-5 h-5" />
-            Documentation
-          </Link>
+            Guide & Documentation
+          </button>
         </nav>
 
         <div className="absolute bottom-6 left-6 right-6">
-          <div className="rounded-xl border border-orange-700/60 bg-orange-900/60 text-xs text-orange-100 overflow-hidden">
+          <div className={`rounded-xl border text-xs overflow-hidden transition-all duration-200 ${
+            isDeveloperInfoOpen
+              ? 'bg-gray-900 border-gray-700 shadow-xl'
+              : 'border-orange-700/60 bg-orange-900/60'
+          }`}>
             <button
               type="button"
               onClick={() => setIsDeveloperInfoOpen((prev) => !prev)}
-              className="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-left hover:bg-orange-800/40 transition-colors"
+              className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 text-left transition-colors ${
+                isDeveloperInfoOpen
+                  ? 'hover:bg-gray-800'
+                  : 'hover:bg-orange-800/40'
+              }`}
             >
-              <span className="font-semibold text-orange-100">Information du développeur</span>
-              <ChevronDown className={`w-4 h-4 text-orange-300 transition-transform ${isDeveloperInfoOpen ? 'rotate-180' : ''}`} />
+              <span className={`font-semibold ${isDeveloperInfoOpen ? 'text-gray-200' : 'text-orange-100'}`}>Information du développeur</span>
+              <ChevronDown className={`w-4 h-4 transition-transform ${isDeveloperInfoOpen ? 'rotate-180 text-gray-400' : 'text-orange-300'}`} />
             </button>
 
             {isDeveloperInfoOpen && (
               <div className="px-3 pb-3">
-                <p className="text-[11px] uppercase tracking-wide text-orange-300">Développement & maintenance</p>
+                <p className="text-[11px] uppercase tracking-wide text-gray-400">Développement & maintenance</p>
                 <p className="mt-1 font-semibold text-white">ESSOH Cyrille</p>
-                <p className="text-orange-200">ic_future / Hfablab</p>
-                <p className="mt-2 text-orange-200">Création: 2026</p>
-                <p className="text-orange-200">Email: ic.future16@gmail.com</p>
-                <p className="text-orange-200">Tél: +225 07 77 17 24 08</p>
-                <p className="mt-2 text-[11px] text-orange-300">Support technique et évolutions de la plateforme.</p>
+                <p className="text-gray-300">ic_future / Nath_tech</p>
+                <p className="mt-2 text-gray-400">Création: 2026</p>
+                <p className="text-gray-300">Email: ic.future16@gmail.com</p>
+                <p className="text-gray-300">Tél: +225 07 77 17 24 08</p>
+                <p className="mt-2 text-[11px] text-gray-500">Support technique et évolutions de la plateforme.</p>
               </div>
             )}
           </div>
@@ -777,7 +791,7 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {activeTab !== 'operators' && (
+        {activeTab !== 'operators' && activeTab !== 'documentation' && (
           <>
             {/* Filters */}
             <div className="bg-white rounded-xl p-4 shadow-sm mb-6">
@@ -961,6 +975,180 @@ const AdminDashboard: React.FC = () => {
               )}
             </div>
           </>
+        )}
+
+        {activeTab === 'documentation' && (
+          <div className="space-y-6">
+            {/* En-tête */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 border border-blue-100">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <BookOpen className="w-7 h-7 text-blue-700" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Guide d'utilisation</h2>
+                  <p className="text-gray-500 mt-1">Tout ce qu'il faut savoir pour gérer le site du Collège Privé la Vision Future</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Cartes principales */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                {
+                  icon: <Monitor className="w-5 h-5" />,
+                  title: 'Éditer une page',
+                  color: 'green',
+                  steps: [
+                    'Allez dans le menu « Éditeur visuel »',
+                    'Sélectionnez la page dans la liste déroulante',
+                    'Cliquez sur les textes encadrés pour les modifier',
+                    'Cliquez « Terminer l\'édition » pour publier',
+                  ],
+                },
+                {
+                  icon: <Image className="w-5 h-5" />,
+                  title: 'Changer le fond Hero',
+                  color: 'purple',
+                  steps: [
+                    'Dans l\'éditeur visuel, cliquez « Fond Hero » (bouton en haut à droite)',
+                    'Choisissez « Couleur » ou « Image »',
+                    'Pour une image : uploadez ou cliquez « Réinitialiser » pour celle par défaut',
+                    'Pour une couleur : sélectionnez une vignette ou tapez une classe Tailwind',
+                  ],
+                },
+                {
+                  icon: <FileText className="w-5 h-5" />,
+                  title: 'Gérer le pied de page',
+                  color: 'amber',
+                  steps: [
+                    'Dans l\'éditeur visuel, sélectionnez « Pied de page »',
+                    'Modifiez adresse, téléphone, email, horaires, réseaux sociaux',
+                    'Le copyright et les crédits sont aussi éditables',
+                  ],
+                },
+                {
+                  icon: <Users className="w-5 h-5" />,
+                  title: 'Opérateurs',
+                  color: 'blue',
+                  steps: [
+                    'Onglet « Opérateurs » du tableau de bord',
+                    'Créer : génère un mot de passe temporaire (changement obligatoire)',
+                    'Activer/Désactiver, Réinitialiser MDP, Déverrouiller un compte',
+                    'Max 10 opérateurs · 10 tentatives = blocage 30 min',
+                  ],
+                },
+                {
+                  icon: <Database className="w-5 h-5" />,
+                  title: 'Sauvegardes',
+                  color: 'orange',
+                  steps: [
+                    'Cliquez « Sauvegarder maintenant » pour créer un ZIP',
+                    'Restauration Niveau A : contenu uniquement',
+                    'Restauration Niveau B : complète (nécessite le code développeur)',
+                    'Toujours sauvegarder AVANT de restaurer',
+                  ],
+                },
+                {
+                  icon: <Shield className="w-5 h-5" />,
+                  title: 'Sécurité',
+                  color: 'red',
+                  steps: [
+                    'Mot de passe : 8+ caractères, majuscule, minuscule, chiffre',
+                    'Historique : les 10 derniers MDP sont bloqués',
+                    'Verrouillage automatique après 10 échecs (30 minutes)',
+                    'Ne partagez jamais vos identifiants',
+                  ],
+                },
+              ].map((card, i) => {
+                const colors: Record<string, { bg: string; badge: string; text: string; stepBg: string }> = {
+                  green:  { bg: 'bg-green-50 border-green-200', badge: 'bg-green-100 text-green-800', text: 'text-green-900', stepBg: 'bg-green-50' },
+                  purple: { bg: 'bg-purple-50 border-purple-200', badge: 'bg-purple-100 text-purple-800', text: 'text-purple-900', stepBg: 'bg-purple-50' },
+                  amber:  { bg: 'bg-amber-50 border-amber-200', badge: 'bg-amber-100 text-amber-800', text: 'text-amber-900', stepBg: 'bg-amber-50' },
+                  blue:   { bg: 'bg-blue-50 border-blue-200', badge: 'bg-blue-100 text-blue-800', text: 'text-blue-900', stepBg: 'bg-blue-50' },
+                  orange: { bg: 'bg-orange-50 border-orange-200', badge: 'bg-orange-100 text-orange-800', text: 'text-orange-900', stepBg: 'bg-orange-50' },
+                  red:    { bg: 'bg-red-50 border-red-200', badge: 'bg-red-100 text-red-800', text: 'text-red-900', stepBg: 'bg-red-50' },
+                };
+                const c = colors[card.color] || colors.blue;
+                return (
+                  <div key={i} className={`${c.bg} border rounded-2xl p-5`}>
+                    <div className="flex items-center gap-2.5 mb-4">
+                      <div className={`${c.badge} p-2 rounded-lg`}>{card.icon}</div>
+                      <h3 className={`font-bold ${c.text}`}>{card.title}</h3>
+                    </div>
+                    <ol className="space-y-2">
+                      {card.steps.map((step, j) => (
+                        <li key={j} className="flex items-start gap-2 text-sm">
+                          <span className={`${c.badge} w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5`}>{j + 1}</span>
+                          <span className="text-gray-700">{step}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* FAQ rapide */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <HelpCircle className="w-5 h-5 text-blue-600" />
+                Questions fréquentes
+              </h3>
+              <div className="grid md:grid-cols-2 gap-3">
+                {[
+                  { q: 'J\'ai oublié mon mot de passe', a: 'Demandez à un autre opérateur de réinitialiser votre MDP depuis l\'onglet Opérateurs.' },
+                  { q: 'Mon compte est verrouillé', a: 'Attendez 30 min ou demandez à un autre opérateur de vous déverrouiller.' },
+                  { q: 'Les modifications sont-elles immédiates ?', a: 'Oui, dès que vous publiez, les changements sont visibles sur le site.' },
+                  { q: 'Comment ajouter une offre d\'emploi ?', a: 'Menu « Offres d\'emploi » → créez une offre avec un PDF. Visible sur la page Carrières.' },
+                  { q: 'Puis-je changer les couleurs du site ?', a: 'Oui, via le bouton « Fond Hero » dans l\'éditeur visuel pour chaque page.' },
+                  { q: 'Où sont les sauvegardes ?', a: 'Dans le dossier backups/ du serveur. Non accessibles par URL directe.' },
+                ].map((faq, i) => (
+                  <div key={i} className="bg-gray-50 rounded-xl p-4">
+                    <p className="font-semibold text-gray-900 text-sm">{faq.q}</p>
+                    <p className="text-gray-600 text-sm mt-1">{faq.a}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Lien doc complète */}
+            <div className="bg-gray-900 rounded-2xl p-6 text-white">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <h3 className="font-bold text-lg">Documentation technique complète</h3>
+                  <p className="text-gray-400 text-sm mt-1">Architecture, déploiement, configuration détaillée</p>
+                </div>
+                <a
+                  href="https://github.com/ecqm19services-web/GSVF/blob/main/DOCUMENTATION_CLIENT.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-gray-900 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Voir la doc complète
+                </a>
+              </div>
+            </div>
+
+            {/* Support */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5">
+                <h4 className="font-semibold text-blue-900 mb-2">Support technique</h4>
+                <p className="text-blue-700 text-sm">
+                  Email : contact@lavisionfuture.com<br />
+                  Téléphone : +225 27 21 29 39 83
+                </p>
+              </div>
+              <div className="bg-green-50 border border-green-200 rounded-2xl p-5">
+                <h4 className="font-semibold text-green-900 mb-2">Développeur</h4>
+                <p className="text-green-700 text-sm">
+                  ic_future / Nath_tech<br />
+                  © 2026 Collège Privé la Vision Future
+                </p>
+              </div>
+            </div>
+          </div>
         )}
 
         {activeTab === 'operators' && (

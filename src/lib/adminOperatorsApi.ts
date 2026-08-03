@@ -13,7 +13,7 @@ export type OperatorsResponse = {
 };
 
 const jsonHeaders = (token: string) => ({
-  Authorization: `Bearer ${token}`,
+  Authorization: `Basic ${token}`,
   'Content-Type': 'application/json',
 });
 
@@ -27,11 +27,15 @@ export async function fetchOperators(token: string): Promise<OperatorsResponse> 
   return res.json();
 }
 
-export async function createOperator(token: string, displayName?: string): Promise<{ ok: boolean; operator: Operator; tempPassword: string; }> {
+export async function createOperator(
+  token: string,
+  confirmation: string,
+  displayName?: string
+): Promise<{ ok: boolean; operator: Operator; tempPassword: string }> {
   const res = await fetch('/api/admin-operators/', {
     method: 'POST',
     headers: jsonHeaders(token),
-    body: JSON.stringify({ action: 'create', displayName }),
+    body: JSON.stringify({ action: 'create', confirmation, displayName }),
   });
   if (!res.ok) {
     const msg = (await res.json().catch(() => ({}))).error || 'Création impossible';
@@ -40,11 +44,15 @@ export async function createOperator(token: string, displayName?: string): Promi
   return res.json();
 }
 
-export async function toggleOperator(token: string, id: string): Promise<{ ok: boolean; operator: Operator; }> {
+export async function toggleOperator(
+  token: string,
+  id: string,
+  confirmation: string
+): Promise<{ ok: boolean; operator: Operator }> {
   const res = await fetch('/api/admin-operators/', {
     method: 'POST',
     headers: jsonHeaders(token),
-    body: JSON.stringify({ action: 'toggle', id }),
+    body: JSON.stringify({ action: 'toggle', id, confirmation }),
   });
   if (!res.ok) {
     const msg = (await res.json().catch(() => ({}))).error || 'Mise à jour impossible';
@@ -53,11 +61,15 @@ export async function toggleOperator(token: string, id: string): Promise<{ ok: b
   return res.json();
 }
 
-export async function resetOperatorPassword(token: string, id: string): Promise<{ ok: boolean; operator: Operator; tempPassword: string; }> {
+export async function resetOperatorPassword(
+  token: string,
+  id: string,
+  confirmation: string
+): Promise<{ ok: boolean; operator: Operator; tempPassword: string }> {
   const res = await fetch('/api/admin-operators/', {
     method: 'POST',
     headers: jsonHeaders(token),
-    body: JSON.stringify({ action: 'reset_password', id }),
+    body: JSON.stringify({ action: 'reset_password', id, confirmation }),
   });
   if (!res.ok) {
     const msg = (await res.json().catch(() => ({}))).error || 'Reset impossible';
@@ -66,11 +78,15 @@ export async function resetOperatorPassword(token: string, id: string): Promise<
   return res.json();
 }
 
-export async function clearOperatorLockout(token: string, id: string): Promise<{ ok: boolean; }> {
+export async function clearOperatorLockout(
+  token: string,
+  id: string,
+  confirmation: string
+): Promise<{ ok: boolean }> {
   const res = await fetch('/api/admin-operators/', {
     method: 'POST',
     headers: jsonHeaders(token),
-    body: JSON.stringify({ action: 'clear_lockout', id }),
+    body: JSON.stringify({ action: 'clear_lockout', id, confirmation }),
   });
   if (!res.ok) {
     const msg = (await res.json().catch(() => ({}))).error || 'Impossible de débloquer';

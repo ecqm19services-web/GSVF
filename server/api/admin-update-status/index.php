@@ -32,6 +32,17 @@ $type = $payload['type'];
 $docId = $payload['id'];
 $action = isset($payload['action']) ? strtolower(trim((string)$payload['action'])) : 'status';
 
+if ($type !== 'contact' && $type !== 'admission') {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid type (must be contact or admission)']);
+    exit;
+}
+if (!in_array($action, ['status', 'delete'], true)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid action']);
+    exit;
+}
+
 // Determine which file to use
 $dataFile = $type === 'admission' ? $dataDir . '/admissions.json' : $dataDir . '/contacts.json';
 
@@ -90,10 +101,23 @@ if (!isset($payload['newStatus'])) {
     exit;
 }
 
+// Validate status against allowed values for the submission type
+$allowedStatuses = $type === 'contact'
+    ? ['new', 'in_progress', 'processed']
+    : ['new', 'under_review', 'interview_scheduled', 'approved', 'rejected', 'waitlist'];
+if (!in_array((string)$payload['newStatus'], $allowedStatuses, true)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid status for this submission type']);
+    exit;
+}
+
 // Update status
 $items[$foundIndex]['status'] = $payload['newStatus'];
-if (isset($payload['publicNotes'])) {
-    $items[$foundIndex]['adminNotes'] = $payload['publicNotes'];
+if ($type === 'admission' && isset($payload['publicNotes'])) {
+    $items[$foundIndex]['publicNotes'] = trim((string)$payload['publicNotes']);
+}
+if (isset($payload['adminNotes'])) {
+    $items[$foundIndex]['adminNotes'] = trim((string)$payload['adminNotes']);
 }
 $items[$foundIndex]['processedAt'] = gmdate('c');
 

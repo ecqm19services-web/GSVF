@@ -31,14 +31,14 @@ if ($file['size'] > $maxSize) {
   exit;
 }
 
-$allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'];
+$allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 $finfo = finfo_open(FILEINFO_MIME_TYPE);
 $mimeType = finfo_file($finfo, $file['tmp_name']);
 finfo_close($finfo);
 
 if (!in_array($mimeType, $allowedTypes)) {
   http_response_code(400);
-  echo json_encode(['error' => 'Invalid file type. Allowed: jpeg, png, webp, gif, svg']);
+  echo json_encode(['error' => 'Invalid file type. Allowed: jpeg, png, webp, gif']);
   exit;
 }
 
@@ -47,7 +47,6 @@ $extMap = [
   'image/png' => 'png',
   'image/webp' => 'webp',
   'image/gif' => 'gif',
-  'image/svg+xml' => 'svg',
 ];
 $ext = $extMap[$mimeType] ?? 'jpg';
 

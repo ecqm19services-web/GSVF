@@ -10,6 +10,9 @@ const CareerApplicationContent: React.FC = () => {
         title="Candidature"
         subtitle="Postulez en ligne"
         description="Votre candidature est liée automatiquement à l'offre sélectionnée."
+        heroImagePath="hero.backgroundImage"
+        heroColorPath="hero.backgroundColor"
+        defaultBackgroundColor="bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950"
         size="small"
       />
 

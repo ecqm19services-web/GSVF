@@ -70,6 +70,8 @@ const CareersContent: React.FC = () => {
         description="Consultez nos appels d'offres d'emploi et candidatez au poste qui vous correspond."
         backgroundImage={heroBgImage || undefined}
         heroImagePath="hero.backgroundImage"
+        heroColorPath="hero.backgroundColor"
+        defaultBackgroundColor="bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950"
         size="medium"
       />
 

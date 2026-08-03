@@ -19,7 +19,7 @@ async function apiFetch<T>(
     ...init,
     headers: {
       ...(init?.headers || {}),
-      Authorization: `Bearer ${token}`,
+      Authorization: `Basic ${token}`,
       'Content-Type': 'application/json',
     },
   });

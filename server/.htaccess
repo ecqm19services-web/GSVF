@@ -1,3 +1,5 @@
+Options -Indexes
+
 RewriteEngine On
 
 # Force trailing slash on /api directories for cleaner routing
@@ -13,6 +15,9 @@ RewriteRule ^backups/ - [F,L]
 # Block direct access to server logs
 RewriteRule ^logs/ - [F,L]
 
+# Block direct access to live user data (contacts/admissions)
+RewriteRule ^data/ - [F,L]
+
 # Do not rewrite existing files/folders
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
@@ -20,3 +25,10 @@ RewriteRule ^ - [L]
 
 # SPA fallback
 RewriteRule ^ index.html [L]
+
+# Headers de sécurité
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

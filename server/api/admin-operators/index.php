@@ -11,6 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $operator = adminAuthenticateOrFail();
 
+// Phrase de confirmation requise pour toute action sur les opérateurs
+define('OPERATOR_ACTION_PASSPHRASE', 'op01-op02-op03-op04-op05-op06-op07-op08-op09-op10');
+
 function loadOperatorsOrFail() {
   $ops = adminAuthLoadOperators();
   if (!is_array($ops)) {
@@ -63,6 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $raw = file_get_contents('php://input');
 $payload = json_decode($raw, true);
 $action = isset($payload['action']) ? trim((string)$payload['action']) : '';
+
+// Toute action sur les opérateurs exige la phrase de confirmation (vérifiée côté serveur)
+$confirmation = isset($payload['confirmation']) ? trim((string)$payload['confirmation']) : '';
+if (!hash_equals(OPERATOR_ACTION_PASSPHRASE, $confirmation)) {
+  http_response_code(403);
+  echo json_encode(['error' => 'Phrase de confirmation incorrecte']);
+  exit;
+}
 
 $operators = loadOperatorsOrFail();
 

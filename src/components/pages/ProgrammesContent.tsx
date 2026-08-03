@@ -39,7 +39,7 @@ const ProgrammesContent: React.FC = () => {
   const { value: programmesData } = usePageJsonContent('programmes', programmesContent);
   const editSession = useEditSession();
   const isEditing = !!editSession?.isEditing;
-  const ui = (programmesData as any).ui || (programmesContent as any).ui;
+  const ui = programmesData.ui || programmesContent.ui;
 
   const toggleCycle = (id: string) => {
     setExpandedCycle(expandedCycle === id ? null : id);
@@ -47,7 +47,7 @@ const ProgrammesContent: React.FC = () => {
 
   const addCycle = () => {
     if (!editSession) return;
-    const current = (programmesData as any).cycles || [];
+    const current = programmesData.cycles || [];
     const newId = `cycle-${Date.now()}`;
     editSession.updateAtPath('cycles', [...current, {
       id: newId,
@@ -62,22 +62,22 @@ const ProgrammesContent: React.FC = () => {
 
   const removeCycle = (index: number) => {
     if (!editSession) return;
-    const cycle = ((programmesData as any).cycles || [])[index];
+    const cycle = (programmesData.cycles || [])[index];
     if (!confirm(`Supprimer le cycle "${cycle?.title || `Cycle ${index + 1}`}" ?\n\nOK pour confirmer, Annuler pour annuler.`)) return;
-    const newCycles = ((programmesData as any).cycles || []).filter((_: unknown, i: number) => i !== index);
+    const newCycles = (programmesData.cycles || []).filter((_: unknown, i: number) => i !== index);
     editSession.updateAtPath('cycles', newCycles);
   };
 
   const addFeature = (cycleIndex: number) => {
     if (!editSession) return;
-    const cycle = ((programmesData as any).cycles || [])[cycleIndex];
+    const cycle = (programmesData.cycles || [])[cycleIndex];
     const newFeatures = [...(cycle?.features || []), 'Nouveau point'];
     editSession.updateAtPath(`cycles.${cycleIndex}.features`, newFeatures);
   };
 
   const removeFeature = (cycleIndex: number, fIndex: number) => {
     if (!editSession) return;
-    const cycle = ((programmesData as any).cycles || [])[cycleIndex];
+    const cycle = (programmesData.cycles || [])[cycleIndex];
     const newFeatures = (cycle?.features || []).filter((_: unknown, i: number) => i !== fIndex);
     editSession.updateAtPath(`cycles.${cycleIndex}.features`, newFeatures);
   };
@@ -88,8 +88,10 @@ const ProgrammesContent: React.FC = () => {
         title={programmesData.hero.title}
         subtitle={programmesData.hero.subtitle}
         description={programmesData.hero.description}
-        backgroundImage={(programmesData.hero as any).backgroundImage || undefined}
+        backgroundImage={(programmesData.hero as { backgroundImage?: string }).backgroundImage || undefined}
         heroImagePath="hero.backgroundImage"
+        heroColorPath="hero.backgroundColor"
+        defaultBackgroundColor="bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950"
         size="medium"
       />
 
@@ -253,7 +255,7 @@ const ProgrammesContent: React.FC = () => {
                         <div className="aspect-video lg:aspect-square rounded-xl overflow-hidden">
                           <EditableImage
                             path={`cycles.${cycleIndex}.image`}
-                            src={(cycle as any).image || '/images/accueil/accueil_ecole.jpeg'}
+                            src={cycle.image || '/images/accueil/accueil_ecole.jpeg'}
                             alt={cycle.title}
                             className="w-full h-full object-cover rounded-xl"
                           />
@@ -299,7 +301,7 @@ const ProgrammesContent: React.FC = () => {
               </ul>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {ui.pedagogy.stats.map((stat: any, index: number) => (
+              {ui.pedagogy.stats.map((stat, index: number) => (
                 <div key={index} className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
                   <EditableText
                     as="div"

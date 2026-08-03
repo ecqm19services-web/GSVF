@@ -34,7 +34,7 @@ const SuiviPage: React.FC = () => {
     }
 
     // Validation du format
-    const refPattern = /^(CONT|ADM)-\d{4}-\d{4}$/;
+    const refPattern = /^(CONT|ADM)-\d{4}-\d{4,6}$/;
     if (!refPattern.test(reference.toUpperCase())) {
       setError('Format invalide. Utilisez CONT-XXXX-XXXX ou ADM-XXXX-XXXX');
       return;
@@ -135,7 +135,7 @@ const SuiviPage: React.FC = () => {
                 type="text"
                 value={reference}
                 onChange={(e) => setReference(e.target.value.toUpperCase())}
-                placeholder="Ex: ADM-2026-1234"
+                placeholder="Ex: ADM-2026-123456"
                 className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-lg font-mono"
               />
               <button
@@ -152,7 +152,7 @@ const SuiviPage: React.FC = () => {
               </button>
             </div>
             <p className="mt-2 text-sm text-gray-500">
-              Format: CONT-XXXX-XXXX (contact) ou ADM-XXXX-XXXX (admission)
+              Format: CONT-AAAA-XXXXXX (contact) ou ADM-AAAA-XXXXXX (admission)
             </p>
           </form>
 

@@ -132,6 +132,11 @@ const EquipeContent: React.FC = () => {
         title={data.hero.title}
         subtitle={data.hero.subtitle}
         description={data.hero.description}
+        backgroundImage={(data.hero as { backgroundImage?: string }).backgroundImage || undefined}
+        backgroundColor={(data.hero as { backgroundColor?: string }).backgroundColor || undefined}
+        heroImagePath="hero.backgroundImage"
+        heroColorPath="hero.backgroundColor"
+        defaultBackgroundColor="bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950"
         size="medium"
       />
 

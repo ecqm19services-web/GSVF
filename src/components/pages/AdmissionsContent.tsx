@@ -17,26 +17,26 @@ const AdmissionsContent: React.FC = () => {
   const editSession = useEditSession<Record<string, unknown> | unknown[]>();
   const isEditing = !!editSession?.isEditing;
   const { value: admissionsData } = usePageJsonContent('admissions', admissionsContent);
-  const fallbackInfoSheet = (admissionsContent as any).infoSheet;
-  const infoSheetFromData = (admissionsData as any).infoSheet || {};
+  const fallbackInfoSheet = admissionsContent.infoSheet;
+  const infoSheetFromData = (admissionsData.infoSheet || {}) as typeof admissionsContent.infoSheet;
   const infoSheet = {
     ...fallbackInfoSheet,
     ...infoSheetFromData,
-    annexFees: { ...fallbackInfoSheet?.annexFees, ...(infoSheetFromData as any).annexFees },
-    transport: { ...fallbackInfoSheet?.transport, ...(infoSheetFromData as any).transport },
-    tuition: { ...fallbackInfoSheet?.tuition, ...(infoSheetFromData as any).tuition },
-    extracurricular: { ...fallbackInfoSheet?.extracurricular, ...(infoSheetFromData as any).extracurricular },
-    uniforms: { ...fallbackInfoSheet?.uniforms, ...(infoSheetFromData as any).uniforms },
-    registrationFile: { ...fallbackInfoSheet?.registrationFile, ...(infoSheetFromData as any).registrationFile },
+    annexFees: { ...fallbackInfoSheet?.annexFees, ...infoSheetFromData.annexFees },
+    transport: { ...fallbackInfoSheet?.transport, ...infoSheetFromData.transport },
+    tuition: { ...fallbackInfoSheet?.tuition, ...infoSheetFromData.tuition },
+    extracurricular: { ...fallbackInfoSheet?.extracurricular, ...infoSheetFromData.extracurricular },
+    uniforms: { ...fallbackInfoSheet?.uniforms, ...infoSheetFromData.uniforms },
+    registrationFile: { ...fallbackInfoSheet?.registrationFile, ...infoSheetFromData.registrationFile },
   };
-  const fallbackUi = (admissionsContent as any).ui;
-  const uiFromData = (admissionsData as any).ui || {};
+  const fallbackUi = admissionsContent.ui;
+  const uiFromData = (admissionsData.ui || {}) as typeof admissionsContent.ui;
   const ui = {
     ...fallbackUi,
     ...uiFromData,
-    processSection: { ...fallbackUi.processSection, ...(uiFromData as any).processSection },
-    applicationSection: { ...fallbackUi.applicationSection, ...(uiFromData as any).applicationSection },
-    helpCta: { ...fallbackUi.helpCta, ...(uiFromData as any).helpCta },
+    processSection: { ...fallbackUi.processSection, ...uiFromData.processSection },
+    applicationSection: { ...fallbackUi.applicationSection, ...uiFromData.applicationSection },
+    helpCta: { ...fallbackUi.helpCta, ...uiFromData.helpCta },
   };
 
   const showTuition = isEditing || infoSheet?.tuition?.visibleInProduction !== false;
@@ -92,7 +92,7 @@ const AdmissionsContent: React.FC = () => {
 
   return (
     <>
-      <Hero title={admissionsData.hero.title} subtitle={admissionsData.hero.subtitle} description={admissionsData.hero.description} backgroundImage={(admissionsData.hero as any).backgroundImage || undefined} heroImagePath="hero.backgroundImage" size="medium" />
+      <Hero title={admissionsData.hero.title} subtitle={admissionsData.hero.subtitle} description={admissionsData.hero.description} backgroundImage={(admissionsData.hero as { backgroundImage?: string }).backgroundImage || undefined} backgroundColor={(admissionsData.hero as { backgroundColor?: string }).backgroundColor || undefined} heroImagePath="hero.backgroundImage" heroColorPath="hero.backgroundColor" defaultBackgroundColor="bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950" size="medium" />
 
       {/* Intro */}
       <section className="py-12 bg-white">
@@ -108,30 +108,30 @@ const AdmissionsContent: React.FC = () => {
       </section>
 
       {/* Tab Navigation */}
-      <section className="bg-white border-b border-gray-200 sticky top-16 z-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-0">
+      <section className="bg-gray-50 border-b border-gray-200 sticky top-16 z-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex gap-1 sm:gap-3 justify-center">
             <button
               onClick={() => setActiveTab('fiche')}
-              className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm border-b-2 transition-colors ${
+              className={`flex items-center gap-2.5 px-5 sm:px-8 py-3.5 rounded-xl font-semibold text-sm sm:text-base transition-all duration-200 ${
                 activeTab === 'fiche'
-                  ? 'border-blue-800 text-blue-800'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'bg-blue-800 text-white shadow-lg shadow-blue-800/25 scale-[1.02]'
+                  : 'bg-white text-gray-600 hover:text-gray-800 hover:bg-gray-100 shadow-sm border border-gray-200'
               }`}
             >
-              <FileText className="w-4 h-4" />
+              <FileText className={`w-5 h-5 ${activeTab === 'fiche' ? 'text-blue-200' : 'text-gray-400'}`} />
               Fiche de renseignements
             </button>
             <button
               onClick={() => setActiveTab('etapes')}
-              className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm border-b-2 transition-colors ${
+              className={`flex items-center gap-2.5 px-5 sm:px-8 py-3.5 rounded-xl font-semibold text-sm sm:text-base transition-all duration-200 ${
                 activeTab === 'etapes'
-                  ? 'border-blue-800 text-blue-800'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'bg-blue-800 text-white shadow-lg shadow-blue-800/25 scale-[1.02]'
+                  : 'bg-white text-gray-600 hover:text-gray-800 hover:bg-gray-100 shadow-sm border border-gray-200'
               }`}
             >
-              <ClipboardList className="w-4 h-4" />
-              Étapes & Demande d'admission
+              <ClipboardList className={`w-5 h-5 ${activeTab === 'etapes' ? 'text-blue-200' : 'text-gray-400'}`} />
+              Étapes &amp; Demande d'admission
             </button>
           </div>
         </div>
@@ -197,7 +197,7 @@ const AdmissionsContent: React.FC = () => {
                               </tr>
                             </thead>
                             <tbody>
-                              {infoSheet.tuition.rows.map((row: any, rowIndex: number) => {
+                              {infoSheet.tuition.rows.map((row, rowIndex: number) => {
                                 const isKeyRow = ['Écolage', 'Inscription'].includes(row.label);
                                 return (
                                 <tr key={rowIndex} className={isKeyRow ? 'bg-blue-50' : rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
@@ -281,7 +281,7 @@ const AdmissionsContent: React.FC = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {infoSheet.annexFees.rows.map((row: any, rowIndex: number) => (
+                            {infoSheet.annexFees.rows.map((row, rowIndex: number) => (
                               <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
                                 <td className="py-2.5 px-4 font-semibold text-gray-900 border border-gray-300 whitespace-nowrap">
                                   <EditableText as="span" path={`infoSheet.annexFees.rows.${rowIndex}.label`} value={row.label} />
@@ -352,7 +352,7 @@ const AdmissionsContent: React.FC = () => {
                   <EditableText as="h3" path="infoSheet.registrationFile.title" value={infoSheet.registrationFile.title} className="text-lg font-bold text-amber-900" />
                 </div>
                 <div className="p-6 space-y-4">
-                  {infoSheet.registrationFile.sections.map((sec: any, sIndex: number) => (
+                  {infoSheet.registrationFile.sections.map((sec, sIndex: number) => (
                     <div key={sIndex} className="bg-amber-50/50 rounded-xl p-4 border border-amber-100">
                       <EditableText as="h4" multiline path={`infoSheet.registrationFile.sections.${sIndex}.title`} value={sec.title} className="font-semibold text-amber-900 mb-2" />
                       <ul className="space-y-1.5">
@@ -429,7 +429,7 @@ const AdmissionsContent: React.FC = () => {
                   <EditableText as="h3" path="infoSheet.transport.title" value={infoSheet.transport.title} className="text-lg font-bold text-teal-900" />
                 </div>
                 <div className="p-6 space-y-3">
-                  {infoSheet.transport.routes.map((route: any, i: number) => (
+                  {infoSheet.transport.routes.map((route, i: number) => (
                     <div key={i} className="bg-teal-50/50 rounded-xl p-3 border border-teal-100">
                       <EditableText as="div" multiline path={`infoSheet.transport.routes.${i}.label`} value={route.label} className="text-teal-900 font-medium text-sm" />
                       <div className="text-teal-700 text-sm mt-1 font-semibold">

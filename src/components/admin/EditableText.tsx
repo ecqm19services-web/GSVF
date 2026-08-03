@@ -12,7 +12,9 @@ type Props = {
 
 const EditableText: React.FC<Props> = ({ path, value, as, multiline = false, className }) => {
   const session = useEditSession<Record<string, unknown> | unknown[]>();
-  const ref = useRef<HTMLElement | null>(null);
+  const ref = useRef<
+    (HTMLDivElement & HTMLSpanElement & HTMLHeadingElement & HTMLParagraphElement & HTMLQuoteElement) | null
+  >(null);
 
   const isEditing = !!session?.isEditing;
 
@@ -26,7 +28,7 @@ const EditableText: React.FC<Props> = ({ path, value, as, multiline = false, cla
     [className, isEditing]
   );
 
-  const Tag: any = as || (multiline ? 'div' : 'span');
+  const Tag = (as || (multiline ? 'div' : 'span')) as 'cite' | 'div' | 'h2' | 'h3' | 'h4' | 'p' | 'span';
 
   return (
     <Tag

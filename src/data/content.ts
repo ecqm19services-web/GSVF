@@ -8,7 +8,7 @@ export const siteConfig = {
   shortName: "CPVF",
   location: "Grand-Bassam, Côte d'Ivoire",
   phone: "+225 27 21 29 39 83",
-  email: "contact@lavisionfuture.ci",
+  email: "contact@lavisionfuture.com",
   address: "Boulevard de la République, Grand-Bassam, Côte d'Ivoire",
   socialLinks: {
     facebook: "https://www.facebook.com/lavisionfuture",
@@ -271,7 +271,7 @@ export const homeContent = {
         src: "/images/accueil/accueil_ecole_eleves.jpeg"
       },
       belowImage: {
-        mode: "text" as const,
+        mode: "text" as "text" | "image",
         text: "Restez informé des dernières nouvelles de notre établissement.",
         imageSrc: "/images/accueil/accueil_ecole.jpeg"
       },
@@ -1167,8 +1167,8 @@ export const contactContent = {
     email: {
       title: "Email",
       addresses: [
-        "contact@lavisionfuture.ci",
-        "admissions@lavisionfuture.ci"
+        "contact@lavisionfuture.com",
+        "admissions@lavisionfuture.com"
       ]
     },
     hours: {
@@ -1182,22 +1182,22 @@ export const contactContent = {
   departments: [
     {
       name: "Direction Générale",
-      email: "direction@lavisionfuture.ci",
+      email: "direction@lavisionfuture.com",
       phone: "+225 27 21 29 39 83"
     },
     {
       name: "Service Admissions",
-      email: "admissions@lavisionfuture.ci",
+      email: "admissions@lavisionfuture.com",
       phone: "+225 05 54 20 35 44"
     },
     {
       name: "Service Scolarité",
-      email: "scolarite@lavisionfuture.ci",
+      email: "scolarite@lavisionfuture.com",
       phone: "+225 05 54 20 35 44"
     },
     {
       name: "Comptabilité",
-      email: "comptabilite@lavisionfuture.ci",
+      email: "comptabilite@lavisionfuture.com",
       phone: "+225 05 54 20 35 44"
     }
   ]
@@ -1343,6 +1343,29 @@ export const actualitesSocialConfig = {
     { id: "tiktok", label: "TikTok", enabled: false, url: "" },
     { id: "linkedin", label: "LinkedIn", enabled: false, url: "" }
   ]
+};
+
+export const footerContent = {
+  about: {
+    title: "Collège Privé la Vision Future",
+    tagline: "L'excellence, Notre devise",
+    description: "Depuis 2019, nous formons les leaders de demain dans un environnement d'excellence à Grand-Bassam."
+  },
+  navigationTitle: "Navigation",
+  academiqueTitle: "Académique",
+  contactTitle: "Contact",
+  address: "Boulevard de la République\nGrand-Bassam, Côte d'Ivoire",
+  phone: "+225 27 21 29 39 83",
+  email: "contact@lavisionfuture.com",
+  hours: "Lun - Ven: 7h30 - 17h00\nSam: 8h00 - 12h00",
+  copyright: "© {year} Collège Privé la Vision Future. Tous droits réservés.",
+  credits: "ic_future",
+  socialLinks: {
+    facebook: "https://www.facebook.com/lavisionfuture",
+    instagram: "https://instagram.com/cpvf",
+    linkedin: "https://linkedin.com/company/cpvf",
+    youtube: "https://youtube.com/@cpvf"
+  }
 };
 
 export const navigation = [

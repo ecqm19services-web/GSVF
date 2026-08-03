@@ -1,8 +1,10 @@
 <?php
 
+error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_WARNING);
+ini_set('display_errors', '0');
+
 const ADMIN_OPERATORS_FILE = __DIR__ . '/admin-operators.json';
 const ADMIN_LOCKOUTS_FILE = __DIR__ . '/admin-lockouts.json';
-const ADMIN_LEGACY_HTPASSWD_FILE = __DIR__ . '/.htpasswd';
 const ADMIN_MAX_FAILED_ATTEMPTS = 10;
 const ADMIN_LOCKOUT_SECONDS = 1800;
 const ADMIN_PASSWORD_MIN_LENGTH = 8;
@@ -130,42 +132,7 @@ function adminAuthLoadOperators() {
     return $byId;
   }
 
-  $byId = [];
-  if (!is_file(ADMIN_LEGACY_HTPASSWD_FILE)) {
-    return $byId;
-  }
-
-  $lines = file(ADMIN_LEGACY_HTPASSWD_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-  if (!is_array($lines)) {
-    return $byId;
-  }
-
-  foreach ($lines as $line) {
-    $parts = explode(':', $line, 2);
-    if (count($parts) !== 2) {
-      continue;
-    }
-    [$id, $hash] = $parts;
-    $id = trim((string)$id);
-    $hash = trim((string)$hash);
-    if ($id === '' || $hash === '') {
-      continue;
-    }
-
-    $byId[$id] = [
-      'id' => $id,
-      'displayName' => $id,
-      'role' => 'admin',
-      'passwordHash' => $hash,
-      'active' => true,
-      'mustChangePassword' => false,
-      'passwordHistory' => [],
-      'createdAt' => gmdate('c'),
-      'updatedAt' => null,
-    ];
-  }
-
-  return $byId;
+  return [];
 }
 
 function adminAuthSaveOperators($operatorsById) {

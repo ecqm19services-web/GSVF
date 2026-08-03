@@ -5,7 +5,8 @@ import { contactContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
 import { useEditSession } from '@/contexts/EditSessionContext';
-import { MapPin, Phone, Mail, Clock, Plus, Trash2 } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Plus, Trash2, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 type ContactData = typeof contactContent;
 
@@ -13,17 +14,29 @@ const ContactContent: React.FC = () => {
   const { value: data } = usePageJsonContent<ContactData>('contact', contactContent);
   const editSession = useEditSession<ContactData>();
   const isEditing = !!editSession?.isEditing;
-  const fallbackUi = (contactContent as any).ui;
-  const uiFromData = (data as any).ui || {};
+  const fallbackUi = contactContent.ui;
+  const uiFromData = (data.ui || {}) as typeof contactContent.ui;
   const ui = {
     ...fallbackUi,
     ...uiFromData,
-    form: { ...fallbackUi.form, ...(uiFromData as any).form },
+    form: { ...fallbackUi.form, ...uiFromData.form },
   };
   return (
     <>
-      <Hero title={data.hero.title} subtitle={data.hero.subtitle} description={data.hero.description} backgroundImage={(data.hero as any).backgroundImage || undefined} heroImagePath="hero.backgroundImage" size="medium" />
-      <section className="pt-12 pb-20 bg-white -mt-10 sm:-mt-12 lg:-mt-14">
+      <Hero title={data.hero.title} subtitle={data.hero.subtitle} description={data.hero.description} backgroundImage={(data.hero as { backgroundImage?: string }).backgroundImage || undefined} heroImagePath="hero.backgroundImage" heroColorPath="hero.backgroundColor" defaultBackgroundColor="bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950" size="medium" />
+
+      {/* Bandeau "Suivre ma demande" */}
+      <section className="bg-amber-50 border-b border-amber-200 py-3 -mt-10 sm:-mt-12 lg:-mt-14 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-2 text-sm">
+          <Search className="w-4 h-4 text-amber-700" />
+          <span className="text-amber-800">Vous avez déjà une référence ?</span>
+          <Link to="/suivi" className="font-semibold text-amber-900 hover:text-amber-700 underline underline-offset-2 transition-colors">
+            Suivre ma demande
+          </Link>
+        </div>
+      </section>
+
+      <section className="pt-12 pb-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-1">

@@ -21,13 +21,13 @@ type VisiteData = typeof visiteContent;
 
 const VisiteContent: React.FC = () => {
   const { value: data } = usePageJsonContent<VisiteData>('visite', visiteContent);
-  const ui = (data as any).ui || (visiteContent as any).ui;
+  const ui = data.ui || visiteContent.ui;
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
   const [currentImage, setCurrentImage] = useState(0);
 
   const getGalleryImages = (sectionIndex: number) => {
-    const section = data.sections[sectionIndex] as any;
+    const section = data.sections[sectionIndex] as (typeof data.sections)[number] & { galleryImages?: { src: string; caption: string }[] };
     return section?.galleryImages || section?.images || [];
   };
 
@@ -81,7 +81,7 @@ const VisiteContent: React.FC = () => {
 
   const addGalleryImageToSection = (sectionIndex: number) => {
     if (!updateAtPath || !data) return;
-    const section = data.sections[sectionIndex] as any;
+    const section = data.sections[sectionIndex] as (typeof data.sections)[number] & { galleryImages?: { src: string; caption: string }[] };
     const currentGallery = section.galleryImages || [...section.images];
     const newGallery = [...currentGallery, { src: '/placeholder.svg', caption: 'Nouvelle photo galerie' }];
     updateAtPath(`sections.${sectionIndex}.galleryImages`, newGallery);
@@ -90,9 +90,9 @@ const VisiteContent: React.FC = () => {
   const removeGalleryImageFromSection = (sectionIndex: number, imageIndex: number) => {
     if (!updateAtPath || !data) return;
     if (!confirm('Supprimer cette photo de la galerie ?\n\nOK pour confirmer, Annuler pour annuler.')) return;
-    const section = data.sections[sectionIndex] as any;
+    const section = data.sections[sectionIndex] as (typeof data.sections)[number] & { galleryImages?: { src: string; caption: string }[] };
     const currentGallery = section.galleryImages || [...section.images];
-    const newGallery = currentGallery.filter((_: any, i: number) => i !== imageIndex);
+    const newGallery = currentGallery.filter((_, i: number) => i !== imageIndex);
     updateAtPath(`sections.${sectionIndex}.galleryImages`, newGallery);
   };
 
@@ -102,8 +102,10 @@ const VisiteContent: React.FC = () => {
         title={data.hero.title}
         subtitle={data.hero.subtitle}
         description={data.hero.description}
-        backgroundImage={(data.hero as any).backgroundImage || undefined}
+        backgroundImage={(data.hero as { backgroundImage?: string }).backgroundImage || undefined}
         heroImagePath="hero.backgroundImage"
+        heroColorPath="hero.backgroundColor"
+        defaultBackgroundColor="bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950"
         size="medium"
       />
 
@@ -175,7 +177,7 @@ const VisiteContent: React.FC = () => {
                   )}
                   <span className="text-gray-500">
                     <Camera className="w-5 h-5 inline mr-1" />
-                    {((section as any).galleryImages || section.images).length} <EditableText as="span" path="ui.photosLabel" value={ui.photosLabel} />
+                    {getGalleryImages(sectionIndex).length} <EditableText as="span" path="ui.photosLabel" value={ui.photosLabel} />
                   </span>
                 </div>
               </div>
@@ -241,7 +243,7 @@ const VisiteContent: React.FC = () => {
                       </button>
                     </div>
                     <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                      {getGalleryImages(sectionIndex).map((gImg: any, gIdx: number) => (
+                      {getGalleryImages(sectionIndex).map((gImg, gIdx: number) => (
                         <div key={gIdx} className="relative group/gal rounded-lg overflow-hidden aspect-square">
                           <EditableImage
                             path={`sections.${sectionIndex}.galleryImages.${gIdx}.src`}

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import HomeContent from '@/components/pages/HomeContent';
 import VisiteContent from '@/components/pages/VisiteContent';
-import NotreEcoleContent from '@/components/pages/NotreEcoleContent';
+import NotreEcoleContent, { notreEcoleContent } from '@/components/pages/NotreEcoleContent';
 import ContactContent from '@/components/pages/ContactContent';
 import MentionsLegalesContent from '@/components/pages/MentionsLegalesContent';
 import ConfidentialiteContent from '@/components/pages/ConfidentialiteContent';
@@ -12,10 +12,8 @@ import AdmissionsContent from '@/components/pages/AdmissionsContent';
 import ActualitesContent from '@/components/pages/ActualitesContent';
 import EquipeContent from '@/components/pages/EquipeContent';
 import EmploisDuTempsContent from '@/components/pages/EmploisDuTempsContent';
-import HistoireContent from '@/components/pages/HistoireContent';
-import VisionContent from '@/components/pages/VisionContent';
-import ExcellenceContent from '@/components/pages/ExcellenceContent';
 import CareersContent from '@/components/pages/CareersContent';
+import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
@@ -31,9 +29,7 @@ import {
   admissionsContent,
   equipeContent,
   emploisDuTempsContent,
-  histoireContent,
-  visionContent,
-  excellenceContent,
+  footerContent,
 } from '@/data/content';
 import { EditSessionProvider } from '@/contexts/EditSessionContext';
 import { PageJsonOverrideProvider } from '@/contexts/PageJsonOverrideContext';
@@ -44,7 +40,6 @@ type EditablePage =
   | 'accueil'
   | 'visite'
   | 'notre-ecole'
-  | 'presentation'
   | 'equipe'
   | 'contact'
   | 'mentions-legales'
@@ -53,18 +48,15 @@ type EditablePage =
   | 'emplois-du-temps'
   | 'admissions'
   | 'actualites'
-  | 'histoire'
-  | 'vision'
-  | 'excellence'
-  | 'carrieres';
+  | 'carrieres'
+  | 'pied-de-page';
 
 type JsonLike = Record<string, unknown> | unknown[];
 
 const pageLabels: Record<EditablePage, string> = {
   accueil: 'Accueil',
   visite: 'Visite',
-  'notre-ecole': 'Notre École',
-  presentation: 'Présentation',
+  'notre-ecole': 'Présentation',
   equipe: 'Équipe Pédagogique',
   contact: 'Contact',
   'mentions-legales': 'Mentions Légales',
@@ -73,10 +65,8 @@ const pageLabels: Record<EditablePage, string> = {
   'emplois-du-temps': 'Emplois du Temps',
   admissions: 'Admissions',
   actualites: 'Actualités',
-  histoire: 'Histoire',
-  vision: 'Vision & Mission',
-  excellence: 'Excellence',
   carrieres: 'Carrières',
+  'pied-de-page': 'Pied de page',
 };
 
 function getFallback(page: EditablePage): JsonLike {
@@ -86,8 +76,7 @@ function getFallback(page: EditablePage): JsonLike {
     case 'visite':
       return visiteContent as unknown as JsonLike;
     case 'notre-ecole':
-    case 'presentation':
-      return {} as JsonLike;
+      return notreEcoleContent as unknown as JsonLike;
     case 'contact':
       return contactContent as unknown as JsonLike;
     case 'mentions-legales':
@@ -100,18 +89,14 @@ function getFallback(page: EditablePage): JsonLike {
       return admissionsContent as unknown as JsonLike;
     case 'actualites':
       return {} as JsonLike;
-    case 'histoire':
-      return histoireContent as unknown as JsonLike;
-    case 'vision':
-      return visionContent as unknown as JsonLike;
-    case 'excellence':
-      return excellenceContent as unknown as JsonLike;
     case 'equipe':
       return equipeContent as unknown as JsonLike;
     case 'emplois-du-temps':
       return emploisDuTempsContent as unknown as JsonLike;
     case 'carrieres':
       return {} as JsonLike;
+    case 'pied-de-page':
+      return footerContent as unknown as JsonLike;
   }
 }
 
@@ -124,10 +109,6 @@ const AdminVisualEditor: React.FC = () => {
       'accueil',
       'visite',
       'notre-ecole',
-      'presentation',
-      'histoire',
-      'vision',
-      'excellence',
       'equipe',
       'programmes',
       'admissions',
@@ -137,6 +118,7 @@ const AdminVisualEditor: React.FC = () => {
       'mentions-legales',
       'confidentialite',
       'carrieres',
+      'pied-de-page',
     ],
     []
   );
@@ -154,7 +136,6 @@ const AdminVisualEditor: React.FC = () => {
       case 'visite':
         return <VisiteContent />;
       case 'notre-ecole':
-      case 'presentation':
         return <NotreEcoleContent />;
       case 'contact':
         return <ContactContent />;
@@ -172,14 +153,10 @@ const AdminVisualEditor: React.FC = () => {
         return <EquipeContent />;
       case 'emplois-du-temps':
         return <EmploisDuTempsContent />;
-      case 'histoire':
-        return <HistoireContent />;
-      case 'vision':
-        return <VisionContent />;
-      case 'excellence':
-        return <ExcellenceContent />;
       case 'carrieres':
         return <CareersContent />;
+      case 'pied-de-page':
+        return null; // Footer is rendered directly, not via renderSelectedPage
     }
   };
 
@@ -376,21 +353,25 @@ const AdminVisualEditor: React.FC = () => {
                     </div>
                   }
                 >
-                  <div
-                    className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200 isolate"
-                    onClickCapture={(e) => {
-                      const target = e.target as HTMLElement;
-                      const anchor = target.closest('a');
-                      if (anchor) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                      }
-                    }}
-                  >
-                    <Layout>
-                      {renderSelectedPage()}
-                    </Layout>
-                  </div>
+                  {page === 'pied-de-page' ? (
+                    <Footer />
+                  ) : (
+                    <div
+                      className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200 isolate"
+                      onClickCapture={(e) => {
+                        const target = e.target as HTMLElement;
+                        const anchor = target.closest('a');
+                        if (anchor) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }
+                      }}
+                    >
+                      <Layout>
+                        {renderSelectedPage()}
+                      </Layout>
+                    </div>
+                  )}
                 </ErrorBoundary>
               </EditSessionProvider>
             </PageJsonOverrideProvider>

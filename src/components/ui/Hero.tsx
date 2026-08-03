@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Play, ImagePlus, Loader2 } from 'lucide-react';
+import { ArrowRight, Play, ImagePlus, Loader2, RotateCcw, Palette, X, Settings2 } from 'lucide-react';
 import EditableText from '@/components/admin/EditableText';
 import { useEditSession } from '@/contexts/EditSessionContext';
 
@@ -18,11 +18,15 @@ interface HeroProps {
   };
   backgroundImage?: string;
   backgroundImages?: string[];
+  backgroundColor?: string;
   slideDuration?: number;
   overlay?: boolean;
   size?: 'small' | 'medium' | 'large';
   align?: 'left' | 'center';
   heroImagePath?: string;
+  heroColorPath?: string;
+  defaultBackgroundImage?: string;
+  defaultBackgroundColor?: string;
 }
 
 const Hero: React.FC<HeroProps> = ({
@@ -33,17 +37,24 @@ const Hero: React.FC<HeroProps> = ({
   ctaSecondary,
   backgroundImage,
   backgroundImages,
+  backgroundColor,
   slideDuration = 5000,
   overlay = true,
   size = 'large',
   align = 'center',
-  heroImagePath
+  heroImagePath,
+  heroColorPath,
+  defaultBackgroundImage,
+  defaultBackgroundColor = 'bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950'
 }) => {
   const editSession = useEditSession<Record<string, unknown> | unknown[]>();
   const isEditing = !!editSession?.isEditing;
   const heroBgInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingHeroBg, setIsUploadingHeroBg] = useState(false);
   const [heroBgPreview, setHeroBgPreview] = useState<string | null>(null);
+  const [showHeroSettings, setShowHeroSettings] = useState(false);
+  const [heroMode, setHeroMode] = useState<'color' | 'image'>(backgroundImage ? 'image' : 'color');
+  const [customColor, setCustomColor] = useState(backgroundColor || '');
 
   const handleHeroBgChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -66,7 +77,9 @@ const Hero: React.FC<HeroProps> = ({
       }
       const data = await res.json();
       editSession.updateAtPath(heroImagePath, data.url);
+      if (heroColorPath) editSession.updateAtPath(heroColorPath, '');
       setHeroBgPreview(null);
+      setHeroMode('image');
     } catch (err) {
       console.error('[Hero] Upload error:', err);
       setHeroBgPreview(null);
@@ -77,8 +90,41 @@ const Hero: React.FC<HeroProps> = ({
     }
   };
 
+  const handleColorChange = (color: string) => {
+    setCustomColor(color);
+    if (editSession && heroColorPath) {
+      editSession.updateAtPath(heroColorPath, color);
+      if (heroImagePath) editSession.updateAtPath(heroImagePath, '');
+    }
+    setHeroMode('color');
+  };
+
+  const handleResetHero = () => {
+    if (!editSession) return;
+    if (defaultBackgroundImage && heroImagePath) {
+      editSession.updateAtPath(heroImagePath, defaultBackgroundImage);
+      if (heroColorPath) editSession.updateAtPath(heroColorPath, '');
+      setHeroMode('image');
+    } else if (defaultBackgroundColor && heroColorPath) {
+      editSession.updateAtPath(heroColorPath, defaultBackgroundColor);
+      if (heroImagePath) editSession.updateAtPath(heroImagePath, '');
+      setHeroMode('color');
+    }
+    setCustomColor('');
+    setHeroBgPreview(null);
+    setShowHeroSettings(false);
+  };
+
+  const handleRemoveImage = () => {
+    if (!editSession || !heroImagePath) return;
+    editSession.updateAtPath(heroImagePath, '');
+    setHeroBgPreview(null);
+    setHeroMode('color');
+  };
+
   // Slideshow state – include heroBgPreview when available
   const resolvedBgImage = heroBgPreview || backgroundImage;
+  const resolvedBgColor = backgroundColor || customColor;
   const images = backgroundImages && backgroundImages.length > 0 ? backgroundImages : resolvedBgImage ? [resolvedBgImage] : [];
   const hasSlideshow = images.length > 1;
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -93,6 +139,11 @@ const Hero: React.FC<HeroProps> = ({
     return () => clearInterval(timer);
   }, [hasSlideshow, nextSlide, slideDuration]);
 
+  useEffect(() => {
+    setHeroMode(backgroundImage ? 'image' : 'color');
+    setCustomColor(backgroundColor || '');
+  }, [backgroundImage, backgroundColor]);
+
   const sizeClasses = {
     small: 'py-16 md:py-24',
     medium: 'py-24 md:py-32',
@@ -106,7 +157,7 @@ const Hero: React.FC<HeroProps> = ({
 
   return (
     <section 
-      className={`relative ${sizeClasses[size]} bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950 overflow-hidden`}
+      className={`relative ${sizeClasses[size]} ${resolvedBgColor || defaultBackgroundColor} overflow-hidden`}
     >
       {/* Background Slideshow (supports images + video) */}
       {images.length > 0 && (
@@ -157,27 +208,126 @@ const Hero: React.FC<HeroProps> = ({
       <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-400/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
 
-      {/* Admin: change hero background image button */}
-      {isEditing && heroImagePath && (
+      {/* Admin: Hero settings panel */}
+      {isEditing && (
         <>
-          <input
-            ref={heroBgInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            className="hidden"
-            onChange={handleHeroBgChange}
-          />
           <button
             type="button"
-            onClick={() => heroBgInputRef.current?.click()}
+            onClick={() => setShowHeroSettings(!showHeroSettings)}
             className="absolute top-4 right-4 z-30 flex items-center gap-2 bg-white/90 backdrop-blur-sm text-orange-900 px-3 py-2 rounded-lg shadow-lg hover:bg-white transition-colors text-sm font-semibold"
           >
-            {isUploadingHeroBg ? (
-              <><Loader2 className="w-4 h-4 animate-spin" /> Upload...</>
-            ) : (
-              <><ImagePlus className="w-4 h-4" /> Image de fond</>
-            )}
+            <Settings2 className="w-4 h-4" />
+            Fond Hero
           </button>
+
+          {showHeroSettings && (
+            <div className="absolute top-16 right-4 z-30 bg-white rounded-xl shadow-2xl p-4 w-72 border border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-900 text-sm">Configuration du fond</h3>
+                <button onClick={() => setShowHeroSettings(false)} className="text-gray-400 hover:text-gray-600">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Mode toggle */}
+              <div className="flex gap-2 mb-4">
+                <button
+                  onClick={() => setHeroMode('color')}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    heroMode === 'color' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  <Palette className="w-4 h-4" /> Couleur
+                </button>
+                <button
+                  onClick={() => setHeroMode('image')}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    heroMode === 'image' ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  <ImagePlus className="w-4 h-4" /> Image
+                </button>
+              </div>
+
+              {/* Color picker */}
+              {heroMode === 'color' && (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-4 gap-2">
+                    {[
+                      'bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950',
+                      'bg-gradient-to-br from-blue-950 via-blue-900 to-blue-950',
+                      'bg-gradient-to-br from-green-950 via-green-900 to-green-950',
+                      'bg-gradient-to-br from-purple-950 via-purple-900 to-purple-950',
+                      'bg-gradient-to-br from-red-950 via-red-900 to-red-950',
+                      'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900',
+                      'bg-gradient-to-br from-amber-900 via-amber-800 to-amber-900',
+                      'bg-gradient-to-br from-teal-950 via-teal-900 to-teal-950',
+                    ].map((color, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handleColorChange(color)}
+                        className={`w-full aspect-square rounded-lg ${color} border-2 ${
+                          resolvedBgColor === color ? 'border-orange-500' : 'border-transparent hover:border-gray-300'
+                        } transition-colors`}
+                        title={color}
+                      />
+                    ))}
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Ou tapez une classe Tailwind..."
+                    value={customColor}
+                    onChange={(e) => setCustomColor(e.target.value)}
+                    onBlur={() => customColor && handleColorChange(customColor)}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-orange-300 outline-none"
+                  />
+                </div>
+              )}
+
+              {/* Image upload */}
+              {heroMode === 'image' && (
+                <div className="space-y-3">
+                  <input
+                    ref={heroBgInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handleHeroBgChange}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => heroBgInputRef.current?.click()}
+                    disabled={isUploadingHeroBg}
+                    className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-orange-100 text-orange-800 hover:bg-orange-200 transition-colors text-sm font-medium disabled:opacity-50"
+                  >
+                    {isUploadingHeroBg ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Upload...</>
+                    ) : (
+                      <><ImagePlus className="w-4 h-4" /> Choisir une image</>
+                    )}
+                  </button>
+                  {resolvedBgImage && (
+                    <button
+                      onClick={handleRemoveImage}
+                      className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors text-sm font-medium"
+                    >
+                      <X className="w-4 h-4" /> Supprimer l'image
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Reset button */}
+              {(defaultBackgroundImage || defaultBackgroundColor) && (
+                <button
+                  onClick={handleResetHero}
+                  className="w-full mt-4 flex items-center justify-center gap-2 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors text-sm font-medium"
+                >
+                  <RotateCcw className="w-4 h-4" /> Réinitialiser par défaut
+                </button>
+              )}
+            </div>
+          )}
         </>
       )}
 

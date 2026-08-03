@@ -5,6 +5,9 @@
  */
 header('Content-Type: application/json; charset=utf-8');
 
+error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_WARNING);
+ini_set('display_errors', '0');
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
     exit;
@@ -16,12 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     exit;
 }
 
+require_once __DIR__ . '/../../_secure/rate-limit.php';
+rateLimitCheck('suivi', 30, 300);
+
 $reference = isset($_GET['reference']) ? trim(strtoupper($_GET['reference'])) : '';
 
 // Validation du format
-if (!preg_match('/^(CONT|ADM)-\d{4}-\d{4}$/', $reference)) {
+if (!preg_match('/^(CONT|ADM)-\d{4}-\d{4,6}$/', $reference)) {
     http_response_code(400);
-    echo json_encode(['error' => 'Format de référence invalide. Utilisez CONT-XXXX-XXXX ou ADM-XXXX-XXXX']);
+    echo json_encode(['error' => 'Format de référence invalide. Utilisez CONT-AAAA-XXXXXX ou ADM-AAAA-XXXXXX']);
     exit;
 }
 
@@ -77,7 +83,7 @@ if ($type === 'contact') {
 } else {
     $safeSubmission['studentFirstName'] = $submission['studentFirstName'] ?? '';
     $safeSubmission['studentLastName'] = $submission['studentLastName'] ?? '';
-    $safeSubmission['level'] = $submission['level'] ?? '';
+    $safeSubmission['level'] = $submission['desiredClass'] ?? $submission['level'] ?? '';
     $safeSubmission['publicNotes'] = $submission['publicNotes'] ?? '';
 }
 

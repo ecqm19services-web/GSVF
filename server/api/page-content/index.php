@@ -16,42 +16,6 @@ if ($page === '' || !preg_match('/^[a-z0-9_-]{1,60}$/i', $page)) {
   exit;
 }
 
-function buildQueryString($queries) {
-  $parts = [];
-  foreach ($queries as $q) {
-    $parts[] = 'queries[]=' . urlencode(json_encode($q));
-  }
-  return implode('&', $parts);
-}
-
-function appwriteRequest($method, $url, $config, $body = null) {
-  $ch = curl_init($url);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-  curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-  $headers = [
-    'Content-Type: application/json',
-    'X-Appwrite-Project: ' . $config['projectId'],
-    'X-Appwrite-Key: ' . $config['apiKey'],
-  ];
-  curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-  if ($body !== null) {
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
-  }
-  $resp = curl_exec($ch);
-  $err  = curl_error($ch);
-  $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-  curl_close($ch);
-  if ($resp === false) {
-    return [$code ?: 500, ['error' => $err ?: 'cURL request failed']];
-  }
-  $json = json_decode($resp, true);
-  if (!is_array($json)) {
-    $json = ['raw' => $resp];
-  }
-  return [$code, $json];
-}
-
 $projectRoot = dirname(__DIR__, 2);
 $contentDir = $projectRoot . '/content/pages';
 $filePath = $contentDir . '/' . strtolower($page) . '.json';
@@ -96,39 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   if ($doc !== null) {
     echo json_encode(['document' => $doc]);
     exit;
-  }
-
-  // Legacy fallback: read from Appwrite when no file exists yet.
-  $configPath = __DIR__ . '/../../_secure/appwrite-config.php';
-  if (file_exists($configPath)) {
-    $config = require $configPath;
-    if (
-      is_array($config) &&
-      isset($config['endpoint'], $config['projectId'], $config['apiKey'], $config['databaseId'], $config['collectionId'])
-    ) {
-      $endpoint = rtrim($config['endpoint'], '/');
-      $db  = $config['databaseId'];
-      $col = $config['collectionId'];
-      $qs = buildQueryString([
-        ['method' => 'equal', 'attribute' => 'page', 'values' => [$page]],
-        ['method' => 'limit', 'values' => [1]],
-      ]);
-      $url = "{$endpoint}/databases/{$db}/collections/{$col}/documents?{$qs}";
-      [$code, $data] = appwriteRequest('GET', $url, $config);
-      if ($code < 400 && !empty($data['documents'][0])) {
-        $legacy = $data['documents'][0];
-        $doc = [
-          '$id' => $legacy['$id'] ?? ('appwrite:' . $page),
-          'page' => $page,
-          'kind' => $legacy['kind'] ?? 'json',
-          'payload' => $legacy['payload'] ?? ($legacy['content'] ?? null),
-          'updatedAt' => $legacy['$updatedAt'] ?? null,
-          '$updatedAt' => $legacy['$updatedAt'] ?? null,
-        ];
-        echo json_encode(['document' => $doc]);
-        exit;
-      }
-    }
   }
 
   echo json_encode(['document' => $doc]);

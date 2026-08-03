@@ -15,6 +15,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+*.tsbuildinfo
 *.local
 
 # Generated content copy (source of truth is /content)
@@ -39,3 +40,6 @@ scripts/generate-operators-excel.cjs
 *.njsproj
 *.sln
 *.sw?
+dist-deploy
+deploy-hostinger.zip
+admin-operators-credentials.xlsx

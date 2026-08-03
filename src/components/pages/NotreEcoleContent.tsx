@@ -35,7 +35,7 @@ const iconMap: Record<string, LucideIcon> = {
   target: Target
 };
 
-const notreEcoleContent = {
+export const notreEcoleContent = {
   hero: {
     title: "Notre École",
     subtitle: "Depuis 2019, une institution d'excellence à Grand-Bassam",
@@ -53,7 +53,7 @@ const notreEcoleContent = {
     timeline: histoireContent.timeline,
     founders: histoireContent.founders,
   },
-  histoireUi: (histoireContent as any).ui,
+  histoireUi: histoireContent.ui,
 };
 
 type NotreEcoleData = typeof notreEcoleContent;
@@ -63,10 +63,10 @@ const NotreEcoleContent: React.FC = () => {
   const editSession = useEditSession<Record<string, unknown> | unknown[]>();
   const isEditing = !!editSession?.isEditing;
   const updateAtPath = editSession?.updateAtPath;
-  const ui = (data as any).ui || (notreEcoleContent as any).ui;
-  const histUi = (data as any).histoireUi || notreEcoleContent.histoireUi;
-  const histoire = (data as any).histoire || notreEcoleContent.histoire;
-  const motDirecteur = (data as any).motDirecteur || notreEcoleContent.motDirecteur;
+  const ui = data.ui || notreEcoleContent.ui;
+  const histUi = data.histoireUi || notreEcoleContent.histoireUi;
+  const histoire = data.histoire || notreEcoleContent.histoire;
+  const motDirecteur = data.motDirecteur || notreEcoleContent.motDirecteur;
   const [expandedYear, setExpandedYear] = useState<number | null>(null);
 
   const handleAddTimelineEntry = () => {
@@ -105,6 +105,11 @@ const NotreEcoleContent: React.FC = () => {
           title={data.hero.title}
           subtitle={data.hero.subtitle}
           description={data.hero.description}
+          backgroundImage={(data.hero as { backgroundImage?: string }).backgroundImage || undefined}
+          backgroundColor={(data.hero as { backgroundColor?: string }).backgroundColor || undefined}
+          heroImagePath="hero.backgroundImage"
+          heroColorPath="hero.backgroundColor"
+          defaultBackgroundColor="bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950"
           size="medium"
         />
         {/* Dove overlay on hero */}
@@ -268,7 +273,7 @@ const NotreEcoleContent: React.FC = () => {
               />
               {/* Mini stats under intro */}
               <div className="grid grid-cols-2 gap-4 mt-8">
-                {(histUi.stats || []).slice(0, 4).map((stat: any, index: number) => (
+                {(histUi.stats || []).slice(0, 4).map((stat, index: number) => (
                   <div key={index} className="bg-white rounded-xl p-4 text-center shadow-sm">
                     <div className="text-2xl font-bold text-blue-800">{stat.value}</div>
                     <div className="text-xs text-gray-500">{stat.label}</div>
@@ -283,7 +288,7 @@ const NotreEcoleContent: React.FC = () => {
               <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-400 via-blue-300 to-blue-200" />
 
               <div className="space-y-0">
-                {histoire.timeline.map((item: any, index: number) => {
+                {histoire.timeline.map((item, index: number) => {
                   const isOpen = expandedYear === index;
                   const isLast = index === histoire.timeline.length - 1;
                   return (

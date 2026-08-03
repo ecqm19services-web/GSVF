@@ -30,8 +30,8 @@ const Header: React.FC = () => {
 
   const isActive = (item: NavItem) => {
     if (location.pathname === item.path) return true;
-    if ('children' in item && (item as any).children) {
-      return (item as any).children.some((c: any) => location.pathname === c.path);
+    if ('children' in item && item.children) {
+      return item.children.some((c) => location.pathname === c.path);
     }
     return false;
   };
@@ -89,7 +89,7 @@ const Header: React.FC = () => {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
               {visibleNav.map((item) => {
-                const children = (item as any).children as { name: string; path: string }[] | undefined;
+                const children = 'children' in item ? item.children : undefined;
 
                 if (children && children.length > 0) {
                   return (
@@ -176,7 +176,7 @@ const Header: React.FC = () => {
           <div className="bg-white border-t border-gray-100 px-4 py-4">
             <nav className="flex flex-col gap-1">
               {visibleNav.map((item) => {
-                const children = (item as any).children as { name: string; path: string }[] | undefined;
+                const children = 'children' in item ? item.children : undefined;
                 const expanded = mobileExpanded === item.path;
 
                 if (children && children.length > 0) {

@@ -95,8 +95,9 @@ const ActualitesContent: React.FC = () => {
       try {
         const res = await fetch('/api/page-content/?page=actualites');
         const data = await res.json();
-        if (data.document?.content) {
-          const parsed = JSON.parse(data.document.content);
+        const doc = data?.document;
+        if (doc && doc.kind === 'json' && doc.payload) {
+          const parsed = JSON.parse(doc.payload);
           if (parsed.articles && Array.isArray(parsed.articles) && parsed.articles.length > 0) {
             setArticles(parsed.articles);
           }
@@ -114,20 +115,26 @@ const ActualitesContent: React.FC = () => {
     loadData();
   }, []);
 
-  const saveArticles = async (newArticles: Article[]) => {
-    setArticles(newArticles);
-    // persist via API
+  const persistPage = async (nextArticles: Article[], nextFeeds: SocialFeed[], nextHeroBg?: string) => {
     try {
       const token = sessionStorage.getItem('cpvf_admin_auth') || '';
-      const existing = await fetch('/api/page-content/?page=actualites').then(r => r.json()).catch(() => ({}));
-      const current = existing.document?.content ? JSON.parse(existing.document.content) : {};
-      const updated = { ...current, articles: newArticles };
-      await fetch('/api/page-content/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Basic ${token}` },
-        body: JSON.stringify({ page: 'actualites', content: JSON.stringify(updated) }),
+      const payload = JSON.stringify({
+        articles: nextArticles,
+        socialFeeds: nextFeeds,
+        hero: { backgroundImage: nextHeroBg || heroBgImage },
       });
+      const res = await fetch('/api/page-content/?page=actualites', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Basic ${token}` },
+        body: JSON.stringify({ kind: 'json', payload }),
+      });
+      if (!res.ok) throw new Error('Publish failed');
     } catch { /* ignore */ }
+  };
+
+  const saveArticles = async (newArticles: Article[]) => {
+    setArticles(newArticles);
+    persistPage(newArticles, socialFeeds);
   };
 
   const addArticle = () => {
@@ -179,10 +186,9 @@ const ActualitesContent: React.FC = () => {
       if (!file) return;
       const formData = new FormData();
       formData.append('image', file);
-      formData.append('folder', 'actualites');
       try {
         const token = sessionStorage.getItem('cpvf_admin_auth') || '';
-        const res = await fetch('/api/upload-image/', { method: 'POST', headers: { Authorization: `Basic ${token}` }, body: formData });
+        const res = await fetch('/api/upload-image/?folder=actualites', { method: 'POST', headers: { Authorization: `Basic ${token}` }, body: formData });
         const result = await res.json();
         if (result.url) setEditingArticle(prev => prev ? { ...prev, image: result.url } : prev);
       } catch { /* ignore */ }
@@ -192,23 +198,20 @@ const ActualitesContent: React.FC = () => {
 
   // Save social config when admin changes it
   const toggleFeed = (feedId: string) => {
-    setSocialFeeds((prev) =>
-      prev.map((f) => (f.id === feedId ? { ...f, enabled: !f.enabled } : f))
-    );
+    setSocialFeeds((prev) => {
+      const next = prev.map((f) => (f.id === feedId ? { ...f, enabled: !f.enabled } : f));
+      persistPage(articles, next);
+      return next;
+    });
   };
 
   const updateFeedUrl = (feedId: string, url: string) => {
-    setSocialFeeds((prev) =>
-      prev.map((f) => (f.id === feedId ? { ...f, url } : f))
-    );
+    setSocialFeeds((prev) => {
+      const next = prev.map((f) => (f.id === feedId ? { ...f, url } : f));
+      persistPage(articles, next);
+      return next;
+    });
   };
-
-  // Persist social config via page-content API
-  useEffect(() => {
-    if (!isEditing) return;
-    // We store socialFeeds in a hidden div data attribute that the EditSession will pick up
-    // Actually, we need to save it via the draft. Let's use updateAtPath if available.
-  }, [socialFeeds, isEditing]);
 
   const enabledFeeds = socialFeeds.filter((f) => f.enabled);
   const feedColSpan = enabledFeeds.length > 0 ? Math.floor(4 / enabledFeeds.length) : 4;
@@ -216,7 +219,7 @@ const ActualitesContent: React.FC = () => {
   const renderSocialFeed = (feed: SocialFeed) => {
     const Icon = socialIcons[feed.id] || Facebook;
     const colors = socialColors[feed.id] || socialColors.facebook;
-    const feedUrl = feed.url || (siteConfig.socialLinks as any)[feed.id] || '';
+    const feedUrl = feed.url || (siteConfig.socialLinks as Record<string, string | undefined>)[feed.id] || '';
 
     if (feed.id === 'facebook' && feedUrl) {
       return (
@@ -336,6 +339,8 @@ const ActualitesContent: React.FC = () => {
         description="Découvrez nos dernières nouvelles, événements et réalisations."
         backgroundImage={heroBgImage || undefined}
         heroImagePath="hero.backgroundImage"
+        heroColorPath="hero.backgroundColor"
+        defaultBackgroundColor="bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950"
         size="medium"
       />
 

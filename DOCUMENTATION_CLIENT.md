@@ -27,7 +27,7 @@ Ce projet est un **site web complet et administrable** pour le Collège Privé l
 | **Frontend** | React 18 + TypeScript + Tailwind CSS |
 | **UI Components** | shadcn/ui |
 | **Backend** | PHP (API REST) |
-| **Base de données** | Appwrite (cloud) + fichiers JSON (local) |
+| **Base de données** | Fichiers JSON locaux (server/data + server/content) |
 | **Authentification** | HTTP Basic Auth + sessionStorage |
 | **Build** | Vite |
 
@@ -56,43 +56,15 @@ Site_VF26/
 ### Prérequis
 - **Hébergement** avec PHP 8.1+ et Apache/Nginx
 - **Node.js** 18+ (pour le build)
-- **Compte Appwrite** (cloud ou auto-hébergé)
 
 ### Étapes de déploiement
 
-#### 1. Configuration Appwrite
-```
-1. Créer un projet Appwrite
-2. Créer une base de données "cpvf"
-3. Créer les collections :
-   - admission_submissions
-   - contact_submissions
-   - admission_status_history
-   - contact_status_history
-   - site_pages (legacy, optionnel)
-   - careers_offers (pour les emplois)
+#### 1. Aucune configuration backend requise
+Ce site n'utilise **aucun service externe** (ni Appwrite, ni Supabase). Toutes les données
+(soumissions, contenus édités, opérateurs) sont stockées dans des **fichiers JSON locaux**
+gérés par les APIs PHP du dossier `server/` (`data/`, `content/pages/`, `_secure/`).
 
-4. Configurer les permissions en lecture/écriture pour l'API key
-```
-
-#### 2. Configuration serveur
-Créer le fichier `server/_secure/appwrite-config.php` :
-
-```php
-<?php
-return [
-    'endpoint' => 'https://cloud.appwrite.io/v1',  // ou votre instance
-    'projectId' => 'VOTRE_PROJECT_ID',
-    'apiKey' => 'VOTRE_API_KEY',
-    'databaseId' => 'cpvf',
-    'admissionSubmissionsCollectionId' => 'admission_submissions',
-    'contactSubmissionsCollectionId' => 'contact_submissions',
-    'admissionStatusHistoryCollectionId' => 'admission_status_history',
-    'contactStatusHistoryCollectionId' => 'contact_status_history',
-];
-```
-
-#### 3. Build et déploiement
+#### 2. Build et déploiement
 ```bash
 # Installer les dépendances
 npm install
@@ -270,7 +242,7 @@ R : Un autre opérateur peut réinitialiser votre mot de passe. En cas de blocag
 R : Oui, via le fichier `tailwind.config.ts` puis rebuild. La couleur principale actuelle est le bleu (#434a7a) et l'orange pour les accents.
 
 **Q : Le site fonctionne-t-il hors ligne ?**  
-R : Non, il nécessite une connexion Internet pour charger les données dynamiques depuis Appwrite.
+R : Non, il nécessite une connexion Internet pour charger les données dynamiques (fichiers JSON servis par les APIs PHP).
 
 **Q : Où sont stockées les sauvegardes ?**  
 R : Dans `server/backups/` (accessible uniquement via l'API admin, pas en URL directe grâce au .htaccess).
@@ -285,7 +257,7 @@ R : Dans `server/backups/` (accessible uniquement via l'API admin, pas en URL di
 
 Pour toute question technique ou demande d'évolution :
 1. Consulter cette documentation
-2. Vérifier les logs dans `server/_secure/admin-audit.log`
+2. Vérifier les logs dans `server/logs/admin-actions/`
 3. Contacter le développeur avec le contexte et les erreurs éventuelles
 
 ---

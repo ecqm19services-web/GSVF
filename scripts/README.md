@@ -1,79 +1,20 @@
-# Scripts de configuration Appwrite
+# Scripts utilitaires
 
 ## bootstrap-admin-operators.cjs
 
-Génère automatiquement un fichier `server/_secure/admin-operators.json` avec des opérateurs individuels, chacun avec un mot de passe aléatoire fort hashé en bcrypt (compatible PHP), pour remplacer le compte admin partagé.
-
-### Utilisation
+Génère `server/_secure/admin-operators.json` avec des opérateurs individuels, chacun avec un mot de passe aléatoire hashé en bcrypt (compatible PHP).
 
 ```bash
 node scripts/bootstrap-admin-operators.cjs 10
 ```
 
-Options:
+Options : `10` = nombre d'opérateurs · `--force` = écrase un fichier existant.
 
-- `10` : nombre d'opérateurs à créer.
-- `--force` : écrase un fichier existant (à utiliser uniquement pour rotation complète des accès).
+## generate-operators-excel.cjs / export-operators-excel.cjs
 
-### Important
+Génèrent les fichiers Excel/CSV d'accès des opérateurs.
 
-1. Le script affiche les mots de passe initiaux une seule fois dans la console.
-2. Transmets ces mots de passe de façon sécurisée (pas par chat public).
-3. Le backend bloque un opérateur pendant 30 minutes après 10 tentatives échouées.
+## postbuild.cjs / deploy.cjs
 
-## setup-appwrite-collection.js
-
-Script automatique pour créer la collection `site_pages` dans Appwrite avec tous les attributs et permissions nécessaires.
-
-### Prérequis
-
-1. Avoir installé les dépendances : `npm install`
-2. Avoir configuré les variables d'environnement
-
-### Configuration
-
-Crée un fichier `.env.local` à la racine du projet avec :
-
-```env
-APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
-APPWRITE_PROJECT_ID=ton_project_id
-APPWRITE_API_KEY=ton_api_key
-APPWRITE_DATABASE_ID=ton_database_id
-```
-
-**Où trouver ces valeurs ?**
-
-- `APPWRITE_PROJECT_ID` : Appwrite Console → Settings → Project ID
-- `APPWRITE_API_KEY` : Appwrite Console → Settings → API Keys (celle nommée "GSVF")
-- `APPWRITE_DATABASE_ID` : Appwrite Console → Databases → Vision Future School DB → copie l'ID
-
-### Utilisation
-
-```bash
-npm run setup:appwrite
-```
-
-### Ce que fait le script
-
-1. ✅ Crée la collection `site_pages`
-2. ✅ Ajoute l'attribut `page` (string, 100 caractères, requis)
-3. ✅ Ajoute l'attribut `content` (string, 1 million de caractères, requis)
-4. ✅ Crée un index unique sur `page` pour éviter les doublons
-5. ✅ Configure les permissions : lecture publique (Role.any())
-
-### En cas d'erreur
-
-**"La collection existe déjà"** : Supprime-la d'abord dans Appwrite Console si tu veux la recréer.
-
-**"Variables d'environnement manquantes"** : Vérifie que ton fichier `.env.local` contient toutes les variables requises.
-
-**"Unauthorized"** : Vérifie que ton API Key a les permissions Database (read/write).
-
-### Après l'exécution
-
-Teste l'API sur ton domaine Hostinger :
-```
-https://votre-domaine.com/api/page-content?page=accueil
-```
-
-Tu devrais avoir `404` (normal, aucun document créé) au lieu de `500 Unauthorized`.
+- `postbuild.cjs` : copie `server/` → `dist/` après `vite build` (préserve `dist/data/`).
+- `deploy.cjs` : prépare `dist-deploy/` (sans les données live) pour l'upload Hostinger.

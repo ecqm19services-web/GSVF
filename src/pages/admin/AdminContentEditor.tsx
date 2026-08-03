@@ -12,7 +12,9 @@ import {
   confidentialiteContent,
   programmesContent,
   admissionsContent,
+  footerContent,
 } from '@/data/content';
+import { notreEcoleContent } from '@/components/pages/NotreEcoleContent';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -29,7 +31,7 @@ import { FileText, LogOut, Monitor, Settings, BriefcaseBusiness, ExternalLink } 
 const pageLabels: Record<string, string> = {
   accueil: 'Accueil',
   visite: 'Visite',
-  'notre-ecole': 'Notre École',
+  'notre-ecole': 'Présentation',
   vision: 'Vision',
   histoire: 'Histoire',
   contact: 'Contact',
@@ -38,6 +40,7 @@ const pageLabels: Record<string, string> = {
   programmes: 'Programmes',
   admissions: 'Admissions',
   actualites: 'Actualités',
+  'pied-de-page': 'Pied de page',
 };
 
 type Source = 'published' | 'local' | 'empty';
@@ -63,8 +66,11 @@ function getDefaultJsonPayload(page: string): string {
     case 'admissions':
       return JSON.stringify(admissionsContent, null, 2);
     case 'notre-ecole':
+      return JSON.stringify(notreEcoleContent, null, 2);
     case 'actualites':
       return JSON.stringify({}, null, 2);
+    case 'pied-de-page':
+      return JSON.stringify(footerContent, null, 2);
     default:
       return JSON.stringify({}, null, 2);
   }
@@ -87,6 +93,7 @@ const AdminContentEditor: React.FC = () => {
       'programmes',
       'admissions',
       'actualites',
+      'pied-de-page',
     ],
     []
   );

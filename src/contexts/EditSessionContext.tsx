@@ -10,41 +10,41 @@ export type EditSessionState<TDraft extends JsonLike> = {
   updateAtPath: (path: string, value: unknown) => void;
 };
 
-const EditSessionContext = createContext<EditSessionState<any> | null>(null);
+const EditSessionContext = createContext<EditSessionState<JsonLike> | null>(null);
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
 }
 
-function cloneContainer(value: unknown): any {
-  if (Array.isArray(value)) return [...value];
-  if (isPlainObject(value)) return { ...value };
-  return {};
+function cloneContainer<T>(value: T): T {
+  if (Array.isArray(value)) return [...value] as T;
+  if (isPlainObject(value)) return { ...value } as T;
+  return {} as T;
 }
 
 function setValueAtPath<TDraft extends JsonLike>(draft: TDraft, path: string, value: unknown): TDraft {
   const parts = path.split('.').filter(Boolean);
   if (parts.length === 0) return draft;
 
-  const root: any = cloneContainer(draft);
-  let cursor: any = root;
-  let sourceCursor: any = draft;
+  const root = cloneContainer(draft);
+  let cursor: Record<string, unknown> = root as Record<string, unknown>;
+  let sourceCursor: unknown = draft;
 
   for (let i = 0; i < parts.length - 1; i++) {
     const key = parts[i]!;
-    const nextSource = sourceCursor?.[key];
-    const next = cloneContainer(nextSource);
+    const nextSource: unknown = (sourceCursor as Record<string, unknown> | undefined)?.[key];
+    const next: unknown = cloneContainer(nextSource);
     cursor[key] = next;
-    cursor = next;
+    cursor = next as Record<string, unknown>;
     sourceCursor = nextSource;
   }
 
   cursor[parts[parts.length - 1]!] = value;
-  return root as TDraft;
+  return root;
 }
 
 export function useEditSession<TDraft extends JsonLike>() {
-  return useContext(EditSessionContext) as EditSessionState<TDraft> | null;
+  return useContext(EditSessionContext) as unknown as EditSessionState<TDraft> | null;
 }
 
 export function EditSessionProvider<TDraft extends JsonLike>(props: {

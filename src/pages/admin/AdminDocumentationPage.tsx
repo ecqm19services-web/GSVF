@@ -422,7 +422,7 @@ const AdminDocumentationPage: React.FC = () => {
                 La configuration système reste inchangée.
               </p>
               <p className="text-sm text-blue-600">
-                <strong>Confirmation requise :</strong> tapez "RESTAURER-A"
+                <strong>Confirmation requise :</strong> tapez "RESTAURER NIVEAU A"
               </p>
             </div>
 
@@ -513,7 +513,7 @@ const AdminDocumentationPage: React.FC = () => {
             <h3 className="text-lg font-semibold mb-2">Documentation technique complète</h3>
             <p className="text-gray-400 text-sm mb-4">
               Pour les informations détaillées sur l\'architecture, le déploiement, 
-              la configuration Appwrite et les procédures avancées :
+              la configuration du serveur et les procédures avancées :
             </p>
             <a
               href="https://github.com/ecqm19services-web/GSVF/blob/main/DOCUMENTATION_CLIENT.md"
@@ -530,7 +530,7 @@ const AdminDocumentationPage: React.FC = () => {
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
               <h4 className="font-semibold text-blue-900 mb-2">Support technique</h4>
               <p className="text-blue-700 text-sm">
-                Email : contact@lavisionfuture.ci<br />
+                Email : contact@lavisionfuture.com<br />
                 Téléphone : +225 27 21 29 39 83
               </p>
             </div>

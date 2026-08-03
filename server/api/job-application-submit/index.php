@@ -1,6 +1,9 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
+error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_WARNING);
+ini_set('display_errors', '0');
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
   http_response_code(204);
   exit;
@@ -11,6 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   echo json_encode(['error' => 'Method not allowed']);
   exit;
 }
+
+require_once __DIR__ . '/../../_secure/rate-limit.php';
+rateLimitCheck('job-application-submit', 10, 3600);
 
 $raw = file_get_contents('php://input');
 $data = json_decode($raw, true);
@@ -38,7 +44,7 @@ if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
 
 // Generate reference
 $year = date('Y');
-$random = rand(1000, 9999);
+$random = random_int(100000, 999999);
 $reference = "JOB-{$year}-{$random}";
 
 // Load existing contacts (job applications stored as contacts)
