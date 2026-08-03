@@ -257,7 +257,7 @@ const AdminDashboard: React.FC = () => {
       await adminDeleteSubmission(token, { type, id });
       await loadData();
 
-      if (selectedItem?.$id === id) {
+      if (selectedItem?.reference === id) {
         setShowDetail(false);
         setSelectedItem(null);
       }
@@ -376,10 +376,10 @@ const AdminDashboard: React.FC = () => {
     const rows = data.map(item => {
       if (activeTab === 'contacts') {
         const c = item as ContactSubmission;
-        return [c.reference, formatDate(c.$createdAt), c.lastName, c.firstName, c.email, c.phone || '', c.subject, c.status];
+        return [c.reference, formatDate(c.createdAt), c.lastName, c.firstName, c.email, c.phone || '', c.subject, c.status];
       } else {
         const a = item as AdmissionSubmission;
-        return [a.reference, formatDate(a.$createdAt), `${a.studentLastName} ${a.studentFirstName}`, a.desiredClass, `${a.parentLastName} ${a.parentFirstName}`, a.parentEmail, a.parentPhone, a.status];
+        return [a.reference, formatDate(a.createdAt), `${a.studentLastName} ${a.studentFirstName}`, a.desiredClass, `${a.parentLastName} ${a.parentFirstName}`, a.parentEmail, a.parentPhone, a.status];
       }
     });
 
@@ -894,9 +894,9 @@ const AdminDashboard: React.FC = () => {
                           </tr>
                         ) : (
                           filteredContacts.map((contact) => (
-                            <tr key={contact.$id} className="hover:bg-gray-50">
+                            <tr key={contact.reference} className="hover:bg-gray-50">
                               <td className="px-6 py-4 font-mono text-sm text-orange-700">{contact.reference}</td>
-                              <td className="px-6 py-4 text-sm text-gray-500">{formatDate(contact.$createdAt)}</td>
+                              <td className="px-6 py-4 text-sm text-gray-500">{formatDate(contact.createdAt)}</td>
                               <td className="px-6 py-4">
                                 <div className="font-medium text-gray-900">{contact.lastName} {contact.firstName}</div>
                                 <div className="text-sm text-gray-500">{contact.email}</div>
@@ -913,12 +913,12 @@ const AdminDashboard: React.FC = () => {
                                     Voir
                                   </button>
                                   <button
-                                    onClick={() => handleDeleteSubmission('contact', contact.$id || '', contact.reference)}
-                                    disabled={!contact.$id || deletingItemId === contact.$id}
+                                    onClick={() => handleDeleteSubmission('contact', contact.reference, contact.reference)}
+                                    disabled={deletingItemId === contact.reference}
                                     className="text-red-600 hover:text-red-700 font-medium text-sm flex items-center gap-1 disabled:opacity-50"
                                   >
                                     <Trash2 className="w-4 h-4" />
-                                    {deletingItemId === contact.$id ? 'Suppression...' : 'Supprimer'}
+                                    {deletingItemId === contact.reference ? 'Suppression...' : 'Supprimer'}
                                   </button>
                                 </div>
                               </td>
@@ -934,9 +934,9 @@ const AdminDashboard: React.FC = () => {
                           </tr>
                         ) : (
                           filteredAdmissions.map((admission) => (
-                            <tr key={admission.$id} className="hover:bg-gray-50">
+                            <tr key={admission.reference} className="hover:bg-gray-50">
                               <td className="px-6 py-4 font-mono text-sm text-orange-700">{admission.reference}</td>
-                              <td className="px-6 py-4 text-sm text-gray-500">{formatDate(admission.$createdAt)}</td>
+                              <td className="px-6 py-4 text-sm text-gray-500">{formatDate(admission.createdAt)}</td>
                               <td className="px-6 py-4">
                                 <div className="font-medium text-gray-900">{admission.studentLastName} {admission.studentFirstName}</div>
                               </td>
@@ -956,12 +956,12 @@ const AdminDashboard: React.FC = () => {
                                     Voir
                                   </button>
                                   <button
-                                    onClick={() => handleDeleteSubmission('admission', admission.$id || '', admission.reference)}
-                                    disabled={!admission.$id || deletingItemId === admission.$id}
+                                    onClick={() => handleDeleteSubmission('admission', admission.reference, admission.reference)}
+                                    disabled={deletingItemId === admission.reference}
                                     className="text-red-600 hover:text-red-700 font-medium text-sm flex items-center gap-1 disabled:opacity-50"
                                   >
                                     <Trash2 className="w-4 h-4" />
-                                    {deletingItemId === admission.$id ? 'Suppression...' : 'Supprimer'}
+                                    {deletingItemId === admission.reference ? 'Suppression...' : 'Supprimer'}
                                   </button>
                                 </div>
                               </td>
@@ -1337,7 +1337,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ item, type, onClose, onStatus
     }
     
     setIsUpdating(true);
-    await onStatusChange(type, item.$id!, newStatus, type === 'admission' ? publicNotes : undefined);
+    await onStatusChange(type, item.reference, newStatus, type === 'admission' ? publicNotes : undefined);
     setIsUpdating(false);
   };
 
@@ -1377,7 +1377,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ item, type, onClose, onStatus
                 </div>
                 <div>
                   <label className="text-sm text-gray-500">Date</label>
-                  <p className="font-medium">{formatDate(item.$createdAt)}</p>
+                  <p className="font-medium">{formatDate(item.createdAt)}</p>
                 </div>
                 <div>
                   <label className="text-sm text-gray-500">Email</label>

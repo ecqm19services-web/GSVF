@@ -6,6 +6,7 @@ export type AdmissionStatus = 'new' | 'under_review' | 'interview_scheduled' | '
 export interface ContactSubmission {
   $id?: string;
   $createdAt?: string;
+  createdAt?: string;
   reference: string;
   firstName: string;
   lastName: string;
@@ -21,6 +22,7 @@ export interface ContactSubmission {
 export interface AdmissionSubmission {
   $id?: string;
   $createdAt?: string;
+  createdAt?: string;
   reference: string;
   studentFirstName: string;
   studentLastName: string;
