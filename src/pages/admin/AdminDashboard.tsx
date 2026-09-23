@@ -461,7 +461,8 @@ const AdminDashboard: React.FC = () => {
     type: 'contact' | 'admission', 
     id: string, 
     newStatus: string,
-    publicNotes?: string
+    publicNotes?: string,
+    interviewDate?: string
   ) => {
     try {
       if (!token) {
@@ -473,6 +474,7 @@ const AdminDashboard: React.FC = () => {
         id,
         newStatus,
         publicNotes,
+        interviewDate,
       });
 
       // Recharger les données
@@ -1590,22 +1592,44 @@ interface DetailModalProps {
   item: ContactSubmission | AdmissionSubmission;
   type: 'contact' | 'admission';
   onClose: () => void;
-  onStatusChange: (type: 'contact' | 'admission', id: string, status: string, publicNotes?: string) => Promise<void>;
+  onStatusChange: (type: 'contact' | 'admission', id: string, status: string, publicNotes?: string, interviewDate?: string) => Promise<void>;
 }
 
 const DetailModal: React.FC<DetailModalProps> = ({ item, type, onClose, onStatusChange }) => {
   const [newStatus, setNewStatus] = useState<string>(item.status);
   const [publicNotes, setPublicNotes] = useState((item as AdmissionSubmission).publicNotes || '');
+  const [interviewDate, setInterviewDate] = useState((item as AdmissionSubmission).interviewDate || '');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [interviewDateError, setInterviewDateError] = useState('');
+
+  const requiresInterviewDate = type === 'admission' && newStatus === 'interview_scheduled';
 
   const handleUpdate = async () => {
-    if (newStatus === item.status && publicNotes === ((item as AdmissionSubmission).publicNotes || '')) {
+    // Le statut « Entretien programmé » exige de proposer une date de RDV.
+    if (requiresInterviewDate && !interviewDate.trim()) {
+      setInterviewDateError("Veuillez proposer une date d'entretien avant d'enregistrer.");
+      return;
+    }
+    setInterviewDateError('');
+
+    const interviewDateChanged = interviewDate !== ((item as AdmissionSubmission).interviewDate || '');
+    if (
+      newStatus === item.status &&
+      publicNotes === ((item as AdmissionSubmission).publicNotes || '') &&
+      !interviewDateChanged
+    ) {
       onClose();
       return;
     }
-    
+
     setIsUpdating(true);
-    await onStatusChange(type, item.reference, newStatus, type === 'admission' ? publicNotes : undefined);
+    await onStatusChange(
+      type,
+      item.reference,
+      newStatus,
+      type === 'admission' ? publicNotes : undefined,
+      type === 'admission' ? interviewDate : undefined
+    );
     setIsUpdating(false);
   };
 
@@ -1740,7 +1764,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ item, type, onClose, onStatus
                 <label className="text-sm text-gray-500 block mb-2">Nouveau statut</label>
                 <select
                   value={newStatus}
-                  onChange={(e) => setNewStatus(e.target.value)}
+                  onChange={(e) => { setNewStatus(e.target.value); setInterviewDateError(''); }}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 >
                   {type === 'contact' ? (
@@ -1761,6 +1785,29 @@ const DetailModal: React.FC<DetailModalProps> = ({ item, type, onClose, onStatus
                   )}
                 </select>
               </div>
+
+              {requiresInterviewDate && (
+                <div>
+                  <label className="text-sm text-gray-500 block mb-2">
+                    Date proposée pour l'entretien <span className="text-red-600">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    value={interviewDate}
+                    onChange={(e) => { setInterviewDate(e.target.value); setInterviewDateError(''); }}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                      interviewDateError ? 'border-red-400' : 'border-gray-200'
+                    }`}
+                  />
+                  {interviewDateError ? (
+                    <p className="mt-1 text-sm text-red-600">{interviewDateError}</p>
+                  ) : (
+                    <p className="mt-1 text-xs text-gray-500">
+                      Cette date sera visible par le parent sur la page de suivi et reprise dans la fiche Word.
+                    </p>
+                  )}
+                </div>
+              )}
 
               {type === 'admission' && (
                 <div>

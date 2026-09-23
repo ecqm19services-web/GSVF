@@ -3,6 +3,7 @@ export type AdminUpdateStatusPayload = {
   id: string;
   newStatus: string;
   publicNotes?: string;
+  interviewDate?: string;
 };
 
 export type AdminDeleteSubmissionPayload = {

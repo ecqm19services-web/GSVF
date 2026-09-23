@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Hero from '@/components/ui/Hero';
 import SectionTitle from '@/components/ui/SectionTitle';
 import AdmissionsForm from '@/components/forms/AdmissionsForm';
@@ -6,7 +7,7 @@ import { admissionsContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
 import { useEditSession } from '@/contexts/EditSessionContext';
-import { FileText, ClipboardList, X } from 'lucide-react';
+import { FileText, ClipboardList, X, Search } from 'lucide-react';
 
 type AdmissionTab = 'fiche' | 'etapes';
 type SensitiveSectionKey = 'tuition' | 'annexFees';
@@ -103,6 +104,17 @@ const AdmissionsContent: React.FC = () => {
   return (
     <>
       <Hero title={admissionsData.hero.title} subtitle={admissionsData.hero.subtitle} description={admissionsData.hero.description} backgroundImage={(admissionsData.hero as { backgroundImage?: string }).backgroundImage || undefined} backgroundColor={(admissionsData.hero as { backgroundColor?: string }).backgroundColor || undefined} heroImagePath="hero.backgroundImage" heroColorPath="hero.backgroundColor" defaultBackgroundColor="bg-gradient-to-br from-orange-950 via-orange-900 to-orange-950" size="medium" />
+
+      {/* Bandeau "Suivre ma demande" */}
+      <section className="bg-amber-50 border-b border-amber-200 py-3 -mt-10 sm:-mt-12 lg:-mt-14 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-2 text-sm">
+          <Search className="w-4 h-4 text-amber-700" />
+          <span className="text-amber-800">Vous avez déjà une référence ?</span>
+          <Link to="/suivi" className="font-semibold text-amber-900 hover:text-amber-700 underline underline-offset-2 transition-colors">
+            Suivre ma demande
+          </Link>
+        </div>
+      </section>
 
       {/* Intro */}
       <section className="py-12 bg-white">

@@ -3,6 +3,7 @@ import {
   admissionStatusLabels,
   type AdmissionSubmission,
 } from '@/types/submissions';
+import { admissionLogoDataUrl } from '@/assets/admissionLogo';
 
 /**
  * Génération d'une « fiche d'inscription » Word (.doc) pour une demande
@@ -115,9 +116,20 @@ export function buildAdmissionDocHtml(item: AdmissionSubmission): string {
   <div style="max-width:720px;margin:0 auto;">
     <!-- En-tête établissement -->
     <div style="background:linear-gradient(90deg,#1e3a8a,#1d4ed8);color:#ffffff;padding:22px 26px;border-radius:10px 10px 0 0;">
-      <div style="font-size:20px;font-weight:700;letter-spacing:0.3px;">${escapeHtml(siteConfig.name)}</div>
-      <div style="font-size:12px;opacity:0.9;margin-top:2px;">L'excellence, notre devise</div>
-      <div style="font-size:11px;opacity:0.85;margin-top:10px;">${escapeHtml(siteConfig.address)} · ${escapeHtml(siteConfig.phone)} · ${escapeHtml(siteConfig.email)}</div>
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="border:none;padding:0;width:74px;vertical-align:middle;">
+            <div style="display:inline-block;background:#ffffff;border-radius:12px;padding:6px;">
+              <img src="${admissionLogoDataUrl}" width="56" height="56" alt="Logo" style="display:block;width:56px;height:56px;" />
+            </div>
+          </td>
+          <td style="border:none;padding:0;vertical-align:middle;">
+            <div style="font-size:20px;font-weight:700;letter-spacing:0.3px;">${escapeHtml(siteConfig.name)}</div>
+            <div style="font-size:12px;margin-top:2px;">L'excellence, notre devise</div>
+            <div style="font-size:11px;margin-top:10px;">${escapeHtml(siteConfig.address)} · ${escapeHtml(siteConfig.phone)} · ${escapeHtml(siteConfig.email)}</div>
+          </td>
+        </tr>
+      </table>
     </div>
 
     <!-- Bandeau référence -->

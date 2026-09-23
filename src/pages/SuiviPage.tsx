@@ -254,6 +254,19 @@ const SuiviPage: React.FC = () => {
                     <p className="text-orange-800">{(result.submission as AdmissionSubmission).publicNotes}</p>
                   </div>
                 )}
+
+                {/* Date proposée pour l'entretien */}
+                {result.type === 'admission'
+                  && result.submission.status === 'interview_scheduled'
+                  && (result.submission as AdmissionSubmission).interviewDate && (
+                  <div className="mt-4 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <Calendar className="w-5 h-5 text-blue-700 shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-blue-900">Date proposée pour l'entretien</h4>
+                      <p className="text-blue-800">{formatDate((result.submission as AdmissionSubmission).interviewDate)}</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}

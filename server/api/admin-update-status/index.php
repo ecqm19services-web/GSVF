@@ -111,10 +111,21 @@ if (!in_array((string)$payload['newStatus'], $allowedStatuses, true)) {
     exit;
 }
 
+// Un entretien programme exige une date proposee (jour de RDV).
+$interviewDate = isset($payload['interviewDate']) ? trim((string)$payload['interviewDate']) : '';
+if ($type === 'admission' && (string)$payload['newStatus'] === 'interview_scheduled' && $interviewDate === '') {
+    http_response_code(400);
+    echo json_encode(['error' => 'A date must be proposed when scheduling an interview (interviewDate is required)']);
+    exit;
+}
+
 // Update status
 $items[$foundIndex]['status'] = $payload['newStatus'];
 if ($type === 'admission' && isset($payload['publicNotes'])) {
     $items[$foundIndex]['publicNotes'] = trim((string)$payload['publicNotes']);
+}
+if ($type === 'admission' && $interviewDate !== '') {
+    $items[$foundIndex]['interviewDate'] = $interviewDate;
 }
 if (isset($payload['adminNotes'])) {
     $items[$foundIndex]['adminNotes'] = trim((string)$payload['adminNotes']);
@@ -134,6 +145,7 @@ adminAuditLog('admin_submission_status_updated', [
     'id' => $docId,
     'newStatus' => (string)$payload['newStatus'],
     'hasPublicNotes' => isset($payload['publicNotes']),
+    'interviewDate' => $interviewDate,
 ]);
 
 echo json_encode(['ok' => true, 'updated' => $items[$foundIndex]]);

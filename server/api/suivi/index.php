@@ -85,6 +85,7 @@ if ($type === 'contact') {
     $safeSubmission['studentLastName'] = $submission['studentLastName'] ?? '';
     $safeSubmission['level'] = $submission['desiredClass'] ?? $submission['level'] ?? '';
     $safeSubmission['publicNotes'] = $submission['publicNotes'] ?? '';
+    $safeSubmission['interviewDate'] = $submission['interviewDate'] ?? '';
 }
 
 $result = [
