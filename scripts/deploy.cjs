@@ -6,13 +6,17 @@
  *   ✅ api/         → les nouvelles APIs PHP (écrase l'ancien)
  *   ✅ _secure/     → les fichiers d'auth (écrase l'ancien)
  *   ✅ index.html   → la nouvelle page d'entrée
+ *   ✅ images/      → images STATIQUES du thème (accueil, admissions, visite, vision…)
  *   ✅ .htaccess    → les règles de routage
  *   ✅ logo-vf.svg  → le logo
  *
  * PROTÈGE (n'écrase JAMAIS) :
  *   🛡️ data/        → contacts.json, admissions.json (données utilisateurs réelles)
- *   🛡️ images/      → images uploadées par l'admin (ne supprime rien)
  *   🛡️ uploads/     → documents uploadés (si présent)
+ *
+ * NOTE images/ : le paquet contient les visuels de base du site. L'upload FTP
+ * les AJOUTE/écrase mais ne SUPPRIME pas les images uploadées par l'admin
+ * (celles-ci portent un nom unique, jamais en collision avec le thème).
  *
  * UTILISATION :
  *   1. `npm run build`           → génère le dist/ complet
@@ -31,7 +35,6 @@ const DEPLOY_DIR = path.join(ROOT, 'dist-deploy');
 // Dossiers/fichiers à NE JAMAIS déployer (données live)
 const SKIP = new Set([
   'data',        // contacts.json, admissions.json (soumissions utilisateurs)
-  'images',      // images uploadées par l'admin
   'uploads',     // documents uploadés
   'backups',     // sauvegardes
   'logs',        // logs serveur
