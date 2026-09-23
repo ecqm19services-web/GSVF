@@ -32,10 +32,15 @@ import {
   HelpCircle,
   Image,
   Database,
-  Globe
+  Globe,
+  Wrench,
+  Copy,
+  CheckCircle2
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { siteConfig } from '@/data/content';
 import { fetchAdminAdmissions, fetchAdminContacts, adminUpdateStatus, adminDeleteSubmission } from '@/lib/adminApi';
+import { downloadAdmissionDoc } from '@/lib/admissionExport';
 import {
   createAdminBackup,
   downloadAdminBackup,
@@ -81,6 +86,8 @@ const AdminDashboard: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<ContactFilterStatus | AdmissionFilterStatus>('all');
   const [opActionMessage, setOpActionMessage] = useState<string>('');
   const [opTempPassword, setOpTempPassword] = useState<string>('');
+  const [tempPasswordModal, setTempPasswordModal] = useState<{ open: boolean; operatorId: string; password: string }>({ open: false, operatorId: '', password: '' });
+  const [tempPasswordCopied, setTempPasswordCopied] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ContactSubmission | AdmissionSubmission | null>(null);
   const [showDetail, setShowDetail] = useState(false);
   const [isBackingUp, setIsBackingUp] = useState(false);
@@ -104,18 +111,29 @@ const AdminDashboard: React.FC = () => {
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
   const [backupSuccess, setBackupSuccess] = useState('');
 
+  // Mode maintenance
+  const [maintenanceEnabled, setMaintenanceEnabled] = useState(false);
+  const [maintenanceMessage, setMaintenanceMessage] = useState('');
+  const [maintenanceLoading, setMaintenanceLoading] = useState(false);
+  const [maintenanceEditing, setMaintenanceEditing] = useState(false);
+  const [maintenanceDraft, setMaintenanceDraft] = useState('');
+
   const OP_PASSPHRASE = 'op01-op02-op03-op04-op05-op06-op07-op08-op09-op10';
   const [opConfirmModal, setOpConfirmModal] = useState<{
     open: boolean;
     label: string;
-    onConfirmed: (phrase: string) => void;
+    onConfirmed: (phrase: string, customPassword: string) => void;
   }>({ open: false, label: '', onConfirmed: () => {} });
   const [opConfirmInput, setOpConfirmInput] = useState('');
   const [opConfirmError, setOpConfirmError] = useState('');
+  const [opCustomPassword, setOpCustomPassword] = useState('');
+  const [showCustomPassword, setShowCustomPassword] = useState(false);
 
-  const requireOpPassphrase = (label: string, onConfirmed: (phrase: string) => void) => {
+  const requireOpPassphrase = (label: string, onConfirmed: (phrase: string, customPassword: string) => void, opts?: { customPassword?: boolean }) => {
     setOpConfirmInput('');
     setOpConfirmError('');
+    setOpCustomPassword('');
+    setShowCustomPassword(!!opts?.customPassword);
     setOpConfirmModal({ open: true, label, onConfirmed });
   };
 
@@ -128,12 +146,13 @@ const AdminDashboard: React.FC = () => {
     setOpConfirmModal({ open: false, label: '', onConfirmed: () => {} });
     setOpConfirmInput('');
     setOpConfirmError('');
-    fn(opConfirmInput);
+    setShowCustomPassword(false);
+    fn(OP_PASSPHRASE, opCustomPassword);
   };
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      navigate('/ecqm19-admin');
+      navigate('/vision-admin');
     }
   }, [authLoading, isAuthenticated, navigate]);
 
@@ -142,6 +161,7 @@ const AdminDashboard: React.FC = () => {
       loadData();
       loadBackups();
       loadOperators();
+      loadMaintenanceStatus();
     }
   }, [isAuthenticated, token]);
 
@@ -177,6 +197,81 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // --- Mode maintenance ---
+  const loadMaintenanceStatus = async () => {
+    try {
+      const res = await fetch('/api/maintenance-mode/');
+      if (res.ok) {
+        const data = await res.json();
+        setMaintenanceEnabled(data.enabled ?? false);
+        setMaintenanceMessage(data.message ?? '');
+        setMaintenanceDraft(data.message ?? '');
+      }
+    } catch {
+      // Silencieux
+    }
+  };
+
+  const toggleMaintenance = async () => {
+    if (!token) return;
+    setMaintenanceLoading(true);
+    try {
+      const res = await fetch('/api/maintenance-mode/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          auth: token,
+          enabled: !maintenanceEnabled,
+          message: maintenanceDraft,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setMaintenanceEnabled(data.data.enabled);
+        setMaintenanceMessage(data.data.message);
+      } else {
+        alert(data.error || `Erreur ${res.status} lors de la modification du mode maintenance.`);
+      }
+    } catch {
+      alert('Erreur réseau.');
+    } finally {
+      setMaintenanceLoading(false);
+    }
+  };
+
+  const saveMaintenanceMessage = async () => {
+    if (!token) return;
+    setMaintenanceLoading(true);
+    try {
+      const res = await fetch('/api/maintenance-mode/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          auth: token,
+          enabled: maintenanceEnabled,
+          message: maintenanceDraft,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setMaintenanceMessage(data.data.message);
+        setMaintenanceEditing(false);
+      } else {
+        alert(data.error || `Erreur ${res.status} lors de la sauvegarde du message.`);
+      }
+    } catch {
+      alert('Erreur réseau.');
+    } finally {
+      setMaintenanceLoading(false);
+    }
+  };
+
   const handleCreateOperator = () => {
     requireOpPassphrase('Créer un nouvel opérateur', async (phrase) => {
       if (!token) return;
@@ -187,6 +282,8 @@ const AdminDashboard: React.FC = () => {
         setOperators((prev) => [...prev, res.operator]);
         setOpTempPassword(res.tempPassword);
         setOpActionMessage(`Opérateur ${res.operator.id} créé. Mot de passe temporaire prêt.`);
+        setTempPasswordCopied(false);
+        setTempPasswordModal({ open: true, operatorId: res.operator.id, password: res.tempPassword });
       } catch (error) {
         alert((error as Error).message || 'Création impossible');
       }
@@ -211,19 +308,38 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleResetOperatorPassword = (id: string) => {
-    requireOpPassphrase(`Réinitialiser le mot de passe de ${id}`, async (phrase) => {
+    requireOpPassphrase(`Réinitialiser le mot de passe de ${id}`, async (phrase, customPw) => {
       if (!token) return;
       setOpActionMessage('');
       setOpTempPassword('');
       try {
-        const res = await resetOperatorPassword(token, id, phrase);
+        const res = await resetOperatorPassword(token, id, phrase, customPw);
         setOperators((prev) => prev.map((op) => (op.id === id ? res.operator : op)));
         setOpTempPassword(res.tempPassword);
         setOpActionMessage(`Mot de passe réinitialisé pour ${id}.`);
+        setTempPasswordCopied(false);
+        setTempPasswordModal({ open: true, operatorId: id, password: res.tempPassword });
       } catch (error) {
         alert((error as Error).message || 'Reset impossible');
       }
-    });
+    }, { customPassword: true });
+  };
+
+  const handleCopyTempPassword = async () => {
+    try {
+      await navigator.clipboard.writeText(tempPasswordModal.password);
+      setTempPasswordCopied(true);
+      setTimeout(() => setTempPasswordCopied(false), 3000);
+    } catch {
+      const textarea = document.createElement('textarea');
+      textarea.value = tempPasswordModal.password;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setTempPasswordCopied(true);
+      setTimeout(() => setTempPasswordCopied(false), 3000);
+    }
   };
 
   const handleClearLockout = (id: string) => {
@@ -470,15 +586,7 @@ const AdminDashboard: React.FC = () => {
 
         <nav className="space-y-2">
           <Link
-            to="/ecqm19-admin/content"
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-orange-200 hover:text-white hover:bg-white/10"
-          >
-            <FileText className="w-5 h-5" />
-            Contenu du site
-          </Link>
-
-          <Link
-            to="/ecqm19-admin/visual"
+            to="/vision-admin/visual"
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-orange-200 hover:text-white hover:bg-white/10"
           >
             <Monitor className="w-5 h-5" />
@@ -486,7 +594,7 @@ const AdminDashboard: React.FC = () => {
           </Link>
 
           <Link
-            to="/ecqm19-admin/jobs"
+            to="/vision-admin/jobs"
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-orange-200 hover:text-white hover:bg-white/10"
           >
             <BriefcaseBusiness className="w-5 h-5" />
@@ -531,15 +639,6 @@ const AdminDashboard: React.FC = () => {
           >
             <Users className="w-5 h-5" />
             Opérateurs
-          </button>
-
-          <button
-            onClick={handleBackup}
-            disabled={!token || isBackingUp}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors hover:bg-white/10 text-orange-100 disabled:opacity-60"
-          >
-            <ShieldAlert className="w-5 h-5" />
-            {isBackingUp ? 'Sauvegarde...' : 'Sauvegarder le site'}
           </button>
 
           <a
@@ -607,6 +706,89 @@ const AdminDashboard: React.FC = () => {
 
       {/* Main Content */}
       <main className="ml-72 p-8">
+        {/* Mode Maintenance */}
+        <div className={`mb-6 rounded-2xl border p-5 transition-colors ${
+          maintenanceEnabled
+            ? 'border-red-300 bg-red-50'
+            : 'border-gray-200 bg-white'
+        }`}>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <Wrench className={`w-5 h-5 mt-0.5 ${maintenanceEnabled ? 'text-red-600' : 'text-gray-500'}`} />
+              <div className="flex-1">
+                <p className={`font-semibold ${maintenanceEnabled ? 'text-red-900' : 'text-gray-900'}`}>
+                  Mode maintenance
+                </p>
+                <p className={`text-sm mt-1 ${maintenanceEnabled ? 'text-red-700' : 'text-gray-600'}`}>
+                  {maintenanceEnabled
+                    ? 'Le site est actuellement inaccessible pour les visiteurs.'
+                    : 'Activez ce mode pour rendre le site inaccessible aux visiteurs (l\'admin reste accessible).'
+                  }
+                </p>
+                {maintenanceEnabled && maintenanceMessage && (
+                  <div className="mt-3 bg-white/60 border border-red-200 rounded-lg p-3">
+                    <p className="text-xs font-medium text-red-800 mb-1">Message affiché :</p>
+                    <p className="text-sm text-red-700 whitespace-pre-wrap">{maintenanceMessage}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 self-start md:self-auto">
+              {maintenanceEnabled && (
+                <button
+                  onClick={() => setMaintenanceEditing(!maintenanceEditing)}
+                  className="inline-flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  {maintenanceEditing ? 'Annuler' : 'Modifier le message'}
+                </button>
+              )}
+              <button
+                onClick={toggleMaintenance}
+                disabled={maintenanceLoading}
+                className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-60 ${
+                  maintenanceEnabled
+                    ? 'bg-green-600 text-white hover:bg-green-700'
+                    : 'bg-red-600 text-white hover:bg-red-700'
+                }`}
+              >
+                <Wrench className="w-4 h-4" />
+                {maintenanceLoading
+                  ? '...'
+                  : maintenanceEnabled
+                    ? 'Désactiver'
+                    : 'Activer'
+                }
+              </button>
+            </div>
+          </div>
+
+          {/* Édition du message */}
+          {maintenanceEditing && (
+            <div className="mt-4 pt-4 border-t border-red-200">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Message affiché aux visiteurs (optionnel)
+              </label>
+              <textarea
+                value={maintenanceDraft}
+                onChange={(e) => setMaintenanceDraft(e.target.value)}
+                rows={3}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none text-sm"
+                placeholder="Ex: Le site est temporairement indisponible pour maintenance. Nous serons de retour dans quelques heures."
+              />
+              <div className="flex justify-end mt-3">
+                <button
+                  onClick={saveMaintenanceMessage}
+                  disabled={maintenanceLoading}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-60 text-sm"
+                >
+                  Sauvegarder le message
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 p-5">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-start gap-3">
@@ -1028,9 +1210,20 @@ const AdminDashboard: React.FC = () => {
                   ],
                 },
                 {
+                  icon: <BriefcaseBusiness className="w-5 h-5" />,
+                  title: 'Offres d\'emploi',
+                  color: 'blue',
+                  steps: [
+                    'Menu « Offres d\'emploi » dans le tableau de bord',
+                    'Créer : titre, date limite, résumé et PDF obligatoire',
+                    'Clôturer ou Republier une offre existante',
+                    'Supprimer : confirmation requise (action irréversible)',
+                  ],
+                },
+                {
                   icon: <Users className="w-5 h-5" />,
                   title: 'Opérateurs',
-                  color: 'blue',
+                  color: 'teal',
                   steps: [
                     'Onglet « Opérateurs » du tableau de bord',
                     'Créer : génère un mot de passe temporaire (changement obligatoire)',
@@ -1043,7 +1236,7 @@ const AdminDashboard: React.FC = () => {
                   title: 'Sauvegardes',
                   color: 'orange',
                   steps: [
-                    'Cliquez « Sauvegarder maintenant » pour créer un ZIP',
+                    'Bouton « Sauvegarder maintenant » en haut du tableau de bord',
                     'Restauration Niveau A : contenu uniquement',
                     'Restauration Niveau B : complète (nécessite le code développeur)',
                     'Toujours sauvegarder AVANT de restaurer',
@@ -1066,6 +1259,7 @@ const AdminDashboard: React.FC = () => {
                   purple: { bg: 'bg-purple-50 border-purple-200', badge: 'bg-purple-100 text-purple-800', text: 'text-purple-900', stepBg: 'bg-purple-50' },
                   amber:  { bg: 'bg-amber-50 border-amber-200', badge: 'bg-amber-100 text-amber-800', text: 'text-amber-900', stepBg: 'bg-amber-50' },
                   blue:   { bg: 'bg-blue-50 border-blue-200', badge: 'bg-blue-100 text-blue-800', text: 'text-blue-900', stepBg: 'bg-blue-50' },
+                  teal:   { bg: 'bg-teal-50 border-teal-200', badge: 'bg-teal-100 text-teal-800', text: 'text-teal-900', stepBg: 'bg-teal-50' },
                   orange: { bg: 'bg-orange-50 border-orange-200', badge: 'bg-orange-100 text-orange-800', text: 'text-orange-900', stepBg: 'bg-orange-50' },
                   red:    { bg: 'bg-red-50 border-red-200', badge: 'bg-red-100 text-red-800', text: 'text-red-900', stepBg: 'bg-red-50' },
                 };
@@ -1136,8 +1330,8 @@ const AdminDashboard: React.FC = () => {
               <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5">
                 <h4 className="font-semibold text-blue-900 mb-2">Support technique</h4>
                 <p className="text-blue-700 text-sm">
-                  Email : contact@lavisionfuture.com<br />
-                  Téléphone : +225 27 21 29 39 83
+                  Email : {siteConfig.email}<br />
+                  Téléphone : {siteConfig.phone}
                 </p>
               </div>
               <div className="bg-green-50 border border-green-200 rounded-2xl p-5">
@@ -1285,6 +1479,24 @@ const AdminDashboard: React.FC = () => {
                 {opConfirmError}
               </p>
             )}
+            {showCustomPassword && (
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <label htmlFor="customPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                  Mot de passe personnalisé <span className="text-gray-400">(optionnel)</span>
+                </label>
+                <input
+                  id="customPassword"
+                  type="text"
+                  value={opCustomPassword}
+                  onChange={(e) => setOpCustomPassword(e.target.value)}
+                  placeholder="Laissez vide pour générer un mot de passe aléatoire"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-orange-400 focus:border-orange-400 outline-none"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Ex : le mot de passe original du fichier Excel. Si vide, un mot de passe aléatoire sera généré.
+                </p>
+              </div>
+            )}
             <div className="flex gap-3 mt-4">
               <button
                 onClick={() => { setOpConfirmModal({ open: false, label: '', onConfirmed: () => {} }); setOpConfirmInput(''); setOpConfirmError(''); }}
@@ -1300,6 +1512,62 @@ const AdminDashboard: React.FC = () => {
                 Confirmer
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Temporary Password Modal */}
+      {tempPasswordModal.open && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <ShieldCheck className="w-6 h-6 text-emerald-600" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">Mot de passe temporaire</h2>
+                <p className="text-sm text-gray-500">Opérateur : <span className="font-mono font-semibold text-orange-700">{tempPasswordModal.operatorId}</span></p>
+              </div>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
+              <p className="text-sm font-semibold text-amber-800 mb-2">
+                ⚠️ Conservez ce mot de passe — il ne sera plus affiché après la fermeture de cette fenêtre.
+              </p>
+              <p className="text-xs text-amber-700">
+                L'opérateur devra le changer à sa première connexion.
+              </p>
+            </div>
+
+            <div className="bg-gray-900 rounded-xl p-4 mb-4 flex items-center justify-between gap-3">
+              <code className="text-emerald-400 text-lg font-mono tracking-wider select-all break-all">
+                {tempPasswordModal.password}
+              </code>
+              <button
+                onClick={handleCopyTempPassword}
+                className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-sm font-medium"
+                title="Copier dans le presse-papier"
+              >
+                {tempPasswordCopied ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4" />
+                    Copié
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    Copier
+                  </>
+                )}
+              </button>
+            </div>
+
+            <button
+              onClick={() => setTempPasswordModal({ open: false, operatorId: '', password: '' })}
+              className="w-full px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-colors text-sm"
+            >
+              Fermer
+            </button>
           </div>
         </div>
       )}
@@ -1407,6 +1675,10 @@ const DetailModal: React.FC<DetailModalProps> = ({ item, type, onClose, onStatus
                     <p className="font-medium">{(item as AdmissionSubmission).studentLastName} {(item as AdmissionSubmission).studentFirstName}</p>
                   </div>
                   <div>
+                    <label className="text-sm text-gray-500">Sexe</label>
+                    <p className="font-medium">{(item as AdmissionSubmission).studentGender || '-'}</p>
+                  </div>
+                  <div>
                     <label className="text-sm text-gray-500">Date de naissance</label>
                     <p className="font-medium">{(item as AdmissionSubmission).studentBirthdate}</p>
                   </div>
@@ -1417,6 +1689,10 @@ const DetailModal: React.FC<DetailModalProps> = ({ item, type, onClose, onStatus
                   <div>
                     <label className="text-sm text-gray-500">École actuelle</label>
                     <p className="font-medium">{(item as AdmissionSubmission).currentSchool || '-'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500">Date d'entretien</label>
+                    <p className="font-medium">{(item as AdmissionSubmission).interviewDate || '-'}</p>
                   </div>
                 </div>
               </div>
@@ -1439,6 +1715,10 @@ const DetailModal: React.FC<DetailModalProps> = ({ item, type, onClose, onStatus
                   <div>
                     <label className="text-sm text-gray-500">Téléphone</label>
                     <p className="font-medium">{(item as AdmissionSubmission).parentPhone}</p>
+                  </div>
+                  <div className="col-span-2">
+                    <label className="text-sm text-gray-500">Adresse</label>
+                    <p className="font-medium">{(item as AdmissionSubmission).parentAddress || '-'}</p>
                   </div>
                 </div>
               </div>
@@ -1499,21 +1779,33 @@ const DetailModal: React.FC<DetailModalProps> = ({ item, type, onClose, onStatus
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-4 flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
-          >
-            Annuler
-          </button>
-          <button
-            onClick={handleUpdate}
-            disabled={isUpdating}
-            className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 flex items-center gap-2"
-          >
-            {isUpdating && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
-            Enregistrer
-          </button>
+        <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-4 flex justify-between gap-3">
+          {type === 'admission' ? (
+            <button
+              onClick={() => downloadAdmissionDoc(item as AdmissionSubmission)}
+              className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors flex items-center gap-2"
+              title="Télécharger la fiche d'inscription au format Word"
+            >
+              <Download className="w-4 h-4" />
+              Export Word (.doc)
+            </button>
+          ) : <div />}
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={handleUpdate}
+              disabled={isUpdating}
+              className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+            >
+              {isUpdating && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+              Enregistrer
+            </button>
+          </div>
         </div>
       </div>
     </div>

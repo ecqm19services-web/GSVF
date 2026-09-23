@@ -64,12 +64,17 @@ export async function toggleOperator(
 export async function resetOperatorPassword(
   token: string,
   id: string,
-  confirmation: string
+  confirmation: string,
+  customPassword?: string
 ): Promise<{ ok: boolean; operator: Operator; tempPassword: string }> {
+  const body: Record<string, string> = { action: 'reset_password', id, confirmation };
+  if (customPassword && customPassword.trim() !== '') {
+    body.customPassword = customPassword.trim();
+  }
   const res = await fetch('/api/admin-operators/', {
     method: 'POST',
     headers: jsonHeaders(token),
-    body: JSON.stringify({ action: 'reset_password', id, confirmation }),
+    body: JSON.stringify(body),
   });
   if (!res.ok) {
     const msg = (await res.json().catch(() => ({}))).error || 'Reset impossible';

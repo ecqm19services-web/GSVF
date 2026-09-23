@@ -125,7 +125,7 @@ export const useAdminAuth = () => {
       sessionStorage.removeItem(STORAGE_KEY);
     } catch { /* ignore */ }
     setToken(null);
-    navigate('/ecqm19-admin');
+    navigate('/vision-admin');
   }, [navigate]);
 
   const checkAuth = useCallback(() => {
@@ -134,7 +134,7 @@ export const useAdminAuth = () => {
 
   const requireAuth = useCallback(() => {
     if (!getStoredCredentials()) {
-      navigate('/ecqm19-admin');
+      navigate('/vision-admin');
     }
   }, [navigate]);
 

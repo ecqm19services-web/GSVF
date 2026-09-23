@@ -106,7 +106,7 @@ const AdminContentEditor: React.FC = () => {
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      navigate('/ecqm19-admin');
+      navigate('/vision-admin');
     }
   }, [authLoading, isAuthenticated, navigate]);
 
@@ -202,20 +202,15 @@ const AdminContentEditor: React.FC = () => {
 
         <nav className="space-y-2">
           <Link
-            to="/ecqm19-admin/dashboard"
+            to="/vision-admin/dashboard"
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-orange-200 hover:text-white"
           >
             <Settings className="w-5 h-5" />
             Tableau de bord
           </Link>
 
-          <div className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/20">
-            <FileText className="w-5 h-5" />
-            Contenu du site
-          </div>
-
           <Link
-            to="/ecqm19-admin/visual"
+            to="/vision-admin/visual"
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-orange-200 hover:text-white"
           >
             <Monitor className="w-5 h-5" />
@@ -223,7 +218,7 @@ const AdminContentEditor: React.FC = () => {
           </Link>
 
           <Link
-            to="/ecqm19-admin/jobs"
+            to="/vision-admin/jobs"
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-orange-200 hover:text-white"
           >
             <BriefcaseBusiness className="w-5 h-5" />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Send, CheckCircle, AlertCircle, Loader2, User, Users, GraduationCap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -6,6 +6,7 @@ interface FormData {
   studentFirstName: string;
   studentLastName: string;
   studentBirthDate: string;
+  studentGender: string;
   currentGrade: string;
   previousSchool: string;
   parentFirstName: string;
@@ -13,6 +14,7 @@ interface FormData {
   parentEmail: string;
   parentPhone: string;
   parentAddress: string;
+  relationship: string;
   desiredGrade: string;
   message: string;
 }
@@ -21,26 +23,73 @@ interface FormErrors {
   [key: string]: string;
 }
 
+const emptyFormData: FormData = {
+  studentFirstName: '',
+  studentLastName: '',
+  studentBirthDate: '',
+  studentGender: '',
+  currentGrade: '',
+  previousSchool: '',
+  parentFirstName: '',
+  parentLastName: '',
+  parentEmail: '',
+  parentPhone: '',
+  parentAddress: '',
+  relationship: '',
+  desiredGrade: '',
+  message: ''
+};
+
+const DRAFT_KEY = 'cpvf_admission_draft_v1';
+
+/** Restaure un brouillon éventuellement sauvegardé lors d'une visite précédente. */
+function loadDraft(): { formData: FormData; currentStep: number; hasContent: boolean } {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as { formData?: Partial<FormData>; currentStep?: number };
+      const merged: FormData = { ...emptyFormData, ...(parsed.formData || {}) };
+      const hasContent = Object.values(merged).some((v) => typeof v === 'string' && v.trim() !== '');
+      const step = typeof parsed.currentStep === 'number' && parsed.currentStep >= 1 && parsed.currentStep <= 3 ? parsed.currentStep : 1;
+      return { formData: merged, currentStep: step, hasContent };
+    }
+  } catch {
+    /* stockage indisponible ou corrompu : on repart de zéro */
+  }
+  return { formData: { ...emptyFormData }, currentStep: 1, hasContent: false };
+}
+
 const AdmissionsForm: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
-    studentFirstName: '',
-    studentLastName: '',
-    studentBirthDate: '',
-    currentGrade: '',
-    previousSchool: '',
-    parentFirstName: '',
-    parentLastName: '',
-    parentEmail: '',
-    parentPhone: '',
-    parentAddress: '',
-    desiredGrade: '',
-    message: ''
-  });
+  const [draft] = useState(loadDraft);
+  const [formData, setFormData] = useState<FormData>(draft.formData);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState<number>(draft.currentStep);
   const [reference, setReference] = useState<string>('');
+  const [showDraftBanner, setShowDraftBanner] = useState<boolean>(draft.hasContent);
+
+  // Auto-sauvegarde du brouillon (effacée après un envoi réussi).
+  useEffect(() => {
+    if (submitStatus === 'success') return;
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ formData, currentStep }));
+    } catch {
+      /* quota dépassé ou stockage bloqué : sans impact fonctionnel */
+    }
+  }, [formData, currentStep, submitStatus]);
+
+  const discardDraft = () => {
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch {
+      /* ignore */
+    }
+    setFormData({ ...emptyFormData });
+    setCurrentStep(1);
+    setErrors({});
+    setShowDraftBanner(false);
+  };
 
   const grades = [
     'Petite Section (Maternelle)',
@@ -118,6 +167,8 @@ const AdmissionsForm: React.FC = () => {
           parentEmail: formData.parentEmail.trim(),
           parentPhone: formData.parentPhone.trim(),
           parentAddress: formData.parentAddress.trim() || undefined,
+          studentGender: formData.studentGender || undefined,
+          relationship: formData.relationship.trim() || undefined,
           message: formData.message.trim() || undefined,
         })
       });
@@ -129,6 +180,11 @@ const AdmissionsForm: React.FC = () => {
       const data = await res.json() as { reference: string };
       setReference(data.reference);
       setSubmitStatus('success');
+      try {
+        localStorage.removeItem(DRAFT_KEY);
+      } catch {
+        /* ignore */
+      }
     } catch (error) {
       console.error('Error submitting admission form:', error);
       setSubmitStatus('error');
@@ -211,6 +267,21 @@ const AdmissionsForm: React.FC = () => {
         </div>
       )}
 
+      {showDraftBanner && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start justify-between gap-3 mb-6">
+          <div className="flex items-start gap-3">
+            <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-blue-900 font-medium text-sm">Brouillon restauré</p>
+              <p className="text-blue-700 text-sm">Vos informations précédentes ont été conservées automatiquement.</p>
+            </div>
+          </div>
+          <button type="button" onClick={discardDraft} className="text-xs font-semibold text-blue-700 hover:text-blue-900 whitespace-nowrap">
+            Repartir à zéro
+          </button>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
         {/* Step 1: Student Info */}
         {currentStep === 1 && (
@@ -283,16 +354,32 @@ const AdmissionsForm: React.FC = () => {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">École actuelle</label>
-              <input
-                type="text"
-                name="previousSchool"
-                value={formData.previousSchool}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-600"
-                placeholder="Nom de l'établissement actuel"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Sexe</label>
+                <select
+                  name="studentGender"
+                  value={formData.studentGender}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-600 bg-white"
+                >
+                  <option value="">Sélectionner</option>
+                  <option value="Masculin">Masculin</option>
+                  <option value="Féminin">Féminin</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">École actuelle</label>
+                <input
+                  type="text"
+                  name="previousSchool"
+                  value={formData.previousSchool}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-600"
+                  placeholder="Nom de l'établissement actuel"
+                />
+              </div>
             </div>
           </div>
         )}
@@ -367,6 +454,24 @@ const AdmissionsForm: React.FC = () => {
             </div>
 
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Relation avec l'élève</label>
+              <select
+                name="relationship"
+                value={formData.relationship}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-600 bg-white"
+              >
+                <option value="">Sélectionner</option>
+                <option value="Père">Père</option>
+                <option value="Mère">Mère</option>
+                <option value="Tuteur">Tuteur</option>
+                <option value="Tutrice">Tutrice</option>
+                <option value="Grand-parent">Grand-parent</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Adresse</label>
               <input
                 type="text"
@@ -403,6 +508,18 @@ const AdmissionsForm: React.FC = () => {
                   <span className="text-gray-500">Contact:</span>
                   <p className="font-medium text-gray-900">{formData.parentEmail}</p>
                 </div>
+                {formData.studentGender && (
+                  <div>
+                    <span className="text-gray-500">Sexe:</span>
+                    <p className="font-medium text-gray-900">{formData.studentGender}</p>
+                  </div>
+                )}
+                {formData.relationship && (
+                  <div>
+                    <span className="text-gray-500">Relation:</span>
+                    <p className="font-medium text-gray-900">{formData.relationship}</p>
+                  </div>
+                )}
               </div>
             </div>
 

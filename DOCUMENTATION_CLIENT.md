@@ -85,7 +85,7 @@ Le dossier `dist/` contient :
 ## 🔐 Accès Administrateur
 
 ### Connexion au tableau de bord
-- **URL :** `https://votre-site.com/ecqm19-admin`
+- **URL :** `https://votre-site.com/vision-admin`
 - **Identifiants par défaut :** Voir fichier `server/_secure/acces-operateurs.csv`
 
 ### Gestion des opérateurs
@@ -252,7 +252,7 @@ R : Dans `server/backups/` (accessible uniquement via l'API admin, pas en URL di
 ## 📞 Support & Contact
 
 **Développeur :** ic_future  
-**Email client :** contact@lavisionfuture.ci  
+**Email client :** visionfuture@gmail.com  
 **Téléphone :** +225 27 21 29 39 83
 
 Pour toute question technique ou demande d'évolution :

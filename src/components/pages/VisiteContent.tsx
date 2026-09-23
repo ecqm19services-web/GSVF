@@ -328,6 +328,8 @@ const VisiteContent: React.FC = () => {
                 <img
                   src={getGalleryImages(currentSection)[currentImage].src}
                   alt={getGalleryImages(currentSection)[currentImage].caption || ''}
+                  loading="lazy"
+                  decoding="async"
                   className="max-w-full max-h-full object-contain"
                 />
               ) : (

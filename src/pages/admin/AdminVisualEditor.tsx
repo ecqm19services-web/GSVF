@@ -33,7 +33,7 @@ import {
 } from '@/data/content';
 import { EditSessionProvider } from '@/contexts/EditSessionContext';
 import { PageJsonOverrideProvider } from '@/contexts/PageJsonOverrideContext';
-import { Monitor, Settings, FileText, LogOut, BriefcaseBusiness, ExternalLink } from 'lucide-react';
+import { Monitor, Settings, LogOut, BriefcaseBusiness, ExternalLink } from 'lucide-react';
 import ErrorBoundary from '@/components/ui/ErrorBoundary';
 
 type EditablePage =
@@ -162,7 +162,7 @@ const AdminVisualEditor: React.FC = () => {
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      navigate('/ecqm19-admin');
+      navigate('/vision-admin');
     }
   }, [authLoading, isAuthenticated, navigate]);
 
@@ -253,19 +253,11 @@ const AdminVisualEditor: React.FC = () => {
 
         <nav className="space-y-2">
           <Link
-            to="/ecqm19-admin/dashboard"
+            to="/vision-admin/dashboard"
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-orange-200 hover:text-white"
           >
             <Settings className="w-5 h-5" />
             Tableau de bord
-          </Link>
-
-          <Link
-            to="/ecqm19-admin/content"
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-orange-200 hover:text-white"
-          >
-            <FileText className="w-5 h-5" />
-            Publication (texte)
           </Link>
 
           <div className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/20">
@@ -274,7 +266,7 @@ const AdminVisualEditor: React.FC = () => {
           </div>
 
           <Link
-            to="/ecqm19-admin/jobs"
+            to="/vision-admin/jobs"
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-orange-200 hover:text-white"
           >
             <BriefcaseBusiness className="w-5 h-5" />

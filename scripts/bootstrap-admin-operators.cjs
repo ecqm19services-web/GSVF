@@ -1,11 +1,29 @@
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 
 const DEFAULT_COUNT = 10;
 const MIN_PASSWORD_LEN = 8;
 const OPERATOR_ID_PREFIX = 'op';
+
+// Opérateurs nommés super-administrateurs (rôle 'superadmin')
+const SUPERADMIN_IDS = new Set(['op01', 'op05', 'op06', 'op10']);
+
+// Mot de passe simple par défaut : OpXX@Vision26 (majuscule + minuscule + chiffre, >= 8 caractères)
+function defaultPasswordFor(id) {
+  const num = id.replace(/^op/i, '');
+  const pwd = `Op${num}@Vision26`;
+  // Contrôle de conformité à la politique des mots de passe
+  if (
+    pwd.length < MIN_PASSWORD_LEN ||
+    !/[A-Z]/.test(pwd) ||
+    !/[a-z]/.test(pwd) ||
+    !/[0-9]/.test(pwd)
+  ) {
+    throw new Error(`Default password for ${id} does not meet the password policy.`);
+  }
+  return pwd;
+}
 
 const projectRoot = path.resolve(__dirname, '..');
 const outputPath = path.join(projectRoot, 'server', '_secure', 'admin-operators.json');
@@ -36,53 +54,13 @@ function toPhpCompatibleBcrypt(hash) {
   return hash;
 }
 
-function randomPassword(length) {
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
-  let out = '';
-  while (out.length < length) {
-    const bytes = crypto.randomBytes(length);
-    for (const b of bytes) {
-      out += alphabet[b % alphabet.length];
-      if (out.length >= length) {
-        break;
-      }
-    }
-  }
-  return out;
-}
-
-function isTooSimilar(password, operatorId) {
-  const lower = password.toLowerCase();
-  const forbiddenParts = [
-    operatorId.toLowerCase(),
-    'admin',
-    'cpvf',
-    'vision',
-    'ecole',
-    'college',
-    '2024',
-    '2025',
-    '2026',
-  ];
-
-  return forbiddenParts.some((part) => part.length >= 3 && lower.includes(part));
-}
-
 const operators = [];
 const credentials = [];
 
 for (let i = 1; i <= requestedCount; i += 1) {
   const id = `${OPERATOR_ID_PREFIX}${pad2(i)}`;
-
-  let plain = '';
-  let attempts = 0;
-  while (!plain || isTooSimilar(plain, id) || credentials.some((entry) => entry.password === plain)) {
-    plain = randomPassword(MIN_PASSWORD_LEN);
-    attempts += 1;
-    if (attempts > 500) {
-      throw new Error(`Unable to generate compliant password for ${id}`);
-    }
-  }
+  const role = SUPERADMIN_IDS.has(id) ? 'superadmin' : 'admin';
+  const plain = defaultPasswordFor(id);
 
   const bcryptHash = bcrypt.hashSync(plain, 10);
   const phpHash = toPhpCompatibleBcrypt(bcryptHash);
@@ -90,7 +68,7 @@ for (let i = 1; i <= requestedCount; i += 1) {
   operators.push({
     id,
     displayName: `Operateur ${pad2(i)}`,
-    role: 'admin',
+    role,
     active: true,
     mustChangePassword: true,
     passwordHash: phpHash,
@@ -98,7 +76,7 @@ for (let i = 1; i <= requestedCount; i += 1) {
     createdAt: new Date().toISOString(),
   });
 
-  credentials.push({ id, password: plain });
+  credentials.push({ id, password: plain, role });
 }
 
 const payload = {
@@ -116,6 +94,6 @@ console.log('\nAdmin operators file created:');
 console.log(outputPath);
 console.log('\nDistribute these one-time credentials securely (do not commit/share in chat):\n');
 for (const entry of credentials) {
-  console.log(`${entry.id} -> ${entry.password}`);
+  console.log(`${entry.id} [${entry.role}] -> ${entry.password}`);
 }
 console.log('\nIMPORTANT: store passwords in your password manager and rotate after first login.\n');

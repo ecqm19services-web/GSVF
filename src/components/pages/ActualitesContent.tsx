@@ -41,19 +41,19 @@ interface SocialFeed {
 const defaultArticles: Article[] = [
   {
     id: '1',
-    title: "100% de réussite au CEPE 2024-2025",
-    excerpt: "Le Collège Privé la Vision Future confirme son excellence avec un taux de réussite de 100% au CEPE pour l'année scolaire 2024-2025.",
+    title: "100% de réussite au CEPE 2025-2026",
+    excerpt: "Le Collège Privé la Vision Future confirme son excellence avec un taux de réussite de 100% au CEPE pour l'année scolaire 2025-2026.",
     content: "",
-    date: "Juillet 2025",
+    date: "Juillet 2026",
     image: "/images/accueil/accueil_ecole_eleves.jpeg",
     category: "Résultats"
   },
   {
     id: '2',
-    title: "Rentrée scolaire 2025-2026",
+    title: "Rentrée scolaire 2026-2027",
     excerpt: "Les inscriptions sont ouvertes pour la nouvelle année scolaire. Affectés et non-affectés sont les bienvenus du 1er cycle au 2nd cycle.",
     content: "",
-    date: "Septembre 2025",
+    date: "Septembre 2026",
     image: "/images/accueil/accueil_ecole.jpeg",
     category: "Inscriptions"
   },
@@ -295,7 +295,7 @@ const ActualitesContent: React.FC = () => {
                   >
                     {article.image && (
                       <div className="aspect-[4/3] bg-gray-100">
-                        <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+                        <img src={article.image} alt={article.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                       </div>
                     )}
                     <div className="p-3">
@@ -407,7 +407,7 @@ const ActualitesContent: React.FC = () => {
               </button>
               {selectedArticle.image && (
                 <div className="aspect-video rounded-2xl overflow-hidden mb-8">
-                  <img src={selectedArticle.image} alt={selectedArticle.title} className="w-full h-full object-cover" />
+                  <img src={selectedArticle.image} alt={selectedArticle.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                 </div>
               )}
               <div className="flex items-center gap-4 mb-4">
@@ -506,7 +506,7 @@ const ActualitesContent: React.FC = () => {
                         >
                           {article.image && (
                             <div className="aspect-[16/9] overflow-hidden">
-                              <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                              <img src={article.image} alt={article.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             </div>
                           )}
                           <div className="p-4">

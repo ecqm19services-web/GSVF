@@ -40,7 +40,7 @@ npm run lint      # ESLint
 
 ## Administration
 
-- Connexion : `/ecqm19-admin` (opérateurs `op01`…`opNN` — voir `scripts/bootstrap-admin-operators.cjs`)
+- Connexion : `/vision-admin` (opérateurs `op01`…`opNN` — voir `scripts/bootstrap-admin-operators.cjs`)
 - Éditeur visuel des pages, gestion des demandes (contacts/admissions), offres d'emploi,
   sauvegardes/restaurations, journal d'audit côté serveur.
 

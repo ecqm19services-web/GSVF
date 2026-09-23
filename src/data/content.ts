@@ -7,8 +7,16 @@ export const siteConfig = {
   name: "Collège Privé la Vision Future",
   shortName: "CPVF",
   location: "Grand-Bassam, Côte d'Ivoire",
+  // URL canonique de référence (SEO : sitemap, JSON-LD, Open Graph).
+  // ⚠️ À ajuster au domaine final lors de la mise en ligne.
+  url: "https://lavisionfuture.com",
+  founded: "2019",
+  // Téléphone (standard) de référence du site : source unique réutilisée partout
+  // (barre supérieure, page Contact, pied de page, maintenance, admin).
   phone: "+225 27 21 29 39 83",
-  email: "contact@lavisionfuture.com",
+  // Adresse e-mail de référence du site : source unique réutilisée partout
+  // (page Contact, pied de page, page maintenance, support admin).
+  email: "visionfuture@gmail.com",
   address: "Boulevard de la République, Grand-Bassam, Côte d'Ivoire",
   socialLinks: {
     facebook: "https://www.facebook.com/lavisionfuture",
@@ -37,20 +45,20 @@ export const homeContent = {
     examResults: {
       cards: [
         {
-          name: "CEPE 2024-2025",
+          name: "CEPE 2025-2026",
           rate: "100%",
           mentions: "Tous les candidats admis",
           rank: "Excellence confirmée"
         },
         {
-          name: "BEPC 2024-2025",
-          rate: "89,47%",
+          name: "BEPC 2025-2026",
+          rate: "91,78%",
           mentions: "Bonne performance académique",
           rank: "Résultats publiés"
         },
         {
-          name: "BAC 2024-2025",
-          rate: "62,31%",
+          name: "BAC 2025-2026",
+          rate: "91,06%",
           mentions: "Progression continue",
           rank: "Résultats publiés"
         }
@@ -73,7 +81,7 @@ export const homeContent = {
       imageCaption: "Campus Vision Future",
       highlight: {
         value: "100%",
-        label: "Réussite au CEPE 2024-2025"
+        label: "Réussite au CEPE 2025-2026"
       }
     },
     programmesPreview: {
@@ -128,18 +136,18 @@ export const homeContent = {
           { label: "Tle", linkUrl: "" }
         ]
       },
-      examResultsTitle: "Résultats examens 2024-2025",
+      examResultsTitle: "Résultats examens 2025-2026",
       examCards: [
         {
           image: "/images/accueil/accueil_ecole.jpeg",
           title: "Résultats au Baccalauréat",
-          subtitle: "Session 2025",
+          subtitle: "Session 2026",
           linkUrl: ""
         },
         {
           image: "/images/accueil/accueil_ecole_eleves_alt.jpeg",
           title: "Résultats au BEPC",
-          subtitle: "Session 2025",
+          subtitle: "Session 2026",
           linkUrl: ""
         }
       ]
@@ -276,24 +284,24 @@ export const homeContent = {
         imageSrc: "/images/accueil/accueil_ecole.jpeg"
       },
       newsTicker: {
-        text: "Inscriptions ouvertes pour l'année 2025-2026 - Journée portes ouvertes le 15 juin 2025"
+        text: "Inscriptions ouvertes pour l'année 2026-2027 - Journée portes ouvertes le 15 juin 2026"
       },
       items: [
         {
-          title: "Rentrée scolaire 2025-2026",
-          body: "La rentrée des classes est fixée au lundi 8 septembre 2025. Les parents sont invités à préparer les fournitures scolaires selon la liste disponible en téléchargement. L'accueil des nouveaux élèves se fera dès 7h30.",
+          title: "Rentrée scolaire 2026-2027",
+          body: "La rentrée des classes est fixée au lundi 8 septembre 2026. Les parents sont invités à préparer les fournitures scolaires selon la liste disponible en téléchargement. L'accueil des nouveaux élèves se fera dès 7h30.",
           linkText: "Télécharger la liste des fournitures",
           linkUrl: ""
         },
         {
-          title: "Résultats examens 2024-2025",
-          body: "Nous sommes fiers d'annoncer d'excellents résultats : 100% au CEPE, 89,47% au BEPC et 62,31% au BAC. Félicitations à tous nos élèves et enseignants pour ces performances remarquables !",
+          title: "Résultats examens 2025-2026",
+          body: "Nous sommes fiers d'annoncer d'excellents résultats : 100% au CEPE, 91,78% au BEPC et 91,06% au BAC. Félicitations à tous nos élèves et enseignants pour ces performances remarquables !",
           linkText: "",
           linkUrl: ""
         },
         {
           title: "Lancement du programme de robotique",
-          body: "Dès la rentrée 2025-2026, le Collège Privé la Vision Future introduit un programme innovant de robotique éducative pour développer la logique, la créativité et les compétences STEM dès la classe de CP.",
+          body: "Dès la rentrée 2026-2027, le Collège Privé la Vision Future introduit un programme innovant de robotique éducative pour développer la logique, la créativité et les compétences STEM dès la classe de CP.",
           linkText: "En savoir plus",
           linkUrl: "/programmes"
         },
@@ -307,7 +315,7 @@ export const homeContent = {
     }
   },
   stats: [
-    { value: "100%", label: "Réussite CEPE 2024-2025" },
+    { value: "100%", label: "Réussite CEPE 2025-2026" },
     { value: "7 ans", label: "D'excellence éducative" },
     { value: "100%", label: "Enseignants qualifiés & autorisés" }
   ],
@@ -355,8 +363,8 @@ export const homeContent = {
   ],
   news: [
     {
-      title: "100% de réussite au CEPE 2024-2025",
-      date: "Juillet 2025",
+      title: "100% de réussite au CEPE 2025-2026",
+      date: "Juillet 2026",
       excerpt: "Taux de réussite de 100% au CEPE, confirmant l'excellence de notre enseignement.",
       image: "/images/home/news1.webp"
     },
@@ -760,7 +768,7 @@ export const programmesContent = {
       ],
       stats: [
         { value: "2019", label: "Année de fondation" },
-        { value: "100%", label: "Réussite CEPE 2024-2025" },
+        { value: "100%", label: "Réussite CEPE 2025-2026" },
         { value: "A1, A2, C, D", label: "Séries au BAC" },
         { value: "100%", label: "Enseignants qualifiés" }
       ]
@@ -781,23 +789,23 @@ export const excellenceContent = {
     description: "Découvrez les performances de nos élèves et les parcours de nos anciens."
   },
   results: {
-    title: "Résultats aux Examens 2024-2025",
+    title: "Résultats aux Examens 2025-2026",
     exams: [
       {
-        name: "CEPE 2024-2025",
+        name: "CEPE 2025-2026",
         rate: "100%",
         mentions: "Tous les candidats admis",
         rank: "Excellence confirmée"
       },
       {
-        name: "BEPC 2024-2025",
-        rate: "89,47%",
+        name: "BEPC 2025-2026",
+        rate: "91,78%",
         mentions: "Bonne performance académique",
         rank: "Résultats publiés"
       },
       {
-        name: "BAC 2024-2025",
-        rate: "62,31%",
+        name: "BAC 2025-2026",
+        rate: "91,06%",
         mentions: "Progression continue",
         rank: "Résultats publiés"
       }
@@ -863,7 +871,7 @@ export const excellenceContent = {
   ],
   ui: {
     results: {
-      subtitle: "Résultats 2024-2025",
+      subtitle: "Résultats 2025-2026",
       description: "Des performances exceptionnelles qui témoignent de la qualité de notre enseignement."
     },
     distinctions: {
@@ -885,7 +893,7 @@ export const excellenceContent = {
       title: "L'excellence en chiffres",
       description: "Des résultats qui parlent d'eux-mêmes et témoignent de notre engagement pour la réussite de chaque élève.",
       stats: [
-        { value: "100%", label: "Réussite CEPE 2024-2025", icon: "graduationcap" },
+        { value: "100%", label: "Réussite CEPE 2025-2026", icon: "graduationcap" },
         { value: "100%", label: "Enseignants qualifiés", icon: "award" },
         { value: "2019", label: "Année de fondation", icon: "trending" },
         { value: "7 ans", label: "D'excellence", icon: "trophy" }
@@ -987,6 +995,7 @@ export const admissionsContent = {
     ],
     annexFees: {
       title: "Frais annexes",
+      description: "",
       visibleInProduction: true,
       summaryVisibleInProduction: false,
       summaryTitle: "Synthèse Frais annexes",
@@ -1098,7 +1107,7 @@ export const admissionsContent = {
           items: [
             "1 extrait d'acte de naissance (copie originale)",
             "1 relevé de note obtenue à l'entrée en 6e (collante) pour les élèves de 6e",
-            "Le dernier bulletin de l'année scolaire 2024-2025 (pour les élèves de la 5e et de la 4e)",
+            "Le dernier bulletin de l'année scolaire 2025-2026 (pour les élèves de la 5e et de la 4e)",
             "1 livret scolaire de la 5e et de la 4e"
           ]
         },
@@ -1106,8 +1115,8 @@ export const admissionsContent = {
           title: "Pour les élèves de la 3e et Tle",
           items: [
             "2 copies d'acte de naissance (copie originale)",
-            "Candidats de plus de 16 ans en 2025 : 1 CNI (Carte Nationale d'identité) - Ivoirien + CMU",
-            "Candidats de plus de 16 ans en 2025 : 1 Carte Consulaire - Non Ivoirien + CMU"
+            "Candidats de plus de 16 ans en 2026 : 1 CNI (Carte Nationale d'identité) - Ivoirien + CMU",
+            "Candidats de plus de 16 ans en 2026 : 1 Carte Consulaire - Non Ivoirien + CMU"
           ]
         }
       ],
@@ -1160,16 +1169,13 @@ export const contactContent = {
     phone: {
       title: "Téléphone",
       numbers: [
-        "+225 27 21 29 39 83",
+        siteConfig.phone,
         "+225 05 54 20 35 44"
       ]
     },
     email: {
       title: "Email",
-      addresses: [
-        "contact@lavisionfuture.com",
-        "admissions@lavisionfuture.com"
-      ]
+      addresses: [siteConfig.email]
     },
     hours: {
       title: "Horaires d'Accueil",
@@ -1178,29 +1184,7 @@ export const contactContent = {
         "Samedi : 8h00 - 12h00"
       ]
     }
-  },
-  departments: [
-    {
-      name: "Direction Générale",
-      email: "direction@lavisionfuture.com",
-      phone: "+225 27 21 29 39 83"
-    },
-    {
-      name: "Service Admissions",
-      email: "admissions@lavisionfuture.com",
-      phone: "+225 05 54 20 35 44"
-    },
-    {
-      name: "Service Scolarité",
-      email: "scolarite@lavisionfuture.com",
-      phone: "+225 05 54 20 35 44"
-    },
-    {
-      name: "Comptabilité",
-      email: "comptabilite@lavisionfuture.com",
-      phone: "+225 05 54 20 35 44"
-    }
-  ]
+  }
 };
 
 export const mentionsLegalesContent = {
@@ -1355,8 +1339,8 @@ export const footerContent = {
   academiqueTitle: "Académique",
   contactTitle: "Contact",
   address: "Boulevard de la République\nGrand-Bassam, Côte d'Ivoire",
-  phone: "+225 27 21 29 39 83",
-  email: "contact@lavisionfuture.com",
+  phone: siteConfig.phone,
+  email: siteConfig.email,
   hours: "Lun - Ven: 7h30 - 17h00\nSam: 8h00 - 12h00",
   copyright: "© {year} Collège Privé la Vision Future. Tous droits réservés.",
   credits: "ic_future",

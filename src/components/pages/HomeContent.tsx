@@ -461,15 +461,17 @@ const HomeContent: React.FC = () => {
                     imgClassName="w-full h-full object-cover object-[center_22%]"
                     folder="accueil"
                   />
-                  <button
-                    onClick={() => setShowVideo(true)}
-                    className="absolute inset-0 flex items-center justify-center bg-black/[0.025] hover:bg-black/5 transition-colors rounded-2xl cursor-pointer"
-                    aria-label="Lire la vidéo du fondateur"
-                  >
-                    <div className="w-16 h-16 md:w-20 md:h-20 bg-white/35 hover:bg-white/45 rounded-full flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
-                      <Play className="w-8 h-8 md:w-10 md:h-10 text-blue-800/45 ml-1" fill="currentColor" />
-                    </div>
-                  </button>
+                  {founderVideoUrl && (
+                    <button
+                      onClick={() => setShowVideo(true)}
+                      className="absolute inset-0 flex items-center justify-center bg-black/[0.025] hover:bg-black/5 transition-colors rounded-2xl cursor-pointer"
+                      aria-label="Lire la vidéo du fondateur"
+                    >
+                      <div className="w-16 h-16 md:w-20 md:h-20 bg-white/35 hover:bg-white/45 rounded-full flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                        <Play className="w-8 h-8 md:w-10 md:h-10 text-blue-800/45 ml-1" fill="currentColor" />
+                      </div>
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="md:col-span-3 p-6 md:p-8 flex flex-col justify-center">

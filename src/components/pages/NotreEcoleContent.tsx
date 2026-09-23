@@ -132,6 +132,8 @@ const NotreEcoleContent: React.FC = () => {
                   <img
                     src={founderPhoto}
                     alt="Photo du fondateur"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full rounded-2xl overflow-hidden shadow-md object-cover object-[center_22%]"
                   />
                 </div>

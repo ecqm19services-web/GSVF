@@ -132,6 +132,22 @@ Les liens sont disponibles en bas de chaque page du site (pied de page) et sur l
 
 ---
 
+## 🛠️ Page de maintenance
+
+Si l'école effectue des travaux de mise à jour du site, vous verrez s'afficher une **page de maintenance** indiquant :
+
+> *« Nous faisons peau neuve »* — Notre site est en cours de transformation pour mieux vous servir.
+
+**Que faire ?**
+- Le site est temporairement inaccessible pendant les travaux
+- Revenez plus tard, le site sera de nouveau disponible
+- Un message personnalisé peut indiquer la durée estimée des travaux
+- Vous pouvez toujours contacter l'école par téléphone ou email
+
+> ℹ️ Cette page est activée uniquement par l'administration de l'école. Vous n'avez aucune action à effectuer.
+
+---
+
 ## ❓ Questions fréquentes
 
 **Q : Comment obtenir un numéro de référence ?**  
@@ -157,7 +173,7 @@ R : Oui. Vos informations sont traitées conformément à notre politique de con
 |-------|-------------|
 | **Adresse** | Abidjan, Côte d'Ivoire |
 | **Téléphone** | +225 27 21 29 39 83 |
-| **Email** | contact@lavisionfuture.ci |
+| **Email** | visionfuture@gmail.com |
 | **Horaires d'ouverture** | Lundi – Vendredi : 7h30 – 17h30 |
 
 ---

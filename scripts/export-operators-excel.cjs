@@ -32,7 +32,7 @@ const rows = operators.map((op) => ({
   'Mot de passe temporaire': passwords[op.id] || '(non disponible)',
   'Changement obligatoire': op.mustChangePassword ? 'Oui' : 'Non',
   'Créé le': op.createdAt || '',
-  'URL de connexion': '/ecqm19-admin',
+  'URL de connexion': '/vision-admin',
 }));
 
 const ws = XLSX.utils.json_to_sheet(rows);

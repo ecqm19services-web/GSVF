@@ -60,24 +60,36 @@ function adminAuthHashMatches($plainPassword, $storedHash) {
 }
 
 function adminAuthRandomPassword($length = 18) {
-  $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*+-_=.?';
-  $out = '';
-  $alphabetLen = strlen($alphabet);
-  if ($alphabetLen === 0) {
+  $uppercase = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  $lowercase = 'abcdefghijkmnopqrstuvwxyz';
+  $digits = '23456789';
+  $specials = '!@#$%*+-_=.?';
+  $all = $uppercase . $lowercase . $digits . $specials;
+  $allLen = strlen($all);
+  if ($allLen === 0) {
     return bin2hex(random_bytes((int)ceil($length / 2)));
   }
 
+  // Garantir au moins un caractère de chaque catégorie requise
+  $out = '';
+  $out .= $uppercase[random_int(0, strlen($uppercase) - 1)];
+  $out .= $lowercase[random_int(0, strlen($lowercase) - 1)];
+  $out .= $digits[random_int(0, strlen($digits) - 1)];
+
   while (strlen($out) < $length) {
-    $bytes = random_bytes($length);
-    foreach (str_split($bytes) as $b) {
-      $out .= $alphabet[ord($b) % $alphabetLen];
-      if (strlen($out) >= $length) {
-        break;
-      }
-    }
+    $out .= $all[random_int(0, $allLen - 1)];
   }
 
-  return $out;
+  // Mélanger pour ne pas avoir les caractères garantis toujours en première position
+  $chars = str_split($out);
+  for ($i = count($chars) - 1; $i > 0; $i--) {
+    $j = random_int(0, $i);
+    $tmp = $chars[$i];
+    $chars[$i] = $chars[$j];
+    $chars[$j] = $tmp;
+  }
+
+  return implode('', $chars);
 }
 
 function adminAuthGetCredentials() {
@@ -266,9 +278,14 @@ function adminAuthAdminSetPassword($operatorId, $newPassword, $forceMustChange =
     return [false, 'Compte opérateur introuvable'];
   }
 
-  $policyError = adminAuthPasswordPolicyError($operatorId, (string)$newPassword, $operators, $operator);
-  if (is_string($policyError) && $policyError !== '') {
-    return [false, $policyError];
+  // La politique de complexité ne s'applique pas aux réinitialisations admin :
+  // le mot de passe est temporaire (mustChangePassword = true), l'opérateur
+  // devra choisir un nouveau mot de passe conforme à sa première connexion.
+  if (!$forceMustChange) {
+    $policyError = adminAuthPasswordPolicyError($operatorId, (string)$newPassword, $operators, $operator);
+    if (is_string($policyError) && $policyError !== '') {
+      return [false, $policyError];
+    }
   }
 
   $newHash = adminAuthHashPassword((string)$newPassword);

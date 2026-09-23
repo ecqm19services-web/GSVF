@@ -12,7 +12,7 @@
 Ouvrez votre navigateur et rendez-vous sur :
 
 ```
-https://votre-site.com/ecqm19-admin
+https://votre-site.com/vision-admin
 ```
 
 Saisissez votre **identifiant** (ex. : `op01`) et votre **mot de passe**, puis cliquez sur **"Se connecter"**.

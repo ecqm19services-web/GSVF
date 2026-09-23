@@ -17,8 +17,10 @@ import {
   ExternalLink,
   Copy,
   Check,
+  BriefcaseBusiness,
 } from 'lucide-react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { siteConfig } from '@/data/content';
 import { Button } from '@/components/ui/button';
 
 interface Section {
@@ -37,7 +39,7 @@ const AdminDocumentationPage: React.FC = () => {
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      navigate('/ecqm19-admin');
+      navigate('/vision-admin');
     }
   }, [authLoading, isAuthenticated, navigate]);
 
@@ -86,6 +88,19 @@ const AdminDocumentationPage: React.FC = () => {
               <p className="text-gray-600 text-sm">
                 Suivez les admissions et messages de contact. Mettez à jour les statuts 
                 et ajoutez des notes pour chaque demande.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <BriefcaseBusiness className="w-5 h-5 text-blue-600" />
+                </div>
+                <h4 className="font-semibold text-gray-900">Offres d\'emploi</h4>
+              </div>
+              <p className="text-gray-600 text-sm">
+                Publiez et gérez les offres d\'emploi avec documents PDF. 
+                Clôturez, republiez ou supprimez les offres.
               </p>
             </div>
 
@@ -389,6 +404,75 @@ const AdminDocumentationPage: React.FC = () => {
       ),
     },
     {
+      id: 'careers',
+      title: 'Offres d\'emploi',
+      icon: <BriefcaseBusiness className="w-5 h-5" />,
+      content: (
+        <div className="space-y-6">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-blue-900 mb-2">Gestion des offres d\'emploi</h3>
+            <p className="text-blue-700">
+              Publiez des offres d\'emploi avec un document PDF officiel. Les offres apparaissent
+              sur la page Carrières du site public.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Créer une offre</h3>
+            <ol className="space-y-2 text-gray-600">
+              <li>1. Cliquez sur « Offres d\'emploi » dans le menu principal</li>
+              <li>2. Remplissez le formulaire : titre, date limite, résumé (optionnel)</li>
+              <li>3. Uploadez le document PDF de l\'offre (obligatoire)</li>
+              <li>4. Cliquez sur « Publier l\'offre »</li>
+            </ol>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Gérer les offres existantes</h3>
+            <div className="grid md:grid-cols-2 gap-3">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h4 className="font-semibold text-green-900 mb-2">Clôturer</h4>
+                <p className="text-sm text-green-700">
+                  Met fin aux candidatures. L\'offre reste visible mais marquée comme clôturée.
+                </p>
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-900 mb-2">Republier</h4>
+                <p className="text-sm text-blue-700">
+                  Rouvre une offre clôturée pour recevoir de nouvelles candidatures.
+                </p>
+              </div>
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <h4 className="font-semibold text-red-900 mb-2">Supprimer</h4>
+                <p className="text-sm text-red-700">
+                  Supprime définitivement l\'offre. Une confirmation est demandée avant suppression.
+                </p>
+              </div>
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <h4 className="font-semibold text-amber-900 mb-2">Voir le PDF</h4>
+                <p className="text-sm text-amber-700">
+                  Ouvre le document PDF de l\'offre dans un nouvel onglet.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h4 className="font-semibold text-amber-900">Important</h4>
+                <p className="text-amber-700 text-sm">
+                  La suppression d\'une offre est irréversible. Une confirmation est demandée
+                  avant toute suppression pour éviter les erreurs.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
       id: 'backup',
       title: 'Sauvegardes',
       icon: <Database className="w-5 h-5" />,
@@ -405,10 +489,9 @@ const AdminDocumentationPage: React.FC = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">Créer une sauvegarde</h3>
             <ol className="space-y-2 text-gray-600">
-              <li>1. Dans le tableau de bord, section "Sauvegarde"</li>
-              <li>2. Cliquez sur "Créer une sauvegarde complète"</li>
-              <li>3. Attendez la génération du fichier ZIP</li>
-              <li>4. Le fichier est stocké sur le serveur (dossier <code>server/backups/</code>)</li>
+              <li>1. Dans le tableau de bord, cliquez sur le bouton « Sauvegarder maintenant » (en haut de la page)</li>
+              <li>2. Attendez la génération du fichier ZIP</li>
+              <li>3. Le fichier est stocké sur le serveur (dossier <code>server/backups/</code>)</li>
             </ol>
           </div>
 
@@ -480,7 +563,11 @@ const AdminDocumentationPage: React.FC = () => {
               },
               {
                 q: 'Comment ajouter une offre d\'emploi ?',
-                a: 'Allez dans "Gestion des emplois" (menu principal), créez une offre avec un document PDF. Elle apparaîtra automatiquement sur la page Carrières.',
+                a: 'Allez dans « Offres d\'emploi » (menu principal), créez une offre avec un document PDF. Elle apparaîtra automatiquement sur la page Carrières.',
+              },
+              {
+                q: 'Comment supprimer une offre d\'emploi ?',
+                a: 'Cliquez sur « Supprimer » à côté de l\'offre. Une confirmation est demandée avant la suppression définitive.',
               },
               {
                 q: 'Puis-je modifier les couleurs du site ?',
@@ -530,8 +617,8 @@ const AdminDocumentationPage: React.FC = () => {
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
               <h4 className="font-semibold text-blue-900 mb-2">Support technique</h4>
               <p className="text-blue-700 text-sm">
-                Email : contact@lavisionfuture.com<br />
-                Téléphone : +225 27 21 29 39 83
+                Email : {siteConfig.email}<br />
+                Téléphone : {siteConfig.phone}
               </p>
             </div>
 
@@ -575,7 +662,7 @@ const AdminDocumentationPage: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Link
-                to="/ecqm19-admin/dashboard"
+                to="/vision-admin/dashboard"
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />

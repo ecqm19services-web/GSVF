@@ -131,7 +131,13 @@ if ($action === 'toggle') {
 }
 
 if ($action === 'reset_password') {
-  $password = adminAuthRandomPassword(18);
+  // Permettre un mot de passe personnalisé (ex: mot de passe original du fichier Excel)
+  $customPassword = isset($payload['customPassword']) ? trim((string)$payload['customPassword']) : '';
+  if ($customPassword !== '') {
+    $password = $customPassword;
+  } else {
+    $password = adminAuthRandomPassword(18);
+  }
   [$ok, $err] = adminAuthAdminSetPassword($targetId, $password, true);
   if (!$ok) {
     http_response_code(400);

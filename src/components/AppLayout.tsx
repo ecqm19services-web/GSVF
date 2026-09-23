@@ -1,20 +1,24 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import HomeContent from '@/components/pages/HomeContent';
-import NotreEcoleContent from '@/components/pages/NotreEcoleContent';
-import ProgrammesContent from '@/components/pages/ProgrammesContent';
-import VisiteContent from '@/components/pages/VisiteContent';
-import AdmissionsContent from '@/components/pages/AdmissionsContent';
-import ContactContent from '@/components/pages/ContactContent';
-import ActualitesContent from '@/components/pages/ActualitesContent';
-import CareersContent from '@/components/pages/CareersContent';
-import CareerApplicationContent from '@/components/pages/CareerApplicationContent';
-import MentionsLegalesContent from '@/components/pages/MentionsLegalesContent';
-import ConfidentialiteContent from '@/components/pages/ConfidentialiteContent';
-import EquipeContent from '@/components/pages/EquipeContent';
-import EmploisDuTempsContent from '@/components/pages/EmploisDuTempsContent';
 import NotFound from '@/pages/NotFound';
+
+// HomeContent reste chargé immédiatement (premier rendu / LCP de l'accueil).
+// Les autres pages publiques sont chargées à la demande (code-splitting),
+// avec un fallback géré par le <Suspense> global de App.tsx.
+const NotreEcoleContent = lazy(() => import('@/components/pages/NotreEcoleContent'));
+const ProgrammesContent = lazy(() => import('@/components/pages/ProgrammesContent'));
+const VisiteContent = lazy(() => import('@/components/pages/VisiteContent'));
+const AdmissionsContent = lazy(() => import('@/components/pages/AdmissionsContent'));
+const ContactContent = lazy(() => import('@/components/pages/ContactContent'));
+const ActualitesContent = lazy(() => import('@/components/pages/ActualitesContent'));
+const CareersContent = lazy(() => import('@/components/pages/CareersContent'));
+const CareerApplicationContent = lazy(() => import('@/components/pages/CareerApplicationContent'));
+const MentionsLegalesContent = lazy(() => import('@/components/pages/MentionsLegalesContent'));
+const ConfidentialiteContent = lazy(() => import('@/components/pages/ConfidentialiteContent'));
+const EquipeContent = lazy(() => import('@/components/pages/EquipeContent'));
+const EmploisDuTempsContent = lazy(() => import('@/components/pages/EmploisDuTempsContent'));
 
 const AppLayout: React.FC = () => {
   const location = useLocation();

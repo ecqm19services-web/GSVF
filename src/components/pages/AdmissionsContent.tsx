@@ -268,8 +268,32 @@ const AdmissionsContent: React.FC = () => {
                       </div>
                     </div>
                     {showAnnexFees && (
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-sm border-collapse border border-gray-300">
+                      <>
+                        {(isEditing || (infoSheet.annexFees.description || '').trim() !== '') && (
+                          <div className="mb-3">
+                            {isEditing && (
+                              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                Texte d'introduction (optionnel)
+                              </p>
+                            )}
+                            <div className="relative">
+                              <EditableText
+                                as="p"
+                                multiline
+                                path="infoSheet.annexFees.description"
+                                value={infoSheet.annexFees.description || ''}
+                                className="min-h-[1.5rem] whitespace-pre-line text-sm leading-relaxed text-gray-600"
+                              />
+                              {isEditing && (infoSheet.annexFees.description || '').trim() === '' && (
+                                <span className="pointer-events-none absolute left-0 top-0 text-sm italic text-gray-400">
+                                  Ex. « Les frais annexes couvrent la tenue, les fournitures, l'assurance… » — cliquez pour saisir un texte.
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm border-collapse border border-gray-300">
                           <thead>
                             <tr className="bg-blue-800 text-white">
                               <th className="text-left py-3 px-4 font-bold border border-gray-300 bg-white"> </th>
@@ -281,18 +305,6 @@ const AdmissionsContent: React.FC = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {infoSheet.annexFees.rows.map((row, rowIndex: number) => (
-                              <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                                <td className="py-2.5 px-4 font-semibold text-gray-900 border border-gray-300 whitespace-nowrap">
-                                  <EditableText as="span" path={`infoSheet.annexFees.rows.${rowIndex}.label`} value={row.label} />
-                                </td>
-                                {row.values.map((v: string, colIndex: number) => (
-                                  <td key={colIndex} className="py-2.5 px-4 text-gray-700 border border-gray-300 whitespace-nowrap">
-                                    <EditableText as="span" path={`infoSheet.annexFees.rows.${rowIndex}.values.${colIndex}`} value={v} />
-                                  </td>
-                                ))}
-                              </tr>
-                            ))}
                             <tr className="bg-blue-800 text-white">
                               <td className="py-2.5 px-4 font-bold border border-blue-700 whitespace-nowrap">
                                 <EditableText as="span" path="infoSheet.annexFees.totalLabel" value={infoSheet.annexFees.totalLabel} />
@@ -305,7 +317,8 @@ const AdmissionsContent: React.FC = () => {
                             </tr>
                           </tbody>
                         </table>
-                      </div>
+                        </div>
+                      </>
                     )}
 
                     {showAnnexFeesSummary && (
@@ -383,6 +396,8 @@ const AdmissionsContent: React.FC = () => {
                     <img
                       src="/images/admissions/tenues.png"
                       alt="Tenues scolaires"
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-auto rounded-xl shadow-lg"
                     />
                   </div>
@@ -415,6 +430,8 @@ const AdmissionsContent: React.FC = () => {
                     <img
                       src="/images/admissions/tenues.png"
                       alt="Tenues scolaires"
+                      loading="lazy"
+                      decoding="async"
                       className="w-48 h-auto rounded-xl shadow-lg"
                     />
                   </div>

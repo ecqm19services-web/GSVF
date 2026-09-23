@@ -17,7 +17,7 @@ const AdminLoginPage: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/ecqm19-admin/visual');
+      navigate('/vision-admin/visual');
     }
   }, [isAuthenticated, navigate]);
 
@@ -55,7 +55,7 @@ const AdminLoginPage: React.FC = () => {
       setPassword(newPassword);
       setNewPassword('');
       setConfirmPassword('');
-      navigate('/ecqm19-admin/visual');
+      navigate('/vision-admin/visual');
       return;
     }
 
