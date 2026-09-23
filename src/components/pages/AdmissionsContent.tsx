@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Hero from '@/components/ui/Hero';
 import SectionTitle from '@/components/ui/SectionTitle';
 import AdmissionsForm from '@/components/forms/AdmissionsForm';
@@ -6,7 +6,7 @@ import { admissionsContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
 import { useEditSession } from '@/contexts/EditSessionContext';
-import { FileText, ClipboardList } from 'lucide-react';
+import { FileText, ClipboardList, X } from 'lucide-react';
 
 type AdmissionTab = 'fiche' | 'etapes';
 type SensitiveSectionKey = 'tuition' | 'annexFees';
@@ -14,6 +14,16 @@ type SensitiveSectionKey = 'tuition' | 'annexFees';
 const AdmissionsContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AdmissionTab>('fiche');
   const [summaryModalSection, setSummaryModalSection] = useState<SensitiveSectionKey | null>(null);
+  const [tenuesLightboxOpen, setTenuesLightboxOpen] = useState(false);
+
+  useEffect(() => {
+    if (!tenuesLightboxOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setTenuesLightboxOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [tenuesLightboxOpen]);
   const editSession = useEditSession<Record<string, unknown> | unknown[]>();
   const isEditing = !!editSession?.isEditing;
   const { value: admissionsData } = usePageJsonContent('admissions', admissionsContent);
@@ -393,13 +403,20 @@ const AdmissionsContent: React.FC = () => {
                 <div className="p-6 relative">
                   {/* Image flottante à droite */}
                   <div className="hidden sm:block absolute top-4 right-4 w-40 lg:w-48 z-10">
-                    <img
-                      src="/images/admissions/tenues.png"
-                      alt="Tenues scolaires"
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-auto rounded-xl shadow-lg"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => setTenuesLightboxOpen(true)}
+                      aria-label="Agrandir l'image des tenues scolaires"
+                      className="group block w-full cursor-zoom-in rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
+                    >
+                      <img
+                        src="/images/admissions/tenues.png"
+                        alt="Tenues scolaires"
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-auto rounded-xl shadow-lg transition group-hover:opacity-90"
+                      />
+                    </button>
                   </div>
                   <div className="space-y-4 sm:pr-44 lg:pr-52">
                     <div className="bg-pink-50/50 rounded-xl p-4 border border-pink-100">
@@ -427,13 +444,20 @@ const AdmissionsContent: React.FC = () => {
                   </div>
                   {/* Image en dessous sur mobile */}
                   <div className="sm:hidden mt-4 flex justify-center">
-                    <img
-                      src="/images/admissions/tenues.png"
-                      alt="Tenues scolaires"
-                      loading="lazy"
-                      decoding="async"
-                      className="w-48 h-auto rounded-xl shadow-lg"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => setTenuesLightboxOpen(true)}
+                      aria-label="Agrandir l'image des tenues scolaires"
+                      className="group block cursor-zoom-in rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
+                    >
+                      <img
+                        src="/images/admissions/tenues.png"
+                        alt="Tenues scolaires"
+                        loading="lazy"
+                        decoding="async"
+                        className="w-48 h-auto rounded-xl shadow-lg transition group-hover:opacity-90"
+                      />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -559,6 +583,37 @@ const AdmissionsContent: React.FC = () => {
             </div>
           </section>
         </>
+      )}
+
+      {tenuesLightboxOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Tenues scolaires en grand"
+        >
+          <button
+            type="button"
+            className="absolute inset-0 bg-slate-900/70"
+            aria-label="Fermer"
+            onClick={() => setTenuesLightboxOpen(false)}
+          />
+          <div className="relative w-full max-w-3xl rounded-2xl bg-white p-3 shadow-2xl">
+            <button
+              type="button"
+              onClick={() => setTenuesLightboxOpen(false)}
+              aria-label="Fermer"
+              className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-slate-900/70 text-white transition hover:bg-slate-900"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <img
+              src="/images/admissions/tenues.png"
+              alt="Tenues scolaires"
+              className="mx-auto h-auto max-h-[85vh] w-auto rounded-xl"
+            />
+          </div>
+        </div>
       )}
 
       {isEditing && summaryModalSection && (
