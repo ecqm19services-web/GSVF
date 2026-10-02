@@ -44,3 +44,9 @@ dist-deploy
 deploy-hostinger.zip
 deploy-hostinger-full.zip
 admin-operators-credentials.xlsx
+
+# Local project backups (safety snapshots, never commit)
+backup-projet-*.zip
+
+# Raw received image material (source only, kept in local backup ZIP)
+img_insp/

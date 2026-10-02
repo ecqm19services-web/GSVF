@@ -16,8 +16,9 @@ export const siteConfig = {
   phone: "+225 27 21 29 39 83",
   // Adresse e-mail de référence du site : source unique réutilisée partout
   // (page Contact, pied de page, page maintenance, support admin).
-  email: "visionfuture@gmail.com",
-  address: "Boulevard de la République, Grand-Bassam, Côte d'Ivoire",
+  // MAJ 2026 : alignée sur l'affiche officielle de l'établissement (à confirmer).
+  email: "visionfutureschool@gmail.com",
+  address: "Quartier Modeste, Route de Bassam, Grand-Bassam, Côte d'Ivoire",
   socialLinks: {
     facebook: "https://www.facebook.com/lavisionfuture",
     instagram: "https://instagram.com/cpvf",
@@ -35,10 +36,10 @@ export const homeContent = {
     ctaSecondary: "Découvrir nos programmes",
     bannerText: "Nous formons les élites de demain",
     slideshowImages: [
-      "/images/accueil/accueil_ecole.jpeg",
-      "/images/accueil/accueil_ecole_eleves.jpeg",
-      "/images/accueil/accueil_ecole_eleves_alt.jpeg",
-      "/images/visite/espace_sport.jpeg"
+      "/images/accueil/campus_facade.jpg",
+      "/images/accueil/campus_cour.jpg",
+      "/images/accueil/eleves_scouts.jpg",
+      "/images/accueil/campus_sport.jpg"
     ]
   },
   sections: {
@@ -115,14 +116,14 @@ export const homeContent = {
       secondary: "Nous contacter"
     },
     bannerImage: {
-      src: "/images/accueil/bienvenu.jpg"
+      src: "/images/accueil/campus_cour.jpg"
     },
     excellenceShowcase: {
       subtitle: "Une éducation d'excellence",
       title: "Résultats scolaires, tableaux d'honneur et performances par classe",
       trimesterLabel: "Résultats scolaires du deuxième trimestre 2025 - 2026",
       honorRoll: {
-        image: "/images/accueil/accueil_ecole_eleves.jpeg",
+        image: "/images/excellence/remise_prix.jpg",
         title: "Tableau d'honneur",
         subtitle: "2e trimestre | Tous secs",
         levelsTitle: "Par niveau",
@@ -139,13 +140,13 @@ export const homeContent = {
       examResultsTitle: "Résultats examens 2025-2026",
       examCards: [
         {
-          image: "/images/accueil/accueil_ecole.jpeg",
+          image: "/images/excellence/ceremonie_certificats.jpg",
           title: "Résultats au Baccalauréat",
           subtitle: "Session 2026",
           linkUrl: ""
         },
         {
-          image: "/images/accueil/accueil_ecole_eleves_alt.jpeg",
+          image: "/images/excellence/concours_litteraire.jpg",
           title: "Résultats au BEPC",
           subtitle: "Session 2026",
           linkUrl: ""
@@ -232,7 +233,7 @@ export const homeContent = {
         calendarText: "Le calendrier des devoirs du Troisième Trimestre 2025 - 2026, allant du lundi 02 mars au 06 mai 2026.",
         calendarLinkText: "À télécharger ici",
         calendarLinkUrl: "",
-        image: "/images/accueil/accueil_ecole_eleves_alt.jpeg",
+        image: "/images/accueil/eleves_uniformes.jpg",
         parentsBoxTitle: "Chers Parents,",
         parentsBoxBody: "Retrouvez dans cet espace les informations utiles destinées aux parents : communications importantes, documents à consulter et indications pratiques pour accompagner la scolarité de votre enfant.\n\nCet encadré peut être mis à jour par l'administration selon les besoins de l'établissement.",
         parentsBoxLinkText: "Consulter les informations",
@@ -255,33 +256,33 @@ export const homeContent = {
       highlight: "Une galerie vivante pour illustrer l'ambiance, l'engagement et l'épanouissement de nos élèves.",
       cardColor: "#434a7a",
       items: [
-        { src: "/images/visite/biblio.jpeg", caption: "Bibliothèque" },
-        { src: "/images/visite/salle_inf.jpeg", caption: "Salle informatique" },
-        { src: "/images/visite/cantine.jpeg", caption: "Cantine" },
-        { src: "/images/visite/espace_sport.jpeg", caption: "Espace sportif" },
-        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Laboratoire numérique" },
-        { src: "/images/accueil/accueil_ecole_eleves.jpeg", caption: "Vie scolaire" },
-        { src: "/images/accueil/accueil_ecole_eleves_alt.jpeg", caption: "Rassemblement" },
-        { src: "/images/accueil/accueil_ecole.jpeg", caption: "Notre campus" },
-        { src: "/images/visite/biblio.jpeg", caption: "Bibliothèque" },
-        { src: "/images/visite/salle_inf.jpeg", caption: "Salle informatique" },
-        { src: "/images/visite/cantine.jpeg", caption: "Cantine" },
-        { src: "/images/visite/espace_sport.jpeg", caption: "Espace sportif" },
-        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Laboratoire numérique" },
-        { src: "/images/accueil/accueil_ecole_eleves.jpeg", caption: "Vie scolaire" },
-        { src: "/images/accueil/accueil_ecole_eleves_alt.jpeg", caption: "Rassemblement" },
-        { src: "/images/accueil/accueil_ecole.jpeg", caption: "Notre campus" }
+        { src: "/images/accueil/campus_facade.jpg", caption: "Façade du collège" },
+        { src: "/images/accueil/campus_cour.jpg", caption: "Cours intérieure" },
+        { src: "/images/accueil/eleves_scouts.jpg", caption: "Salut des élèves" },
+        { src: "/images/accueil/eleves_uniformes.jpg", caption: "Élèves en tenue" },
+        { src: "/images/visite/salle_info.jpg", caption: "Salle informatique" },
+        { src: "/images/visite/salle_info_2.jpg", caption: "Équipements informatiques" },
+        { src: "/images/visite/labo_chimie.jpg", caption: "Laboratoire de chimie" },
+        { src: "/images/visite/atelier_cuisine.jpg", caption: "Atelier cuisine" },
+        { src: "/images/excellence/remise_prix.jpg", caption: "Remise de prix" },
+        { src: "/images/excellence/concours_litteraire.jpg", caption: "Concours littéraire" },
+        { src: "/images/excellence/ceremonie_certificats.jpg", caption: "Cérémonie de certificats" },
+        { src: "/images/fondateur/fondateur_trophee.jpg", caption: "Meilleure Institution" },
+        { src: "/images/home/actu_noel.jpg", caption: "Arbre de Noël" },
+        { src: "/images/home/actu_campagne.jpg", caption: "Campagne de sensibilisation" },
+        { src: "/images/accueil/campus_sport.jpg", caption: "Espace sportif" },
+        { src: "/images/home/actu_fete_travail.jpg", caption: "Fête du travail" }
       ]
     },
     actualites: {
       title: "Notre Actualité",
       image: {
-        src: "/images/accueil/accueil_ecole_eleves.jpeg"
+        src: "/images/home/actu_journee_excellence.jpg"
       },
       belowImage: {
         mode: "text" as "text" | "image",
         text: "Restez informé des dernières nouvelles de notre établissement.",
-        imageSrc: "/images/accueil/accueil_ecole.jpeg"
+        imageSrc: "/images/accueil/campus_facade.jpg"
       },
       newsTicker: {
         text: "Inscriptions ouvertes pour l'année 2026-2027 - Journée portes ouvertes le 15 juin 2026"
@@ -363,22 +364,22 @@ export const homeContent = {
   ],
   news: [
     {
-      title: "100% de réussite au CEPE 2025-2026",
-      date: "Juillet 2026",
-      excerpt: "Taux de réussite de 100% au CEPE, confirmant l'excellence de notre enseignement.",
-      image: "/images/home/news1.webp"
+      title: "Journée de l'Excellence",
+      date: "25 Septembre 2026",
+      excerpt: "Remise des prix et célébration de l'excellence au Collège Privé La Vision Future.",
+      image: "/images/home/actu_journee_excellence.jpg"
     },
     {
-      title: "Inauguration du nouveau laboratoire de sciences",
-      date: "10 Septembre 2025",
-      excerpt: "Un investissement majeur pour l'enseignement scientifique.",
-      image: "/images/home/news2.webp"
+      title: "Concours littéraire",
+      date: "2026",
+      excerpt: "Nos élèves se distinguent lors du concours littéraire de l'établissement.",
+      image: "/images/excellence/concours_litteraire.jpg"
     },
     {
-      title: "Partenariat avec l'Université de Bordeaux",
-      date: "5 Novembre 2025",
-      excerpt: "Nouvelles opportunités pour nos bacheliers.",
-      image: "/images/home/news3.webp"
+      title: "Campagne « Zéro Grossesse à l'école »",
+      date: "2026",
+      excerpt: "Sensibilisation de nos élèves aux enjeux de santé et de responsabilité.",
+      image: "/images/home/actu_campagne.jpg"
     }
   ]
 };
@@ -410,17 +411,17 @@ export const visiteContent = {
       title: "Entrée Principale & Accueil",
       description: "Un accueil chaleureux dans un cadre verdoyant. Notre entrée principale reflète les valeurs d'ouverture et d'excellence de notre établissement.",
       images: [
-        { src: "/images/accueil/accueil_ecole.jpeg", caption: "Portail principal" },
-        { src: "/images/accueil/accueil_ecole_eleves.jpeg", caption: "Allée d'accès" },
-        { src: "/images/accueil/accueil_ecole_eleves_alt.jpeg", caption: "Bâtiment administratif" }
+        { src: "/images/accueil/campus_facade.jpg", caption: "Entrée principale" },
+        { src: "/images/accueil/campus_cour.jpg", caption: "Cours intérieure" },
+        { src: "/images/accueil/eleves_scouts.jpg", caption: "Accueil des élèves" }
       ],
       galleryImages: [
-        { src: "/images/accueil/accueil_ecole.jpeg", caption: "Portail principal" },
-        { src: "/images/accueil/accueil_ecole_eleves.jpeg", caption: "Allée d'accès" },
-        { src: "/images/accueil/accueil_ecole_eleves_alt.jpeg", caption: "Bâtiment administratif" },
-        { src: "/images/accueil/accueil_ecole.jpeg", caption: "Vue d'ensemble de l'entrée" },
-        { src: "/images/accueil/accueil_ecole_eleves.jpeg", caption: "Accueil des élèves" },
-        { src: "/images/accueil/accueil_ecole_eleves_alt.jpeg", caption: "Espace d'accueil" }
+        { src: "/images/accueil/campus_facade.jpg", caption: "Façade du collège" },
+        { src: "/images/accueil/campus_cour.jpg", caption: "Bâtiments A et B" },
+        { src: "/images/accueil/eleves_scouts.jpg", caption: "Élèves en uniforme" },
+        { src: "/images/accueil/eleves_uniformes.jpg", caption: "Rassemblement d'élèves" },
+        { src: "/images/home/actu_evenement.jpg", caption: "Vie de campus" },
+        { src: "/images/home/actu_evenement2.jpg", caption: "Temps fort scolaire" }
       ]
     },
     {
@@ -428,18 +429,16 @@ export const visiteContent = {
       title: "Salles de Classe",
       description: "Des espaces d'apprentissage modernes et lumineux, dédiés à chaque niveau, favorisant la concentration et la réussite des élèves.",
       images: [
-        { src: "/images/visite/salle_inf.jpeg", caption: "Salle de classe primaire" },
-        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Salle de classe secondaire" },
-        { src: "/images/visite/biblio.jpeg", caption: "Bibliothèque" }
+        { src: "/images/visite/salle_info.jpg", caption: "Espace pédagogique" },
+        { src: "/images/visite/salle_info_2.jpg", caption: "Salle équipée" },
+        { src: "/images/accueil/eleves_uniformes.jpg", caption: "Élèves en classe" }
       ],
       galleryImages: [
-        { src: "/images/visite/salle_inf.jpeg", caption: "Salle de classe primaire" },
-        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Salle de classe secondaire" },
-        { src: "/images/visite/biblio.jpeg", caption: "Bibliothèque" },
-        { src: "/images/visite/salle_inf.jpeg", caption: "Vue d'ensemble de la salle" },
-        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Équipements pédagogiques" },
-        { src: "/images/visite/biblio.jpeg", caption: "Espace lecture" },
-        { src: "/images/visite/salle_inf.jpeg", caption: "Tableau interactif" }
+        { src: "/images/visite/salle_info.jpg", caption: "Salle informatique" },
+        { src: "/images/visite/salle_info_2.jpg", caption: "Postes de travail" },
+        { src: "/images/accueil/eleves_uniformes.jpg", caption: "Élèves" },
+        { src: "/images/accueil/eleves_scouts_2.jpg", caption: "Groupe d'élèves" },
+        { src: "/images/home/actu_evenement3.jpg", caption: "Activité scolaire" }
       ]
     },
     {
@@ -447,17 +446,15 @@ export const visiteContent = {
       title: "Robotique & Informatique",
       description: "Une salle dédiée à la robotique et à l'informatique, où les élèves s'initient aux nouvelles technologies, à la programmation et à la pensée computationnelle.",
       images: [
-        { src: "/images/visite/salle_inf.jpeg", caption: "Salle de robotique & informatique" },
-        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Postes informatiques" },
-        { src: "/images/visite/salle_inf.jpeg", caption: "Atelier robotique" }
+        { src: "/images/visite/salle_info_2.jpg", caption: "Salle de robotique & informatique" },
+        { src: "/images/visite/salle_info.jpg", caption: "Postes informatiques" },
+        { src: "/images/visite/labo_chimie_2.jpg", caption: "Atelier technologique" }
       ],
       galleryImages: [
-        { src: "/images/visite/salle_inf.jpeg", caption: "Salle de robotique & informatique" },
-        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Postes informatiques" },
-        { src: "/images/visite/salle_inf.jpeg", caption: "Atelier robotique" },
-        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Robots éducatifs" },
-        { src: "/images/visite/salle_inf.jpeg", caption: "Programmation en classe" },
-        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Projets d'élèves" }
+        { src: "/images/visite/salle_info_2.jpg", caption: "Salle informatique" },
+        { src: "/images/visite/salle_info.jpg", caption: "Équipements" },
+        { src: "/images/visite/labo_chimie.jpg", caption: "Atelier scientifique" },
+        { src: "/images/visite/labo_chimie_2.jpg", caption: "Ressources pédagogiques" }
       ]
     },
     {
@@ -465,17 +462,14 @@ export const visiteContent = {
       title: "Laboratoires Scientifiques",
       description: "Une salle de laboratoire dédiée à la physique et à la chimie, ainsi qu'une salle de SVT, permettent une approche pratique des sciences.",
       images: [
-        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Laboratoire de physique-chimie" },
-        { src: "/images/visite/biblio.jpeg", caption: "Salle de SVT" },
-        { src: "/images/visite/salle_inf.jpeg", caption: "Équipements scientifiques" }
+        { src: "/images/visite/labo_chimie.jpg", caption: "Laboratoire de physique-chimie" },
+        { src: "/images/visite/labo_chimie_2.jpg", caption: "Verrerie et produits" },
+        { src: "/images/visite/salle_info.jpg", caption: "Instruments de mesure" }
       ],
       galleryImages: [
-        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Laboratoire de physique-chimie" },
-        { src: "/images/visite/biblio.jpeg", caption: "Salle de SVT" },
-        { src: "/images/visite/salle_inf.jpeg", caption: "Équipements scientifiques" },
-        { src: "/images/visite/salle_inf_alt.jpeg", caption: "Expériences en cours" },
-        { src: "/images/visite/salle_inf.jpeg", caption: "Microscopes et instruments" },
-        { src: "/images/visite/biblio.jpeg", caption: "Collections de spécimens" }
+        { src: "/images/visite/labo_chimie.jpg", caption: "Laboratoire" },
+        { src: "/images/visite/labo_chimie_2.jpg", caption: "Rangements et éprouvettes" },
+        { src: "/images/visite/salle_info_2.jpg", caption: "Salle numérique" }
       ]
     },
     {
@@ -483,17 +477,13 @@ export const visiteContent = {
       title: "Espace Sportif",
       description: "Un terrain polyvalent en plein air servant à la pratique du football, du basketball, du handball et du tennis. Un espace simple mais fonctionnel où les élèves développent leur esprit d'équipe et leur condition physique.",
       images: [
-        { src: "/images/visite/espace_sport.jpeg", caption: "Terrain polyvalent" },
-        { src: "/images/visite/espace_sport.jpeg", caption: "Activités sportives" },
-        { src: "/images/visite/espace_sport.jpeg", caption: "Entraînement collectif" }
+        { src: "/images/accueil/campus_sport.jpg", caption: "Terrain polyvalent" },
+        { src: "/images/accueil/campus_sport.jpg", caption: "Fresque sportive" },
+        { src: "/images/accueil/campus_cour.jpg", caption: "Espace du campus" }
       ],
       galleryImages: [
-        { src: "/images/visite/espace_sport.jpeg", caption: "Terrain polyvalent" },
-        { src: "/images/visite/espace_sport.jpeg", caption: "Activités sportives" },
-        { src: "/images/visite/espace_sport.jpeg", caption: "Entraînement collectif" },
-        { src: "/images/visite/espace_sport.jpeg", caption: "Match de football" },
-        { src: "/images/visite/espace_sport.jpeg", caption: "Basketball" },
-        { src: "/images/visite/espace_sport.jpeg", caption: "Échauffement" }
+        { src: "/images/accueil/campus_sport.jpg", caption: "Terrain polyvalent" },
+        { src: "/images/accueil/campus_cour.jpg", caption: "Campus" }
       ]
     },
     {
@@ -501,17 +491,13 @@ export const visiteContent = {
       title: "Restauration & Détente",
       description: "Un espace de restauration où les élèves prennent leurs repas dans un cadre convivial, avec des espaces de détente pour les pauses.",
       images: [
-        { src: "/images/visite/cantine.jpeg", caption: "Cantine principale" },
-        { src: "/images/visite/cantine.jpeg", caption: "Espace détente" },
-        { src: "/images/visite/cantine.jpeg", caption: "Service des repas" }
+        { src: "/images/visite/atelier_cuisine.jpg", caption: "Atelier culinaire" },
+        { src: "/images/visite/atelier_cuisine_2.jpg", caption: "Activité restauration" },
+        { src: "/images/visite/atelier_cuisine.jpg", caption: "Élèves en tenue de cuisine" }
       ],
       galleryImages: [
-        { src: "/images/visite/cantine.jpeg", caption: "Cantine principale" },
-        { src: "/images/visite/cantine.jpeg", caption: "Espace détente" },
-        { src: "/images/visite/cantine.jpeg", caption: "Service des repas" },
-        { src: "/images/visite/cantine.jpeg", caption: "Menu du jour" },
-        { src: "/images/visite/cantine.jpeg", caption: "Pause déjeuner" },
-        { src: "/images/visite/cantine.jpeg", caption: "Espace convivial" }
+        { src: "/images/visite/atelier_cuisine.jpg", caption: "Atelier cuisine" },
+        { src: "/images/visite/atelier_cuisine_2.jpg", caption: "Temps de restauration" }
       ]
     }
   ]
@@ -705,7 +691,7 @@ export const programmesContent = {
         "Initiation à la lecture et aux mathématiques",
         "Arts plastiques et musique"
       ],
-      image: "/images/accueil/accueil_ecole_eleves.jpeg"
+      image: "/images/visite/atelier_cuisine.jpg"
     },
     {
       id: "primaire",
@@ -719,7 +705,7 @@ export const programmesContent = {
         "Éducation sportive quotidienne",
         "Projets interdisciplinaires"
       ],
-      image: "/images/accueil/accueil_ecole_eleves_alt.jpeg"
+      image: "/images/accueil/eleves_uniformes.jpg"
     },
     {
       id: "college",
@@ -733,7 +719,7 @@ export const programmesContent = {
         "Accueil des élèves affectés et non-affectés",
         "Suivi personnalisé de chaque élève"
       ],
-      image: "/images/visite/salle_inf.jpeg"
+      image: "/images/visite/salle_info.jpg"
     },
     {
       id: "lycee",
@@ -748,7 +734,7 @@ export const programmesContent = {
         "Accueil des affectés et non-affectés",
         "Orientation et coaching personnalisé"
       ],
-      image: "/images/visite/biblio.jpeg"
+      image: "/images/excellence/remise_prix.jpg"
     }
   ],
   specialPrograms: [],
@@ -842,19 +828,19 @@ export const excellenceContent = {
       name: "[Nom de l'ancien élève]",
       promotion: "[Année]",
       achievement: "[Parcours ou réussite de l'ancien élève]",
-      image: "/images/excellence/A1.webp"
+      image: "/images/excellence/remise_prix.jpg"
     },
     {
       name: "[Nom de l'ancien élève]",
       promotion: "[Année]",
       achievement: "[Parcours ou réussite de l'ancien élève]",
-      image: "/images/excellence/A2.webp"
+      image: "/images/excellence/diplomes.jpg"
     },
     {
       name: "[Nom de l'ancien élève]",
       promotion: "[Année]",
       achievement: "[Parcours ou réussite de l'ancien élève]",
-      image: "/images/excellence/A3.webp"
+      image: "/images/excellence/ceremonie_certificats.jpg"
     }
   ],
   testimonials: [
@@ -1162,7 +1148,7 @@ export const contactContent = {
       title: "Adresse",
       lines: [
         "Collège Privé la Vision Future",
-        "Boulevard de la République",
+        "Quartier Modeste, Route de Bassam",
         "Grand-Bassam, Côte d'Ivoire"
       ]
     },
@@ -1338,7 +1324,7 @@ export const footerContent = {
   navigationTitle: "Navigation",
   academiqueTitle: "Académique",
   contactTitle: "Contact",
-  address: "Boulevard de la République\nGrand-Bassam, Côte d'Ivoire",
+  address: "Quartier Modeste, Route de Bassam\nGrand-Bassam, Côte d'Ivoire",
   phone: siteConfig.phone,
   email: siteConfig.email,
   hours: "Lun - Ven: 7h30 - 17h00\nSam: 8h00 - 12h00",
