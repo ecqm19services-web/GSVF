@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Hero from '@/components/ui/Hero';
 import FacebookPageEmbed from '@/components/ui/FacebookPageEmbed';
+import ElfsightWidget from '@/components/ui/ElfsightWidget';
+import TikTokFeed from '@/components/ui/TikTokFeed';
 import { siteConfig, actualitesSocialConfig } from '@/data/content';
 import { useEditSession } from '@/contexts/EditSessionContext';
 import {
@@ -36,7 +38,19 @@ interface SocialFeed {
   label: string;
   enabled: boolean;
   url: string;
+  widgetId?: string;
+  pinnedVideos?: string[];
+  videos?: string[];
 }
+
+/** Extrait les IDs numériques de vidéos TikTok (15-20 chiffres) d'un texte contenant des URLs ou des IDs bruts. */
+const parseVideoIds = (raw: string): string[] => {
+  const out: string[] = [];
+  const re = /(\d{15,20})/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(raw))) if (!out.includes(m[1])) out.push(m[1]);
+  return out;
+};
 
 const defaultArticles: Article[] = [
   {
@@ -213,7 +227,39 @@ const ActualitesContent: React.FC = () => {
     });
   };
 
+  const updateFeedWidget = (feedId: string, widgetId: string) => {
+    setSocialFeeds((prev) => {
+      const next = prev.map((f) => (f.id === feedId ? { ...f, widgetId } : f));
+      persistPage(articles, next);
+      return next;
+    });
+  };
+
+  const updateFeedVideos = (feedId: string, raw: string) => {
+    const ids = parseVideoIds(raw);
+    setSocialFeeds((prev) => {
+      const next = prev.map((f) => (f.id === feedId ? { ...f, pinnedVideos: ids } : f));
+      persistPage(articles, next);
+      return next;
+    });
+  };
+
+  // Met à jour un des 4 emplacements vidéo TikTok (un lien par zone)
+  const updateFeedVideoSlot = (feedId: string, index: number, value: string) => {
+    setSocialFeeds((prev) => {
+      const next = prev.map((f) => {
+        if (f.id !== feedId) return f;
+        const videos = [0, 1, 2, 3].map((i) => (f.videos && f.videos[i]) || '');
+        videos[index] = value;
+        return { ...f, videos };
+      });
+      persistPage(articles, next);
+      return next;
+    });
+  };
+
   const enabledFeeds = socialFeeds.filter((f) => f.enabled);
+  const gridFeeds = enabledFeeds;
   const feedColSpan = enabledFeeds.length > 0 ? Math.floor(4 / enabledFeeds.length) : 4;
 
   const renderSocialFeed = (feed: SocialFeed) => {
@@ -250,6 +296,67 @@ const ActualitesContent: React.FC = () => {
               <ArrowRight className="w-4 h-4" />
             </a>
           </div>
+        </div>
+      );
+    }
+
+    if (feed.id === 'tiktok') {
+      const slots = [0, 1, 2, 3].map((i) => (feed.videos && feed.videos[i]) || '');
+      const ids = slots.map((s) => parseVideoIds(s)[0] || '');
+      const hasAny = ids.some(Boolean);
+      const display = isEditing ? ids : ids.filter(Boolean);
+      return (
+        <div key={feed.id}>
+          <div className="flex items-center gap-3 mb-4">
+            <span className={`inline-flex items-center gap-2 px-4 py-1.5 ${colors.bg} ${colors.text} rounded-full text-sm font-semibold`}>
+              <Icon className="w-4 h-4" />
+              Vidéos {feed.label}
+            </span>
+          </div>
+          <div className="bg-white rounded-2xl shadow-lg p-3">
+            {!hasAny && !isEditing ? (
+              <div className="flex flex-col items-center justify-center gap-3 py-16 text-center bg-gray-50 rounded-xl">
+                <Icon className="w-12 h-12 text-gray-800" />
+                <p className="text-gray-700 font-semibold">Collège Privé la Vision Future</p>
+                <span className="text-xs font-semibold text-gray-500">Contenu TikTok bientôt disponible</span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {display.map((id, i) => (
+                  <div key={id || `slot-${i}`} className="flex flex-col items-center">
+                    {id ? (
+                      <iframe
+                        src={`https://www.tiktok.com/embed/v2/${id}`}
+                        title={`TikTok ${id}`}
+                        className="w-full max-w-[320px] aspect-[9/14] rounded-xl border-0"
+                        allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                        allowFullScreen
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full max-w-[320px] aspect-[9/14] rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center text-center p-4 text-xs text-gray-400">
+                        Zone {i + 1} — colle un lien TikTok dans « Configurer les réseaux sociaux »
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          {feedUrl && (
+            <div className="text-right mt-4">
+              <a
+                href={feedUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center gap-2 ${colors.badge} hover:opacity-80 font-medium text-sm`}
+              >
+                <Icon className="w-4 h-4" />
+                Voir le profil {feed.label}
+                <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+          )}
         </div>
       );
     }
@@ -386,6 +493,22 @@ const ActualitesContent: React.FC = () => {
                         onChange={(e) => updateFeedUrl(feed.id, e.target.value)}
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-amber-300 focus:border-amber-400 outline-none"
                       />
+                      {feed.id === 'tiktok' && (
+                        <div className="mt-2 space-y-2">
+                          <p className="text-xs font-semibold text-gray-500">4 zones de vidéos — colle un lien TikTok par zone :</p>
+                          {[0, 1, 2, 3].map((i) => (
+                            <input
+                              key={i}
+                              type="text"
+                              placeholder={`Zone ${i + 1} : lien ou ID de vidéo TikTok`}
+                              value={(feed.videos && feed.videos[i]) || ''}
+                              onChange={(e) => updateFeedVideoSlot(feed.id, i, e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-amber-300 focus:border-amber-400 outline-none"
+                            />
+                          ))}
+                          <p className="text-xs text-gray-500">Chaque zone affiche sa vidéo automatiquement (lecteur natif, sans clic). Laisse vide pour masquer la zone.</p>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -534,11 +657,11 @@ const ActualitesContent: React.FC = () => {
                 </div>
               </div>
 
-              {/* Social feeds — dynamic */}
+              {/* Social feeds — dynamique (Facebook et TikTok côte à côte) */}
               <div className="xl:col-span-4">
-                {enabledFeeds.length > 0 ? (
-                  <div className={`grid grid-cols-1 ${enabledFeeds.length >= 2 ? 'xl:grid-cols-2' : ''} gap-6 items-start`}>
-                    {enabledFeeds.map((feed) => renderSocialFeed(feed))}
+                {gridFeeds.length > 0 ? (
+                  <div className={`grid grid-cols-1 ${gridFeeds.length >= 2 ? 'xl:grid-cols-2' : ''} gap-6 items-start`}>
+                    {gridFeeds.map((feed) => renderSocialFeed(feed))}
                   </div>
                 ) : (
                   <div className="text-center py-20 text-gray-400">

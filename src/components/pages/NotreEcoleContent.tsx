@@ -4,7 +4,6 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import { visionContent, histoireContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
-import founderPhoto from '../../../Fondateur_CPVF.png';
 import { 
   Star, 
   Shield, 
@@ -130,7 +129,7 @@ const NotreEcoleContent: React.FC = () => {
               <div className="md:col-span-2 p-6 md:p-8 flex items-center justify-center">
                 <div className="relative w-64 h-80 md:w-full md:h-96">
                   <img
-                    src={founderPhoto}
+                    src="/images/fondateur/fondateur_allocution.jpg"
                     alt="Photo du fondateur"
                     loading="lazy"
                     decoding="async"

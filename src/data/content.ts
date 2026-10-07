@@ -1,7 +1,6 @@
 // Content data for Collège Privé la Vision Future
 // This simulates Markdown content that would be editable via CMS
 
-import founderPhoto from '../../Fondateur_CPVF.png';
 
 export const siteConfig = {
   name: "Collège Privé la Vision Future",
@@ -19,11 +18,13 @@ export const siteConfig = {
   // MAJ 2026 : alignée sur l'affiche officielle de l'établissement (à confirmer).
   email: "visionfutureschool@gmail.com",
   address: "Quartier Modeste, Route de Bassam, Grand-Bassam, Côte d'Ivoire",
+  // Seuls les réseaux confirmés sont renseignés. Instagram/LinkedIn/YouTube
+  // (placeholders « cpvf ») sont vidés jusqu'à communication des vrais liens.
   socialLinks: {
     facebook: "https://www.facebook.com/lavisionfuture",
-    instagram: "https://instagram.com/cpvf",
-    linkedin: "https://linkedin.com/company/cpvf",
-    youtube: "https://youtube.com/@cpvf"
+    instagram: "",
+    linkedin: "",
+    youtube: ""
   }
 };
 
@@ -39,7 +40,9 @@ export const homeContent = {
       "/images/accueil/campus_facade.jpg",
       "/images/accueil/campus_cour.jpg",
       "/images/accueil/eleves_scouts.jpg",
-      "/images/accueil/campus_sport.jpg"
+      "/images/accueil/campus_sport.jpg",
+      "/images/accueil/slide_ceremonie.jpg",
+      "/images/accueil/slide_groupe.jpg"
     ]
   },
   sections: {
@@ -116,16 +119,23 @@ export const homeContent = {
       secondary: "Nous contacter"
     },
     bannerImage: {
-      src: "/images/accueil/campus_cour.jpg"
+      src: "/images/accueil/bienvenu.jpg"
     },
     excellenceShowcase: {
       subtitle: "Une éducation d'excellence",
       title: "Résultats scolaires, tableaux d'honneur et performances par classe",
-      trimesterLabel: "Résultats scolaires du deuxième trimestre 2025 - 2026",
+      trimesterLabel: "Résultats scolaires du deuxième trimestre 2026 - 2027",
       honorRoll: {
         image: "/images/excellence/remise_prix.jpg",
         title: "Tableau d'honneur",
-        subtitle: "2e trimestre | Tous secs",
+        subtitle: "2e trimestre · Tous secteurs",
+        documentUrl: "",
+        slides: [
+          "/images/excellence/remise_prix.jpg",
+          "/images/excellence/diplomes.jpg",
+          "/images/excellence/ceremonie_certificats.jpg",
+          "/images/excellence/concours_litteraire.jpg"
+        ],
         levelsTitle: "Par niveau",
         levels: [
           { label: "6e", linkUrl: "" },
@@ -141,13 +151,34 @@ export const homeContent = {
       examCards: [
         {
           image: "/images/excellence/ceremonie_certificats.jpg",
+          images: [
+            "/images/excellence/ceremonie_certificats.jpg",
+            "/images/excellence/remise_prix.jpg",
+            "/images/accueil/slide_ceremonie.jpg"
+          ],
           title: "Résultats au Baccalauréat",
           subtitle: "Session 2026",
           linkUrl: ""
         },
         {
           image: "/images/excellence/concours_litteraire.jpg",
+          images: [
+            "/images/excellence/concours_litteraire.jpg",
+            "/images/accueil/slide_groupe.jpg",
+            "/images/excellence/diplomes.jpg"
+          ],
           title: "Résultats au BEPC",
+          subtitle: "Session 2026",
+          linkUrl: ""
+        },
+        {
+          image: "/images/excellence/diplomes.jpg",
+          images: [
+            "/images/excellence/diplomes.jpg",
+            "/images/excellence/remise_prix.jpg",
+            "/images/excellence/ceremonie_certificats.jpg"
+          ],
+          title: "Résultats au CEPE",
           subtitle: "Session 2026",
           linkUrl: ""
         }
@@ -156,10 +187,10 @@ export const homeContent = {
     practicalInfo: {
       subtitle: "Informations pratiques",
       title: "Vie scolaire, emploi du temps et informations parents",
-      description: "Des blocs simples à mettre à jour pour aider l'administration à publier le calendrier, les emplois du temps, les devoirs et les informations utiles aux parents.",
+      description: "Suivez la vie scolaire en un coup d'œil : calendrier des vacances, emploi du temps par niveau, dates de devoirs et informations utiles aux parents.",
       leftColumn: {
-        title: "Activités de l'année scolaire 25 - 26",
-        highlightTitle: "Découpage de l'année scolaire 2025 - 2026",
+        title: "Activités de l'année scolaire 2026 - 2027",
+        highlightTitle: "Découpage de l'année scolaire 2026 - 2027",
         trimesters: [
           {
             title: "Premier trimestre",
@@ -178,7 +209,7 @@ export const homeContent = {
             body: ""
           }
         ],
-        breaksTitle: "Congés scolaires 2025 - 2026",
+        breaksTitle: "Congés scolaires 2026 - 2027",
         breaks: [
           {
             title: "Toussaint",
@@ -205,7 +236,7 @@ export const homeContent = {
             body: ""
           }
         ],
-        footerTitle: "Le programme général 25-26 des activités du collège",
+        footerTitle: "Le programme général 2026-2027 des activités du collège",
         footerLinkText: "À consulter ici",
         footerLinkUrl: ""
       },
@@ -230,12 +261,12 @@ export const homeContent = {
           { label: "", linkUrl: "" }
         ],
         calendarTitle: "Calendrier des devoirs :",
-        calendarText: "Le calendrier des devoirs du Troisième Trimestre 2025 - 2026, allant du lundi 02 mars au 06 mai 2026.",
+        calendarText: "Le calendrier des devoirs du Troisième Trimestre est disponible en téléchargement.",
         calendarLinkText: "À télécharger ici",
         calendarLinkUrl: "",
         image: "/images/accueil/eleves_uniformes.jpg",
         parentsBoxTitle: "Chers Parents,",
-        parentsBoxBody: "Retrouvez dans cet espace les informations utiles destinées aux parents : communications importantes, documents à consulter et indications pratiques pour accompagner la scolarité de votre enfant.\n\nCet encadré peut être mis à jour par l'administration selon les besoins de l'établissement.",
+        parentsBoxBody: "Communications de l'administration, comptes rendus de réunions parents-professeurs, documents scolaires (bulletins, certificats, factures) et informations pratiques : horaires, cantine et transport. Les parents y trouvent l'essentiel pour suivre la scolarité de leur enfant.",
         parentsBoxLinkText: "Consulter les informations",
         parentsBoxLinkUrl: "",
         parentsBoxExtraLinks: [] as { text: string; url: string }[]
@@ -243,7 +274,7 @@ export const homeContent = {
     },
     motFondateur: {
       title: "Mot du Fondateur",
-      photo: founderPhoto,
+      photo: "/images/fondateur/fondateur_principal.jpg",
       videoUrl: "",
       message: "Depuis la création du Collège Privé la Vision Future en 2019, notre ambition a toujours été de former des citoyens responsables, compétents et ouverts sur le monde. Chaque jour, nous nous engageons à offrir à nos élèves un cadre d'apprentissage stimulant où l'excellence académique s'allie à l'épanouissement personnel. Je suis fier du chemin parcouru et confiant dans l'avenir que nous construisons ensemble.",
       name: "M. DÉGBOUÉ YAO EULOGE",
@@ -259,7 +290,7 @@ export const homeContent = {
         { src: "/images/accueil/campus_facade.jpg", caption: "Façade du collège" },
         { src: "/images/accueil/campus_cour.jpg", caption: "Cours intérieure" },
         { src: "/images/accueil/eleves_scouts.jpg", caption: "Salut des élèves" },
-        { src: "/images/accueil/eleves_uniformes.jpg", caption: "Élèves en tenue" },
+        { src: "/images/accueil/eleves_uniformes.jpg", caption: "Élèves en tenue lors d'une sortie pédagogique" },
         { src: "/images/visite/salle_info.jpg", caption: "Salle informatique" },
         { src: "/images/visite/salle_info_2.jpg", caption: "Équipements informatiques" },
         { src: "/images/visite/labo_chimie.jpg", caption: "Laboratoire de chimie" },
@@ -271,13 +302,20 @@ export const homeContent = {
         { src: "/images/home/actu_noel.jpg", caption: "Arbre de Noël" },
         { src: "/images/home/actu_campagne.jpg", caption: "Campagne de sensibilisation" },
         { src: "/images/accueil/campus_sport.jpg", caption: "Espace sportif" },
-        { src: "/images/home/actu_fete_travail.jpg", caption: "Fête du travail" }
+        { src: "/images/home/actu_fete_travail.jpg", caption: "Fête du travail" },
+        { src: "/images/galerie/peinture.jpg", caption: "Atelier peinture" },
+        { src: "/images/galerie/religion.jpg", caption: "Aumônerie & chorale" }
       ]
     },
     actualites: {
       title: "Notre Actualité",
       image: {
-        src: "/images/home/actu_journee_excellence.jpg"
+        src: "/images/home/actu_journee_excellence.jpg",
+        slides: [
+          "/images/home/actu_journee_excellence.jpg",
+          "/images/home/actu_evenement3.jpg",
+          "/images/home/actu_evenement.jpg"
+        ]
       },
       belowImage: {
         mode: "text" as "text" | "image",
@@ -342,26 +380,9 @@ export const homeContent = {
       icon: "globe"
     }
   ],
-  testimonials: [
-    {
-      quote: "Le Collège Privé la Vision Future a transformé ma vie. Les enseignants m'ont donné confiance en mes capacités.",
-      author: "Aminata Koné",
-      role: "Ancienne élève, promotion 2022",
-      achievement: "Admise à Sciences Po Paris"
-    },
-    {
-      quote: "L'environnement d'apprentissage et les valeurs transmises ont façonné le caractère de mes enfants.",
-      author: "Dr. Jean-Baptiste Aka",
-      role: "Parent d'élèves",
-      achievement: "3 enfants diplômés"
-    },
-    {
-      quote: "Une école qui prépare vraiment les élèves aux défis du monde moderne.",
-      author: "Marie-Claire Bamba",
-      role: "Ancienne élève, promotion 2020",
-      achievement: "Ingénieure chez Google"
-    }
-  ],
+  // Purge : anciens témoignages inventés (personnes et réussites fictives).
+  // À alimenter uniquement avec de vrais retours fournis par l'établissement.
+  testimonials: [],
   news: [
     {
       title: "Journée de l'Excellence",
@@ -431,7 +452,7 @@ export const visiteContent = {
       images: [
         { src: "/images/visite/salle_info.jpg", caption: "Espace pédagogique" },
         { src: "/images/visite/salle_info_2.jpg", caption: "Salle équipée" },
-        { src: "/images/accueil/eleves_uniformes.jpg", caption: "Élèves en classe" }
+        { src: "/images/visite/eleves_classe.jpg", caption: "Élèves en salle de lecture" }
       ],
       galleryImages: [
         { src: "/images/visite/salle_info.jpg", caption: "Salle informatique" },
@@ -446,7 +467,7 @@ export const visiteContent = {
       title: "Robotique & Informatique",
       description: "Une salle dédiée à la robotique et à l'informatique, où les élèves s'initient aux nouvelles technologies, à la programmation et à la pensée computationnelle.",
       images: [
-        { src: "/images/visite/salle_info_2.jpg", caption: "Salle de robotique & informatique" },
+        { src: "/images/visite/salle_info_2.jpg", caption: "Salle de robotique & informatique", slides: ["/images/visite/salle_info_2.jpg", "/images/equipe/robotique.jpg"] },
         { src: "/images/visite/salle_info.jpg", caption: "Postes informatiques" },
         { src: "/images/visite/labo_chimie_2.jpg", caption: "Atelier technologique" }
       ],
@@ -464,7 +485,7 @@ export const visiteContent = {
       images: [
         { src: "/images/visite/labo_chimie.jpg", caption: "Laboratoire de physique-chimie" },
         { src: "/images/visite/labo_chimie_2.jpg", caption: "Verrerie et produits" },
-        { src: "/images/visite/salle_info.jpg", caption: "Instruments de mesure" }
+        { src: "/images/visite/salle_info.jpg", caption: "Espace numérique" }
       ],
       galleryImages: [
         { src: "/images/visite/labo_chimie.jpg", caption: "Laboratoire" },
@@ -492,12 +513,12 @@ export const visiteContent = {
       description: "Un espace de restauration où les élèves prennent leurs repas dans un cadre convivial, avec des espaces de détente pour les pauses.",
       images: [
         { src: "/images/visite/atelier_cuisine.jpg", caption: "Atelier culinaire" },
-        { src: "/images/visite/atelier_cuisine_2.jpg", caption: "Activité restauration" },
+        { src: "/images/visite/cantine.jpeg", caption: "Salle de restauration" },
         { src: "/images/visite/atelier_cuisine.jpg", caption: "Élèves en tenue de cuisine" }
       ],
       galleryImages: [
         { src: "/images/visite/atelier_cuisine.jpg", caption: "Atelier cuisine" },
-        { src: "/images/visite/atelier_cuisine_2.jpg", caption: "Temps de restauration" }
+        { src: "/images/visite/cantine.jpeg", caption: "Temps de restauration" }
       ]
     }
   ]
@@ -957,7 +978,7 @@ export const admissionsContent = {
     ]
   },
   calendar: {
-    title: "Calendrier des Admissions 2025-2026",
+    title: "Calendrier des Admissions 2026-2027",
     dates: [
       { event: "Ouverture des inscriptions", date: "1er Février 2025" },
       { event: "Journées portes ouvertes", date: "15-16 Mars 2025" },
@@ -969,7 +990,7 @@ export const admissionsContent = {
   },
   infoSheet: {
     title: "Fiche de renseignements",
-    subtitle: "Rentrée scolaire 2025 - 2026",
+    subtitle: "Rentrée scolaire 2026 - 2027",
     disclaimer: "NB : les montants ci-dessous sont indicatifs et peuvent évoluer. Veuillez contacter l'administration pour confirmation.",
     servicesTitle: "Services",
     services: [
@@ -985,7 +1006,7 @@ export const admissionsContent = {
       visibleInProduction: true,
       summaryVisibleInProduction: false,
       summaryTitle: "Synthèse Frais annexes",
-      summaryDetail: "Renseignez ici une synthèse publique sans le détail complet du tableau.",
+      summaryDetail: "Les frais annexes (tenues, fournitures, transport, cantine) varient selon le niveau. Contactez l'administration pour le détail actualisé.",
       columns: ["6ème à la 4ème", "3ème", "2nde / 1ère", "Tle"],
       rows: [
         { label: "Tenue de sport", values: ["6 000 FCFA", "6 000 FCFA", "9 000 FCFA", "9 000 FCFA"] },
@@ -1042,7 +1063,7 @@ export const admissionsContent = {
       visibleInProduction: true,
       summaryVisibleInProduction: false,
       summaryTitle: "Synthèse Écolage",
-      summaryDetail: "Renseignez ici une synthèse publique sans le détail complet du tableau.",
+      summaryDetail: "Les frais d'écolage varient selon le niveau et le statut (affecté / non affecté). Contactez l'administration pour le détail actualisé.",
       columns: [
         "6ème à la 3ème (Affectés)",
         "6ème à la 3ème (Non affectés)",
@@ -1238,52 +1259,64 @@ export const equipeContent = {
   },
   members: [
     {
-      name: "M. Kouamé Yao",
-      title: "Directeur Général",
-      description: "Fondateur de l'établissement, il porte la vision d'une éducation d'excellence accessible à tous depuis 2019.",
-      photo: "/images/accueil/accueil_ecole.jpeg"
+      name: "Directeur des Études",
+      title: "Coordination pédagogique",
+      description: "Organisation des emplois du temps, suivi pédagogique et coordination des équipes pour garantir la qualité de l'enseignement au quotidien.",
+      photo: "/images/equipe/portrait-placeholder.svg"
     },
     {
-      name: "Mme Awa Traoré",
-      title: "Directrice Pédagogique",
-      description: "Spécialiste en sciences de l'éducation, elle coordonne les programmes et assure la qualité de l'enseignement.",
-      photo: "/images/accueil/accueil_ecole_eleves.jpeg"
+      name: "Directeur des Études du Secondaire",
+      title: "Coordination · Collège & Lycée",
+      description: "Pilotage pédagogique du secondaire : programmes, évaluations, conseils de classe et accompagnement des élèves jusqu'aux examens (BEPC, Baccalauréat).",
+      photo: "/images/equipe/portrait-placeholder.svg"
     },
     {
-      name: "M. Jean-Marc Brou",
-      title: "Professeur de Mathématiques",
-      description: "Agrégé de mathématiques, il prépare nos élèves aux examens avec rigueur et passion depuis 5 ans.",
-      photo: "/images/accueil/accueil_ecole_eleves_alt.jpeg"
+      name: "EPS & Sport",
+      title: "Professeur · Éducation Physique et Sportive",
+      description: "Activité physique, sports collectifs et individuels, hygiène de vie et dépassement de soi pour l'équilibre corps et esprit des élèves.",
+      photo: "/images/equipe/eps-sport.jpg"
     },
     {
-      name: "Mme Fatou Diallo",
-      title: "Professeure de Français",
-      description: "Diplômée en lettres modernes, elle transmet l'amour de la langue et de la littérature à nos élèves.",
-      photo: "/images/visite/salle_inf.jpeg"
+      name: "Mathématiques",
+      title: "Professeur · Collège & Lycée",
+      description: "Rigueur, exercices ciblés et préparation aux examens (BEPC, Baccalauréat) pour consolider les bases et le raisonnement.",
+      photo: "/images/equipe/mathematiques.jpg"
     },
     {
-      name: "M. Éric N'Guessan",
-      title: "Professeur de Sciences",
-      description: "Passionné de physique-chimie et de SVT, il rend les sciences vivantes à travers des expériences pratiques.",
-      photo: "/images/visite/salle_inf_alt.jpeg"
+      name: "Français & Lettres",
+      title: "Professeur · Collège & Lycée",
+      description: "Maîtrise de la langue, goût de la lecture et de l'écriture, expression orale et préparation aux épreuves de français.",
+      photo: "/images/equipe/francais.jpg"
     },
     {
-      name: "Mme Claire Konan",
-      title: "Professeure d'Anglais",
-      description: "Certifiée Cambridge, elle prépare nos élèves à devenir des citoyens du monde bilingues.",
-      photo: "/images/visite/biblio.jpeg"
+      name: "Sciences (Physique-Chimie / SVT)",
+      title: "Professeur · Laboratoire",
+      description: "Démarche scientifique et expérimentation au laboratoire pour comprendre le monde et réussir les évaluations.",
+      photo: "/images/equipe/sciences.jpg"
     },
     {
-      name: "M. Ismaël Coulibaly",
-      title: "Responsable Informatique & Robotique",
-      description: "Ingénieur en informatique, il initie les élèves à la programmation et à la robotique éducative.",
-      photo: "/images/visite/salle_inf.jpeg"
+      name: "Langues étrangères",
+      title: "Anglais · Allemand · Espagnol",
+      description: "Communication progressive et ouverture internationale, avec l'allemand et l'espagnol dès la classe de 6ème.",
+      photo: "/images/equipe/langues.jpg"
     },
     {
-      name: "Mme Adjoua Koffi",
-      title: "Surveillante Générale",
-      description: "Garante de la discipline et du bien-être des élèves, elle veille au bon déroulement de la vie scolaire.",
-      photo: "/images/visite/cantine.jpeg"
+      name: "Informatique & Robotique",
+      title: "Responsable · STEM",
+      description: "Initiation à la programmation et à la robotique éducative pour développer la logique et la créativité.",
+      photo: "/images/equipe/robotique.jpg"
+    },
+    {
+      name: "Histoire-Géo & Éducation à la citoyenneté",
+      title: "Professeur · Collège & Lycée",
+      description: "Repères historiques et géographiques, esprit critique et formation du citoyen responsable.",
+      photo: "/images/equipe/histoire-geo.jpg"
+    },
+    {
+      name: "Vie scolaire & Accompagnement",
+      title: "CPE · Psychologue · Infirmerie",
+      description: "Encadrement, bien-être et suivi individualisé des élèves tout au long de l'année.",
+      photo: "/images/equipe/vie-scolaire.webp"
     }
   ]
 };
@@ -1308,10 +1341,13 @@ export const emploisDuTempsContent = {
 export const actualitesSocialConfig = {
   feeds: [
     { id: "facebook", label: "Facebook", enabled: true, url: "" },
-    { id: "instagram", label: "Instagram", enabled: true, url: "" },
-    { id: "youtube", label: "YouTube", enabled: false, url: "" },
-    { id: "tiktok", label: "TikTok", enabled: false, url: "" },
-    { id: "linkedin", label: "LinkedIn", enabled: false, url: "" }
+    {
+      id: "tiktok",
+      label: "TikTok",
+      enabled: true,
+      url: "https://www.tiktok.com/@college.prive.la",
+      videos: ["", "", "", ""]
+    }
   ]
 };
 
@@ -1332,9 +1368,9 @@ export const footerContent = {
   credits: "ic_future",
   socialLinks: {
     facebook: "https://www.facebook.com/lavisionfuture",
-    instagram: "https://instagram.com/cpvf",
-    linkedin: "https://linkedin.com/company/cpvf",
-    youtube: "https://youtube.com/@cpvf"
+    instagram: "",
+    linkedin: "",
+    youtube: ""
   }
 };
 

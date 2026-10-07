@@ -1,5 +1,12 @@
 Options -Indexes
 
+# MIME types corrects pour les modules JavaScript (.mjs) — requis par le worker pdf.js
+# (sans cela, Apache/Hostinger renvoie text/plain et le navigateur bloque le module).
+<IfModule mod_mime.c>
+  AddType application/javascript .mjs
+  AddType application/javascript .js
+</IfModule>
+
 RewriteEngine On
 
 # Force trailing slash on /api directories for cleaner routing (GET only)

@@ -54,38 +54,27 @@ const Footer: React.FC = () => {
               <EditableText as="span" multiline path="about.description" value={footerData.about.description} />
             </p>
             <div className="flex gap-4">
-              <a
-                href={socialLinks.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-orange-500 transition-colors"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a
-                href={socialLinks.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-orange-500 transition-colors"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a
-                href={socialLinks.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-orange-500 transition-colors"
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a
-                href={socialLinks.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-orange-500 transition-colors"
-              >
-                <Youtube className="w-5 h-5" />
-              </a>
+              {Object.entries(socialLinks)
+                .filter(([, url]) => Boolean(url))
+                .map(([key, url]) => {
+                  const Icon =
+                    key === "instagram" ? Instagram :
+                    key === "linkedin" ? Linkedin :
+                    key === "youtube" ? Youtube :
+                    Facebook;
+                  return (
+                    <a
+                      key={key}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={key}
+                      className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-orange-500 transition-colors"
+                    >
+                      <Icon className="w-5 h-5" />
+                    </a>
+                  );
+                })}
             </div>
             {/* Admin: edit social links */}
             {isEditing && (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Hero from '@/components/ui/Hero';
 import { visiteContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
@@ -13,11 +13,42 @@ import {
   Camera,
   Play,
   Plus,
-  Trash2
+  Trash2,
+  ImagePlus
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 type VisiteData = typeof visiteContent;
+
+// Bannière qui fait défiler plusieurs images (fondu enchaîné) à intervalle fixe
+const RotatingImage: React.FC<{
+  slides: string[];
+  alt: string;
+  intervalMs?: number;
+}> = ({ slides, alt, intervalMs = 2000 }) => {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const t = window.setInterval(() => setIdx((p) => (p + 1) % slides.length), intervalMs);
+    return () => clearInterval(t);
+  }, [slides.length, intervalMs]);
+  return (
+    <div className="relative w-full h-full">
+      {slides.map((s, i) => (
+        <img
+          key={`${s}-${i}`}
+          src={s}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+            i === idx % slides.length ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+      ))}
+    </div>
+  );
+};
 
 const VisiteContent: React.FC = () => {
   const { value: data } = usePageJsonContent<VisiteData>('visite', visiteContent);
@@ -94,6 +125,52 @@ const VisiteContent: React.FC = () => {
     const currentGallery = section.galleryImages || [...section.images];
     const newGallery = currentGallery.filter((_, i: number) => i !== imageIndex);
     updateAtPath(`sections.${sectionIndex}.galleryImages`, newGallery);
+  };
+
+  // --- Diaporama par vignette : ajouter/supprimer plusieurs images qui défilent (2 s) ---
+  const [slideTarget, setSlideTarget] = useState<{ si: number; ii: number } | null>(null);
+  const [isUploadingSlide, setIsUploadingSlide] = useState(false);
+  const slideInputRef = useRef<HTMLInputElement>(null);
+
+  const openSlidePicker = (si: number, ii: number) => {
+    setSlideTarget({ si, ii });
+    slideInputRef.current?.click();
+  };
+
+  const handleSlideUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || !slideTarget || !updateAtPath || !data) return;
+    const { si, ii } = slideTarget;
+    setIsUploadingSlide(true);
+    const image = data.sections[si].images[ii] as { src: string; slides?: string[] };
+    const next: string[] = image.slides && image.slides.length ? [...image.slides] : [image.src];
+    const creds = sessionStorage.getItem('cpvf_admin_auth');
+    const headers: Record<string, string> = {};
+    if (creds) headers['Authorization'] = `Basic ${creds}`;
+    for (const file of Array.from(files)) {
+      try {
+        const formData = new FormData();
+        formData.append('image', file);
+        const res = await fetch('/api/upload-image/?folder=visite', { method: 'POST', headers, body: formData });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.url) next.push(json.url);
+        }
+      } catch { /* skip failed */ }
+    }
+    updateAtPath(`sections.${si}.images.${ii}.slides`, next);
+    setIsUploadingSlide(false);
+    if (slideInputRef.current) slideInputRef.current.value = '';
+    setSlideTarget(null);
+  };
+
+  const removeTileSlide = (si: number, ii: number, idx: number) => {
+    if (!updateAtPath || !data) return;
+    const image = data.sections[si].images[ii] as { slides?: string[] };
+    const cur = image.slides || [];
+    const next = cur.filter((_, i) => i !== idx);
+    // Moins de 2 images => on reverts en mode statique (image de base seule)
+    updateAtPath(`sections.${si}.images.${ii}.slides`, next.length >= 2 ? next : []);
   };
 
   return (
@@ -191,14 +268,22 @@ const VisiteContent: React.FC = () => {
                       imageIndex === 0 ? 'col-span-2 aspect-video' : 'aspect-square'
                     }`}
                   >
-                    <EditableImage
-                      path={`sections.${sectionIndex}.images.${imageIndex}.src`}
-                      src={image.src}
-                      alt={image.caption}
-                      folder={`visite`}
-                      className="w-full h-full"
-                      imgClassName="w-full h-full object-cover"
-                    />
+                    {(() => {
+                      const slides = (image as { slides?: string[] }).slides;
+                      if (slides && slides.length > 1 && !isEditing) {
+                        return <RotatingImage slides={slides} alt={image.caption} intervalMs={2000} />;
+                      }
+                      return (
+                        <EditableImage
+                          path={`sections.${sectionIndex}.images.${imageIndex}.src`}
+                          src={image.src}
+                          alt={image.caption}
+                          folder={`visite`}
+                          className="w-full h-full"
+                          imgClassName="w-full h-full object-cover"
+                        />
+                      );
+                    })()}
                     
                     {isEditing && (
                       <button
@@ -213,6 +298,34 @@ const VisiteContent: React.FC = () => {
                         <Trash2 className="w-4 h-4" />
                       </button>
                     )}
+
+                    {isEditing && (() => {
+                      const slides = (image as { slides?: string[] }).slides || [];
+                      return (
+                        <div className="absolute top-2 left-2 z-30 flex flex-wrap items-center gap-1 max-w-[calc(100%-4rem)]">
+                          {slides.map((s, i) => (
+                            <div key={`${s}-${i}`} className="relative w-10 h-10 rounded-md overflow-hidden ring-2 ring-white/80 shadow">
+                              <img src={s} alt="" className="w-full h-full object-cover" />
+                              <button
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeTileSlide(sectionIndex, imageIndex, i); }}
+                                className="absolute top-0 right-0 p-0.5 bg-red-600 text-white rounded-bl-md hover:bg-red-700"
+                                title="Retirer cette image du diaporama"
+                              >
+                                <X className="w-2.5 h-2.5" />
+                              </button>
+                            </div>
+                          ))}
+                          <button
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); openSlidePicker(sectionIndex, imageIndex); }}
+                            disabled={isUploadingSlide}
+                            className="min-w-10 h-10 px-2 rounded-md bg-blue-600 text-white flex items-center justify-center gap-1 hover:bg-blue-700 shadow disabled:opacity-60"
+                            title="Ajouter des images à faire défiler (diaporama)"
+                          >
+                            {isUploadingSlide ? <span className="text-[10px]">…</span> : <ImagePlus className="w-4 h-4" />}
+                          </button>
+                        </div>
+                      );
+                    })()}
 
                     <button
                       onClick={() => openLightbox(sectionIndex, imageIndex)}
@@ -364,6 +477,14 @@ const VisiteContent: React.FC = () => {
           </button>
         </div>
       )}
+      <input
+        ref={slideInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        multiple
+        className="hidden"
+        onChange={handleSlideUpload}
+      />
     </>
   );
 };

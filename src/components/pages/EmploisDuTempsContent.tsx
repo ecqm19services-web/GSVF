@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Hero from '@/components/ui/Hero';
 import { emploisDuTempsContent } from '@/data/content';
 import { usePageJsonContent } from '@/hooks/usePageJsonContent';
@@ -7,6 +7,8 @@ import { useEditSession } from '@/contexts/EditSessionContext';
 import { Plus, Trash2, Download, FileText, Upload } from 'lucide-react';
 
 type EdtData = typeof emploisDuTempsContent;
+
+const PdfViewer = React.lazy(() => import('@/components/pdf/PdfViewer'));
 
 const EmploisDuTempsContent: React.FC = () => {
   const { value: data } = usePageJsonContent<EdtData>('emplois-du-temps', emploisDuTempsContent);
@@ -77,7 +79,7 @@ const EmploisDuTempsContent: React.FC = () => {
         size="medium"
       />
 
-      <section className="py-10 bg-gray-50">
+      <section className="relative z-10 -mt-20 md:-mt-28 pt-6 pb-12 bg-gray-50">
         <div className="w-full px-4 sm:px-6 lg:px-8">
           {/* Tabs */}
           <div className="flex flex-wrap justify-center gap-2 mb-10">
@@ -150,13 +152,17 @@ const EmploisDuTempsContent: React.FC = () => {
                 )}
               </div>
 
-              {/* PDF Preview iframe — full width */}
-              <div className="mt-6 rounded-xl overflow-hidden border border-gray-200">
-                <iframe
-                  src={currentClass.pdf}
-                  title={`Emploi du temps ${currentClass.name}`}
-                  className="w-full h-[85vh]"
-                />
+              {/* PDF affiché directement sur la page (pages rendues en canvas, sans contour de visualiseur) */}
+              <div className="mt-8 mx-auto max-w-4xl text-left">
+                <Suspense
+                  fallback={
+                    <div className="flex items-center justify-center py-16 text-gray-500 text-sm">
+                      Chargement du document…
+                    </div>
+                  }
+                >
+                  <PdfViewer src={currentClass.pdf} />
+                </Suspense>
               </div>
             </div>
           )}

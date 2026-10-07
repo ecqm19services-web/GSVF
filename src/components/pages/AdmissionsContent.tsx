@@ -16,6 +16,7 @@ const AdmissionsContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AdmissionTab>('fiche');
   const [summaryModalSection, setSummaryModalSection] = useState<SensitiveSectionKey | null>(null);
   const [tenuesLightboxOpen, setTenuesLightboxOpen] = useState(false);
+  const [suiviPopupOpen, setSuiviPopupOpen] = useState(false);
 
   useEffect(() => {
     if (!tenuesLightboxOpen) return;
@@ -27,6 +28,16 @@ const AdmissionsContent: React.FC = () => {
   }, [tenuesLightboxOpen]);
   const editSession = useEditSession<Record<string, unknown> | unknown[]>();
   const isEditing = !!editSession?.isEditing;
+
+  // Popup "Suivre ma demande" à l'ouverture de la page (une fois par session, non montré en mode édition)
+  useEffect(() => {
+    if (isEditing) return;
+    let seen: string | null = null;
+    try { seen = sessionStorage.getItem('cpvf-admissions-suivi-popup'); } catch { /* ignore */ }
+    if (seen === '1') return;
+    try { sessionStorage.setItem('cpvf-admissions-suivi-popup', '1'); } catch { /* ignore */ }
+    setSuiviPopupOpen(true);
+  }, [isEditing]);
   const { value: admissionsData } = usePageJsonContent('admissions', admissionsContent);
   const fallbackInfoSheet = admissionsContent.infoSheet;
   const infoSheetFromData = (admissionsData.infoSheet || {}) as typeof admissionsContent.infoSheet;
@@ -665,6 +676,56 @@ const AdmissionsContent: React.FC = () => {
                 className="rounded-lg px-4 py-2.5 text-sm font-semibold bg-slate-200 text-slate-800 hover:bg-slate-300"
               >
                 Garder masqué
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {suiviPopupOpen && !isEditing && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Suivre ma demande"
+        >
+          <button
+            type="button"
+            className="absolute inset-0 bg-slate-900/60"
+            aria-label="Fermer"
+            onClick={() => setSuiviPopupOpen(false)}
+          />
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-amber-200">
+            <button
+              type="button"
+              onClick={() => setSuiviPopupOpen(false)}
+              aria-label="Fermer"
+              className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <div className="mb-3 flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-amber-100">
+                <Search className="h-5 w-5 text-amber-700" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900">Vous avez déjà une référence ?</h3>
+            </div>
+            <p className="mb-5 text-sm text-slate-600">
+              Consultez l'avancement de votre demande d'admission à tout moment.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link
+                to="/suivi"
+                onClick={() => setSuiviPopupOpen(false)}
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-600"
+              >
+                <Search className="h-4 w-4" /> Suivre ma demande
+              </Link>
+              <button
+                type="button"
+                onClick={() => setSuiviPopupOpen(false)}
+                className="flex-1 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              >
+                Nouvelle demande
               </button>
             </div>
           </div>

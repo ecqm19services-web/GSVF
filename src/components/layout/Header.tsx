@@ -74,10 +74,10 @@ const Header: React.FC = () => {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-14">
+          <div className="flex justify-between items-center h-[4.5rem]">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 group relative">
-              <div className="relative -my-6 z-10">
+              <div className="relative -mb-6 z-10">
                 <img src="/logo-vf.svg" alt="Collège Privé la Vision Future" className="w-[4.5rem] h-[4.5rem] md:w-[5.5rem] md:h-[5.5rem] rounded-full object-contain bg-white shadow-lg ring-2 ring-white group-hover:shadow-orange-200 transition-shadow" />
               </div>
               <div className="hidden sm:block">

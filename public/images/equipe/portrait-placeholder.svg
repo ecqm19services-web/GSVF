@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800" role="img" aria-label="Portrait à venir">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1e3a8a"/>
+      <stop offset="1" stop-color="#172554"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="800" fill="url(#bg)"/>
+  <g fill="#f8fafc" opacity="0.92">
+    <circle cx="300" cy="330" r="120"/>
+    <path d="M120 660c0-105 80-190 180-190s180 85 180 190v20H120z"/>
+  </g>
+  <rect x="255" y="700" width="90" height="6" rx="3" fill="#f97316"/>
+</svg>

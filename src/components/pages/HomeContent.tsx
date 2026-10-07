@@ -34,6 +34,37 @@ type PracticalInfo = HomeSections['practicalInfo'];
 type PracticalTextItem = PracticalInfo['leftColumn']['trimesters'][number];
 type PracticalLinkItem = PracticalInfo['rightColumn']['firstCycleLinks'][number];
 
+// Fond défilant des cartes "Résultats examens" : bascule entre les images
+// à intervalle aléatoire entre 2 et 5 secondes (fondu enchaîné).
+const ExamCardSlideshow: React.FC<{ images: string[] }> = ({ images }) => {
+  const list = images.filter(Boolean);
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    if (list.length <= 1) return;
+    let timer = 0;
+    const tick = () => {
+      setIdx((p) => (p + 1) % list.length);
+      timer = window.setTimeout(tick, 2000 + Math.random() * 3000);
+    };
+    timer = window.setTimeout(tick, 2000 + Math.random() * 3000);
+    return () => window.clearTimeout(timer);
+  }, [list.length]);
+  return (
+    <>
+      {list.map((src, i) => (
+        <img
+          key={`${src}-${i}`}
+          src={src}
+          alt=""
+          loading={i === 0 ? 'eager' : 'lazy'}
+          decoding="async"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${i === idx ? 'opacity-100' : 'opacity-0'}`}
+        />
+      ))}
+    </>
+  );
+};
+
 const HomeContent: React.FC = () => {
   const { value: homeData } = usePageJsonContent<HomeData>('accueil', homeContent);
   const editSession = useEditSession<HomeData>();
@@ -87,6 +118,114 @@ const HomeContent: React.FC = () => {
     actu.items || homeContent.sections.actualites.items;
   const newsTickerText = actu.newsTicker?.text || homeContent.sections.actualites.newsTicker.text;
   const belowImageMode = (actu.belowImage?.mode as 'text' | 'image' | undefined) || 'text';
+
+  // Actualités : image rotative (changement aléatoire toutes les 3 à 8 s), images gérables par l'admin
+  const actuSlides: string[] =
+    actu.image?.slides && actu.image.slides.length
+      ? actu.image.slides
+      : actu.image?.src
+        ? [actu.image.src]
+        : [];
+  const [actuIndex, setActuIndex] = useState(0);
+  const [isUploadingActu, setIsUploadingActu] = useState(false);
+  const actuInputRef = useRef<HTMLInputElement>(null);
+  const actuSafeIndex = actuSlides.length ? actuIndex % actuSlides.length : 0;
+  useEffect(() => {
+    if (actuSlides.length <= 1 || editSession?.isEditing) return;
+    let cancelled = false;
+    let timer = 0;
+    const schedule = () => {
+      const delay = 3000 + Math.random() * 5000; // 3 à 8 secondes
+      timer = window.setTimeout(() => {
+        setActuIndex((prev) => {
+          let next = prev;
+          while (next === prev) next = Math.floor(Math.random() * actuSlides.length);
+          return next;
+        });
+        if (!cancelled) schedule();
+      }, delay);
+    };
+    schedule();
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [actuSlides.length, editSession?.isEditing]);
+  const handleActuMultiUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || !editSession) return;
+    setIsUploadingActu(true);
+    const nextSlides = [...actuSlides];
+    const creds = sessionStorage.getItem('cpvf_admin_auth');
+    const headers: Record<string, string> = {};
+    if (creds) headers['Authorization'] = `Basic ${creds}`;
+    for (const file of Array.from(files)) {
+      try {
+        const formData = new FormData();
+        formData.append('image', file);
+        const res = await fetch('/api/upload-image/?folder=actualites', { method: 'POST', headers, body: formData });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.url) nextSlides.push(data.url);
+        }
+      } catch { /* skip failed */ }
+    }
+    editSession.updateAtPath('sections.actualites.image.slides', nextSlides);
+    setIsUploadingActu(false);
+    if (actuInputRef.current) actuInputRef.current.value = '';
+  };
+  const removeActuSlide = (index: number) => {
+    if (!editSession) return;
+    if (!confirm("Supprimer cette image de l'actualité ?\n\nOK pour confirmer, Annuler pour annuler.")) return;
+    const nextSlides = actuSlides.filter((_, i) => i !== index);
+    editSession.updateAtPath('sections.actualites.image.slides', nextSlides);
+    if (actuIndex >= nextSlides.length) setActuIndex(Math.max(0, nextSlides.length - 1));
+  };
+
+  // Tableau d'honneur : images rotatives (fondu toutes les 5 s), gérables par l'admin
+  const hrSlides: string[] =
+    excellenceShowcase.honorRoll?.slides && excellenceShowcase.honorRoll.slides.length
+      ? excellenceShowcase.honorRoll.slides
+      : excellenceShowcase.honorRoll?.image
+        ? [excellenceShowcase.honorRoll.image]
+        : [];
+  const [hrIndex, setHrIndex] = useState(0);
+  const [isUploadingHr, setIsUploadingHr] = useState(false);
+  const hrInputRef = useRef<HTMLInputElement>(null);
+  const hrSafeIndex = hrSlides.length ? hrIndex % hrSlides.length : 0;
+  const [hrLightboxOpen, setHrLightboxOpen] = useState(false);
+  useEffect(() => {
+    if (hrSlides.length <= 1 || editSession?.isEditing) return;
+    const t = window.setInterval(() => setHrIndex((p) => (p + 1) % hrSlides.length), 5000);
+    return () => clearInterval(t);
+  }, [hrSlides.length, editSession?.isEditing]);
+  const handleHrMultiUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || !editSession) return;
+    setIsUploadingHr(true);
+    const nextSlides = [...hrSlides];
+    const creds = sessionStorage.getItem('cpvf_admin_auth');
+    const headers: Record<string, string> = {};
+    if (creds) headers['Authorization'] = `Basic ${creds}`;
+    for (const file of Array.from(files)) {
+      try {
+        const formData = new FormData();
+        formData.append('image', file);
+        const res = await fetch('/api/upload-image/?folder=excellence', { method: 'POST', headers, body: formData });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.url) nextSlides.push(data.url);
+        }
+      } catch { /* skip failed */ }
+    }
+    editSession.updateAtPath('sections.excellenceShowcase.honorRoll.slides', nextSlides);
+    setIsUploadingHr(false);
+    if (hrInputRef.current) hrInputRef.current.value = '';
+  };
+  const removeHrSlide = (index: number) => {
+    if (!editSession) return;
+    if (!confirm("Supprimer cette image du tableau d'honneur ?\n\nOK pour confirmer, Annuler pour annuler.")) return;
+    const nextSlides = hrSlides.filter((_, i) => i !== index);
+    editSession.updateAtPath('sections.excellenceShowcase.honorRoll.slides', nextSlides);
+    if (hrIndex >= nextSlides.length) setHrIndex(Math.max(0, nextSlides.length - 1));
+  };
 
   // Video modal state
   const [showVideo, setShowVideo] = useState(false);
@@ -150,7 +289,7 @@ const HomeContent: React.FC = () => {
   const addExamCard = () => {
     if (!editSession) return;
     const current = excellenceShowcase.examCards || [];
-    editSession.updateAtPath('sections.excellenceShowcase.examCards', [...current, { image: '/placeholder.svg', title: '', subtitle: '', linkUrl: '' }]);
+    editSession.updateAtPath('sections.excellenceShowcase.examCards', [...current, { image: '/placeholder.svg', images: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg'], title: '', subtitle: '', linkUrl: '' }]);
   };
   const removeExamCard = (i: number) => {
     if (!editSession) return;
@@ -654,14 +793,65 @@ const HomeContent: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-8 md:gap-10 items-start">
             {/* Left column – 45% : square image + optional zone below */}
             <div className="w-full md:w-[45%] flex-shrink-0">
-              <EditableImage
-                path="sections.actualites.image.src"
-                src={actu.image?.src}
-                alt="Actualité"
-                className="w-full aspect-square rounded-2xl overflow-hidden shadow-lg"
-                imgClassName="w-full h-full object-cover"
-                folder="actualites"
-              />
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-lg bg-gray-100">
+                {actuSlides.map((src, i) => (
+                  <img
+                    key={`${src}-${i}`}
+                    src={src}
+                    alt="Actualité"
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${i === actuSafeIndex ? 'opacity-100' : 'opacity-0'}`}
+                  />
+                ))}
+                {actuSlides.length > 1 && (
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                    {actuSlides.map((_, i) => (
+                      <span key={i} className={`w-2 h-2 rounded-full transition-colors ${i === actuSafeIndex ? 'bg-white' : 'bg-white/50'}`} />
+                    ))}
+                  </div>
+                )}
+              </div>
+              {editSession?.isEditing && (
+                <div className="mt-3 rounded-xl border border-dashed border-orange-300 bg-orange-50 p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold text-orange-800">🖼️ Images de l'actualité ({actuSlides.length})</span>
+                    <input
+                      ref={actuInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      multiple
+                      className="hidden"
+                      onChange={handleActuMultiUpload}
+                    />
+                    <button
+                      onClick={() => actuInputRef.current?.click()}
+                      disabled={isUploadingActu}
+                      className="flex items-center gap-1.5 bg-orange-600 text-white px-3 py-1.5 rounded-lg font-semibold text-xs hover:bg-orange-700 transition-colors disabled:opacity-50"
+                    >
+                      {isUploadingActu ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ImagePlus className="w-3.5 h-3.5" />}
+                      Ajouter
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-4 gap-2">
+                    {actuSlides.map((src, i) => (
+                      <div key={`${src}-${i}`} className="relative group aspect-square rounded-lg overflow-hidden border border-orange-200">
+                        <img src={src} alt="" className="w-full h-full object-cover" />
+                        {actuSlides.length > 1 && (
+                          <button
+                            onClick={() => removeActuSlide(i)}
+                            className="absolute top-0.5 right-0.5 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700"
+                            title="Supprimer cette image"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-[11px] text-orange-700">L'image change toute seule toutes les 3 à 8 secondes. Ajoutez ou supprimez les images ici.</p>
+                </div>
+              )}
               <div className="mt-4">
                 {belowImageMode === 'image' ? (
                   <EditableImage
@@ -786,15 +976,59 @@ const HomeContent: React.FC = () => {
             />
 
             <div className="grid lg:grid-cols-[1.45fr_0.8fr] gap-4 md:gap-6 items-stretch">
-              <div className="rounded-[22px] overflow-hidden border-4 border-white/25 shadow-2xl bg-white/10 backdrop-blur-sm min-h-[260px] md:min-h-[360px]">
-                <EditableImage
-                  path="sections.excellenceShowcase.honorRoll.image"
-                  src={excellenceShowcase.honorRoll?.image}
-                  alt="Tableau d'honneur"
-                  className="w-full h-full"
-                  imgClassName="w-full h-full object-cover"
-                  folder="accueil"
-                />
+              <div className="flex flex-col gap-3">
+                <div className="relative flex-1 rounded-[22px] overflow-hidden border-4 border-white/25 shadow-2xl bg-white/10 backdrop-blur-sm min-h-[260px] md:min-h-[360px]">
+                  {!editSession?.isEditing && hrSlides.length > 1 ? (
+                    <>
+                      {hrSlides.map((s, i) => (
+                        <img
+                          key={`${s}-${i}`}
+                          src={s}
+                          alt="Tableau d'honneur"
+                          loading={i === 0 ? 'eager' : 'lazy'}
+                          decoding="async"
+                          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${i === hrSafeIndex ? 'opacity-100' : 'opacity-0'}`}
+                        />
+                      ))}
+                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
+                        {hrSlides.map((_, i) => (
+                          <span key={i} className={`w-1.5 h-1.5 rounded-full transition-colors ${i === hrSafeIndex ? 'bg-white' : 'bg-white/40'}`} />
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <EditableImage
+                      path="sections.excellenceShowcase.honorRoll.image"
+                      src={excellenceShowcase.honorRoll?.image}
+                      alt="Tableau d'honneur"
+                      className="w-full h-full"
+                      imgClassName="w-full h-full object-cover"
+                      folder="accueil"
+                    />
+                  )}
+                </div>
+
+                {editSession?.isEditing && (
+                  <div className="bg-white/10 rounded-lg p-3 border border-white/20">
+                    <input ref={hrInputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple className="hidden" onChange={handleHrMultiUpload} />
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-[11px] font-bold text-yellow-300">🖼 Images du tableau d'honneur ({hrSlides.length}) — défilent toutes les 5 s</p>
+                      <button onClick={() => hrInputRef.current?.click()} disabled={isUploadingHr} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold disabled:opacity-60">
+                        {isUploadingHr ? <Loader2 className="w-3 h-3 animate-spin" /> : <ImagePlus className="w-3 h-3" />} Ajouter
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2">
+                      {hrSlides.map((s, i) => (
+                        <div key={`${s}-${i}`} className="relative group/hr rounded-lg overflow-hidden aspect-square">
+                          <img src={s} alt="" className="w-full h-full object-cover" />
+                          <button onClick={() => removeHrSlide(i)} className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover/hr:opacity-100 transition-opacity" title="Supprimer">
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="rounded-[22px] bg-white/10 backdrop-blur-sm border border-white/15 px-5 py-6 md:px-8 md:py-8 flex flex-col justify-center">
@@ -832,7 +1066,8 @@ const HomeContent: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-x-6 gap-y-3 max-w-sm mx-auto w-full">
                   {(excellenceShowcase.honorRoll?.levels || []).map((level: HonorRollLevel, index: number) => {
-                    const hasLink = !!level.linkUrl;
+                    const resolvedLink = level.linkUrl || (excellenceShowcase.honorRoll?.documentUrl || '');
+                    const hasLink = !!resolvedLink;
                     const levelContent = (
                       <>
                         <EditableText
@@ -841,7 +1076,7 @@ const HomeContent: React.FC = () => {
                           value={level.label || ''}
                           className="font-bold text-white text-base md:text-lg underline underline-offset-4"
                         />
-                        {hasLink && <ArrowUpRight className="w-4 h-4 text-white" />}
+                        <ArrowUpRight className="w-4 h-4 text-white" />
                       </>
                     );
 
@@ -856,15 +1091,24 @@ const HomeContent: React.FC = () => {
                             <Trash2 className="w-3 h-3" />
                           </button>
                         )}
-                        {hasLink && !editSession?.isEditing ? (
+                        {!editSession?.isEditing && hasLink ? (
                           <a
-                            href={level.linkUrl}
-                            target={level.linkUrl.endsWith('.pdf') ? '_blank' : undefined}
-                            rel={level.linkUrl.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
-                            className="inline-flex items-center gap-2 hover:text-orange-100 transition-colors"
+                            href={resolvedLink}
+                            target={resolvedLink.endsWith('.pdf') ? '_blank' : undefined}
+                            rel={resolvedLink.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
+                            className="inline-flex items-center gap-2 hover:text-orange-100 transition-colors cursor-pointer"
                           >
                             {levelContent}
                           </a>
+                        ) : !editSession?.isEditing ? (
+                          <button
+                            type="button"
+                            onClick={() => setHrLightboxOpen(true)}
+                            className="inline-flex items-center gap-2 hover:text-orange-100 transition-colors cursor-pointer"
+                            title="Voir le tableau d'honneur"
+                          >
+                            {levelContent}
+                          </button>
                         ) : (
                           <div className="inline-flex items-center gap-2">
                             {levelContent}
@@ -874,6 +1118,55 @@ const HomeContent: React.FC = () => {
                     );
                   })}
                 </div>
+
+                {hrLightboxOpen && !editSession?.isEditing && (
+                  <div
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4"
+                    onClick={() => setHrLightboxOpen(false)}
+                    role="dialog"
+                    aria-modal="true"
+                  >
+                    <button
+                      onClick={() => setHrLightboxOpen(false)}
+                      className="absolute top-4 right-4 p-2 bg-white/15 text-white rounded-full hover:bg-white/25"
+                      aria-label="Fermer"
+                    >
+                      <X className="w-6 h-6" />
+                    </button>
+                    <div className="max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
+                      <img
+                        src={hrSlides[hrSafeIndex] || hrSlides[0] || excellenceShowcase.honorRoll?.image}
+                        alt="Tableau d'honneur"
+                        className="w-full max-h-[85vh] object-contain rounded-xl"
+                      />
+                      <p className="text-center text-white/80 text-sm mt-3">Tableau d'honneur — {excellenceShowcase.honorRoll?.subtitle || '2e trimestre'}</p>
+                    </div>
+                  </div>
+                )}
+
+                {editSession?.isEditing && (
+                  <div className="mt-3 bg-white/10 rounded-lg p-3 border border-white/20">
+                    <p className="text-[11px] font-bold text-yellow-300 mb-1">🏆 PDF général du tableau d'honneur (repli pour toutes les classes) :</p>
+                    <div className="flex items-center gap-2">
+                      <EditableText
+                        as="p"
+                        path="sections.excellenceShowcase.honorRoll.documentUrl"
+                        value={excellenceShowcase.honorRoll?.documentUrl || ''}
+                        className="text-sm text-white break-all bg-white/10 rounded px-2 py-1 border border-white/20 flex-1"
+                      />
+                      <label className="cursor-pointer p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors" title="Uploader un PDF">
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          className="hidden"
+                          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleDocumentUpload(f, 'sections.excellenceShowcase.honorRoll.documentUrl'); }}
+                        />
+                        <span className="text-xs font-bold">📄</span>
+                      </label>
+                    </div>
+                    <p className="text-[10px] text-white/50 mt-1">Si une classe a son propre lien, il est utilisé ; sinon elle pointe vers ce PDF.</p>
+                  </div>
+                )}
 
                 {editSession?.isEditing && (excellenceShowcase.honorRoll?.levels || []).length > 0 && (
                   <div className="mt-4 bg-white/10 rounded-lg p-3 border border-white/20 space-y-2">
@@ -923,7 +1216,7 @@ const HomeContent: React.FC = () => {
               </button>
             )}
 
-            <div className="grid md:grid-cols-2 gap-5 md:gap-7">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7">
               {(excellenceShowcase.examCards || []).map((card: ExamCard, index: number) => {
                 const hasLink = !!card.linkUrl;
                 const cardInner = (
@@ -938,26 +1231,35 @@ const HomeContent: React.FC = () => {
                       </button>
                     )}
                     <div className="aspect-[4/3] overflow-hidden relative">
-                      <EditableImage
-                        path={`sections.excellenceShowcase.examCards.${index}.image`}
-                        src={card.image}
-                        alt={card.title || ''}
-                        className="w-full h-full"
-                        imgClassName="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        folder="accueil"
-                      />
-                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 md:p-5">
+                      {editSession?.isEditing ? (
+                        <div className="grid grid-cols-3 gap-1 h-full">
+                          {[0, 1, 2].map((j) => (
+                            <EditableImage
+                              key={j}
+                              path={`sections.excellenceShowcase.examCards.${index}.images.${j}`}
+                              src={(card.images && card.images[j]) || (j === 0 ? card.image : '') || '/placeholder.svg'}
+                              alt={`${card.title || ''} ${j + 1}`}
+                              className="relative h-full"
+                              imgClassName="w-full h-full object-cover"
+                              folder="accueil"
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <ExamCardSlideshow images={(card.images && card.images.length ? card.images : [card.image])} />
+                      )}
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 md:p-5 z-10 pointer-events-none">
                         <EditableText
                           as="h4"
                           path={`sections.excellenceShowcase.examCards.${index}.title`}
                           value={card.title || ''}
-                          className="text-white text-xl md:text-2xl font-black leading-tight"
+                          className="text-white text-xl md:text-2xl font-black leading-tight pointer-events-auto"
                         />
                         <EditableText
                           as="p"
                           path={`sections.excellenceShowcase.examCards.${index}.subtitle`}
                           value={card.subtitle || ''}
-                          className="text-orange-100 text-sm md:text-base font-semibold mt-1"
+                          className="text-orange-100 text-sm md:text-base font-semibold mt-1 pointer-events-auto"
                         />
                       </div>
                     </div>
