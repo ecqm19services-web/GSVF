@@ -27,6 +27,13 @@ server/_secure/acces-operateurs.xlsx
 server/_secure/reset-all-operators.php
 scripts/generate-operators-excel.cjs
 
+# Delivery / internal documentation (plaintext admin passwords — local only, never commit)
+DOCUMENTATION_ECOLE.md
+DOCUMENTATION_ECOLE.html
+DOCUMENTATION_ECOLE.pdf
+docs/DOCUMENTATION_DEVELOPPEUR.md
+DOCUMENTATION_COMPLETE.*
+
 # Appwrite credentials (email reference)
 # Email: ecqm19services@gmail.com
 
