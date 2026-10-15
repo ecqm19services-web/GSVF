@@ -21,6 +21,7 @@ const LOGO_PATH = path.join(ROOT, 'public', 'logo-vf.svg');
 const DEV = {
   name: 'M. ESSOH Cyrille',
   handles: 'ic_future / Hfablab',
+  email: 'ic.future16@gmail.com',
   phone: '+225 07 77 17 24 08',
 };
 const SCHOOL = {
@@ -345,7 +346,9 @@ function buildHtml(mdSource) {
     <tr><td>Zone d'administration</td><td>${escapeHtml(SCHOOL.admin)}</td></tr>
     <tr><td>Version du document</td><td>${REMISE_DATE}</td></tr>
     <tr><td>Éditeur des pages</td><td>Mode <strong>éditeur visuel</strong> (recommandé)</td></tr>
+    <tr><td>Vidéos d'appui</td><td>Plusieurs vidéos par zone d'administration, mises à disposition avec ce document (§10)</td></tr>
     <tr><td>Développeur</td><td>${escapeHtml(DEV.name)} — ${escapeHtml(DEV.handles)}</td></tr>
+    <tr><td>Contact prestataire</td><td>${escapeHtml(DEV.email)} · ${escapeHtml(DEV.phone)}</td></tr>
   </table>
 </section>
 
@@ -355,21 +358,22 @@ ${body}
   <div class="sig-box">
     <h2>✍️ Signature et livraison</h2>
     <p>Le présent document atteste la livraison de la version décrite : fonctionnalités publiques,
-    espace d'administration <code>${escapeHtml(SCHOOL.admin)}</code>, 10 comptes opérateurs et
-    procédure de sauvegarde à la charge de l'école.
+    espace d'administration <code>${escapeHtml(SCHOOL.admin)}</code>, 10 comptes opérateurs,
+    procédure de sauvegarde à la charge de l'école et <strong>vidéos d'accompagnement</strong> mises à
+    disposition avec ce document (§10).
     La partie technique (serveur, mise en ligne, scripts) reste gérée par le prestataire.</p>
 
     <table class="cover-meta" style="max-width:none;width:100%;margin-top:5mm;">
       <tr><td>Client</td><td>${escapeHtml(SCHOOL.name)} — ${escapeHtml(SCHOOL.site)}</td></tr>
       <tr><td>Contact établissement</td><td>${escapeHtml(SCHOOL.email)} · Standard ${escapeHtml(SCHOOL.standard)}</td></tr>
-      <tr><td>Prestataire</td><td>${escapeHtml(DEV.name)} (${escapeHtml(DEV.handles)})</td></tr>
+      <tr><td>Prestataire</td><td>${escapeHtml(DEV.name)} (${escapeHtml(DEV.handles)}) · ${escapeHtml(DEV.email)}</td></tr>
       <tr><td>Date de remise</td><td>${REMISE_DATE}</td></tr>
     </table>
 
     <div class="sig-grid">
       <div class="sig-col">
         <h4>Le développeur</h4>
-        <div class="sig-line">${escapeHtml(DEV.name)}<br><small>${escapeHtml(DEV.handles)} · ${escapeHtml(DEV.phone)}</small></div>
+        <div class="sig-line">${escapeHtml(DEV.name)}<br><small>${escapeHtml(DEV.handles)} · ${escapeHtml(DEV.email)} · ${escapeHtml(DEV.phone)}</small></div>
       </div>
       <div class="sig-col">
         <h4>Pour l'établissement</h4>
@@ -378,7 +382,8 @@ ${body}
     </div>
 
     <div class="sig-stamp">
-      Guide remis à l'école le ${REMISE_DATE} — à mettre à jour à chaque changement de compte opérateur.
+      Guide remis à l'école le ${REMISE_DATE}, avec les vidéos d'accompagnement mises à
+      disposition avec ce document (§10) — à mettre à jour à chaque changement de compte opérateur.
       Toute demande d'évolution du site s'adresse au prestataire (contacts en §9).
     </div>
   </div>
