@@ -332,7 +332,13 @@ const VisiteContent: React.FC = () => {
                       className="absolute inset-0 z-10"
                       style={{ pointerEvents: isEditing ? 'none' : 'auto' }}
                     />
-                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent z-20 pointer-events-none">
+                    {/* Légende : voilée en consultation (le clic ouvre la visionneuse),
+                        atteignable en mode édition — sinon « pointer-events: none »
+                        laissait le clic à la photo et la légende ne pouvait être corrigée. */}
+                    <div
+                      className={`absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent z-20 ${
+                        isEditing ? 'pointer-events-auto' : 'pointer-events-none'
+                      }`}>
                       <EditableText
                         as="p"
                         path={`sections.${sectionIndex}.images.${imageIndex}.caption`}

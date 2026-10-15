@@ -23,6 +23,7 @@ import {
   type LucideIcon
 } from 'lucide-react';
 import { useEditSession } from '@/contexts/EditSessionContext';
+import { isEditableTarget } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 
 const iconMap: Record<string, LucideIcon> = {
@@ -317,8 +318,12 @@ const NotreEcoleContent: React.FC = () => {
                         <div
                           role="button"
                           tabIndex={0}
-                          onClick={() => setExpandedYear(isOpen ? null : index)}
+                          onClick={(e) => {
+                            if (isEditing && isEditableTarget(e.target)) return;
+                            setExpandedYear(isOpen ? null : index);
+                          }}
                           onKeyDown={(e) => {
+                            if (isEditing && isEditableTarget(e.target)) return;
                             if (e.key === 'Enter' || e.key === ' ') {
                               e.preventDefault();
                               setExpandedYear(isOpen ? null : index);

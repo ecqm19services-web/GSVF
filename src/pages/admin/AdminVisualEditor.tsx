@@ -211,6 +211,35 @@ const AdminVisualEditor: React.FC = () => {
     }
   }, [draft, initialSnapshot]);
 
+  // Brouillon non publié : prévenir avant de fermer la page ou de changer de page.
+  // Sans ce garde-fou, une saisie (nom d'un membre, texte d'une rubrique) disparaissait
+  // silencieusement au rechargement ou à un changement de page dans le sélecteur.
+  useEffect(() => {
+    if (!isDirty) return;
+    const warn = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [isDirty]);
+
+  const changePage = (next: EditablePage, select: HTMLSelectElement) => {
+    if (next === page) return;
+    if (
+      isDirty &&
+      !window.confirm(
+        `Des modifications de la page « ${pageLabels[page]} » ne sont pas encore publiées.\n\n` +
+          `OK : changer de page et perdre ces modifications.\n` +
+          `Annuler : rester sur la page et publier d'abord.`
+      )
+    ) {
+      select.value = page;
+      return;
+    }
+    setPage(next);
+  };
+
   const onPublish = async () => {
     if (!token || !draft) return;
 
@@ -310,7 +339,7 @@ const AdminVisualEditor: React.FC = () => {
                 <Label className="mb-2 block">Page</Label>
                 <select
                   value={page}
-                  onChange={(e) => setPage(e.target.value as EditablePage)}
+                  onChange={(e) => changePage(e.target.value as EditablePage, e.currentTarget)}
                   className="flex h-10 w-full items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 cursor-pointer"
                 >
                   {pages.map((p) => (

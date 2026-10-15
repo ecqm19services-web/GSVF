@@ -20,8 +20,12 @@ const EditableImage: React.FC<Props> = ({ path, src, alt = '', className, imgCla
 
   const isEditing = !!session?.isEditing;
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isEditing) return;
+    // En mode édition, un clic sur une image ne sert qu'à la remplacer : il ne doit pas
+    // remonter aux conteneurs cliquables (cartes qui se déplient, galeries), sinon la
+    // carte réagit deux fois alors que l'utilisateur visait seulement l'image.
+    e.stopPropagation();
     fileInputRef.current?.click();
   };
 

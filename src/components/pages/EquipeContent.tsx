@@ -5,7 +5,8 @@ import { usePageJsonContent } from '@/hooks/usePageJsonContent';
 import EditableText from '@/components/admin/EditableText';
 import EditableImage from '@/components/admin/EditableImage';
 import { useEditSession } from '@/contexts/EditSessionContext';
-import { Plus, Trash2, X } from 'lucide-react';
+import { isEditableTarget } from '@/lib/utils';
+import { Plus, Trash2, X, Info } from 'lucide-react';
 
 type EquipeData = typeof equipeContent;
 
@@ -16,6 +17,9 @@ const EquipeContent: React.FC = () => {
   const { isEditing, updateAtPath } = useEditSession<EquipeData>() || {};
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const expandRef = useRef<HTMLDivElement>(null);
+  // Membre ajouté à l'instant : son champ « nom » doit recevoir le curseur, sans quoi
+  // l'écran s'ouvre sans rien sélectionner et l'ajout reste illisible (« Nouveau membre »).
+  const pendingNameFocus = useRef<number | null>(null);
 
   const addMember = () => {
     if (!updateAtPath || !data) return;
@@ -24,11 +28,16 @@ const EquipeContent: React.FC = () => {
       {
         name: 'Nouveau membre',
         title: 'Titre / Fonction',
-        description: 'Description du membre de l\'équipe.',
-        photo: '/placeholder.svg',
+        description: "Description du membre de l'équipe.",
+        // Visuel de repli réel du dossier équipe (le fichier /placeholder.svg n'existe pas).
+        photo: '/images/equipe/portrait-placeholder.svg',
       },
     ];
     updateAtPath('members', newMembers);
+    // Ouvre directement la fiche du nouveau membre : sans ça, la carte ajoutée en fin
+    // de liste reste hors écran et l'écran d'édition (photo, nom, fonction) n'apparaît pas.
+    pendingNameFocus.current = newMembers.length - 1;
+    setExpandedIndex(newMembers.length - 1);
   };
 
   const removeMember = (index: number) => {
@@ -45,11 +54,23 @@ const EquipeContent: React.FC = () => {
   };
 
   useEffect(() => {
-    if (expandedIndex !== null && expandRef.current) {
-      setTimeout(() => {
-        expandRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 100);
-    }
+    if (expandedIndex === null) return;
+    const timer = setTimeout(() => {
+      expandRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      if (pendingNameFocus.current !== expandedIndex) return;
+      pendingNameFocus.current = null;
+      // Placer le curseur dans le nom, texte sélectionné : la frappe le remplace aussitôt.
+      const field = expandRef.current?.querySelector<HTMLElement>('h2[contenteditable="true"]');
+      if (!field) return;
+      field.focus();
+      const selection = window.getSelection();
+      if (!selection) return;
+      const range = document.createRange();
+      range.selectNodeContents(field);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }, 120);
+    return () => clearTimeout(timer);
   }, [expandedIndex]);
 
   // Determine which row the expanded card is in (0-indexed)
@@ -92,8 +113,12 @@ const EquipeContent: React.FC = () => {
           {/* Netflix-style gradient: bottom fade to dark */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#181818] via-[#181818]/40 to-transparent" />
 
-          {/* Name + title overlaid at bottom of image */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-10">
+          {/* Name + title overlaid at bottom of image.
+              z-30 : le voile « CHANGER L'IMAGE » de l'éditeur de photo est en z-20 et
+              recouvrait tout le visuel, nom et fonction compris — un clic sur le texte
+              ouvrait le sélecteur de fichier au lieu de placer le curseur, ce qui rendait
+              le titre et la fonction impossibles à modifier en fiche. */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-30">
             <EditableText
               as="h2"
               path={`members.${expandedIndex}.name`}
@@ -114,6 +139,11 @@ const EquipeContent: React.FC = () => {
 
         {/* Description area — dark background */}
         <div className="px-6 md:px-10 pb-8 pt-2">
+          {isEditing && (
+            <p className="text-xs md:text-sm font-medium text-orange-200/90 mb-2">
+              Cliquez sur la photo pour la remplacer, sur le nom, la fonction ou la description pour les modifier.
+            </p>
+          )}
           <EditableText
             as="p"
             multiline
@@ -151,7 +181,11 @@ const EquipeContent: React.FC = () => {
                   return (
                     <div
                       key={idx}
-                      onClick={() => toggleExpand(idx)}
+                      onClick={(e) => {
+                        // Un clic dans un champ éditable doit placer le curseur, pas replier la grille.
+                        if (isEditing && isEditableTarget(e.target)) return;
+                        toggleExpand(idx);
+                      }}
                       className={`group relative rounded-xl overflow-hidden bg-white shadow-md hover:shadow-xl cursor-pointer transition-all duration-300 hover:-translate-y-1 ${
                         isSelected ? 'ring-2 ring-orange-500 shadow-orange-100' : 'border border-gray-100'
                       }`}
@@ -166,28 +200,51 @@ const EquipeContent: React.FC = () => {
                           className="w-full h-full"
                           imgClassName="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
-                        {/* Admin: delete button */}
+                        {/* Admin : ouvrir la fiche (photo + description) et supprimer.
+                            Ces deux boutons restent visibles en mode édition : cachés au
+                            survol, ils étaient impossibles à trouver (ni souris sur certains
+                            postes, ni évidence de leur existence). */}
                         {isEditing && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeMember(idx);
-                            }}
-                            className="absolute top-2 right-2 z-30 p-2 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 shadow-lg"
-                            title="Supprimer ce membre"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleExpand(idx);
+                              }}
+                              className="absolute top-2 left-2 z-30 flex items-center gap-1 p-2 bg-blue-700 text-white rounded-full shadow-lg hover:bg-blue-800 transition-colors"
+                              title="Ouvrir la fiche de ce membre (photo et description)"
+                            >
+                              <Info className="w-4 h-4" />
+                              <span className="text-[11px] font-semibold pr-1">Fiche</span>
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeMember(idx);
+                              }}
+                              className="absolute top-2 right-2 z-30 p-2 bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 transition-colors"
+                              title="Supprimer ce membre"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
                         )}
                       </div>
-                      {/* Text below the image */}
+                      {/* Text below the image — éditable ici aussi, sinon le nom et la
+                          fonction ne se corrigent qu'en ouvrant la fiche. */}
                       <div className="p-3 md:p-4">
-                        <h3 className="font-bold text-gray-900 text-sm md:text-base leading-tight">
-                          {member.name}
-                        </h3>
-                        <p className="text-orange-600 text-xs md:text-sm font-medium mt-0.5">
-                          {member.title}
-                        </p>
+                        <EditableText
+                          as="h3"
+                          path={`members.${idx}.name`}
+                          value={member.name}
+                          className="block font-bold text-gray-900 text-sm md:text-base leading-tight"
+                        />
+                        <EditableText
+                          as="p"
+                          path={`members.${idx}.title`}
+                          value={member.title}
+                          className="block text-orange-600 text-xs md:text-sm font-medium mt-0.5"
+                        />
                       </div>
                     </div>
                   );
